@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">通讯录</string>
+
+    <!--主页-->
+    <string name="tab_friends">通讯</string>
+    <string name="tab_me">我的</string>
+    <string name="tab_msg">短信</string>
+
+    <!--通讯-->
+    <string name="friends_contacts">通讯录</string>
+    <string name="friends_call">拨号</string>
+    <string name="friends_record">通话记录</string>
+    <string name="num0">0</string>
+    <string name="num1">1</string>
+    <string name="num2">2</string>
+    <string name="num3">3</string>
+    <string name="num4">4</string>
+    <string name="num5">5</string>
+    <string name="num6">6</string>
+    <string name="num7">7</string>
+    <string name="num8">8</string>
+    <string name="num9">9</string>
+    <string name="call">拨打</string>
+    <string name="delete">删除</string>
+
+</resources>

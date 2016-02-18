@@ -1,0 +1,7 @@
+<resources>
+    <string name="error_no_record">没有相关记录，点击刷新</string>
+    <string name="error_network">网络未连接!</string>
+    <string name="hint_exit">再按一次返回键退出应用</string>
+    <string name="ViewHolder">ViewHolder</string>
+    <string name="record_hint">录音结束倒计时:#num#秒</string>
+</resources>

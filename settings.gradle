@@ -1,0 +1,1 @@
+include ':baseLibs', ':fastandroiddev', ':autolayout', ':SweetAlert', ':android-http', ':umenglib', ':pushToRefresh', ':contacts', ':alipay'
