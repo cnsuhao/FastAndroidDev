@@ -17,6 +17,7 @@ gradle/*
 captures/*
 .DS_Store
 .idea/*
+school/*
 
 # Local configuration file (sdk path, etc)
 local.properties
