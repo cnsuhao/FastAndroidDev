@@ -192,7 +192,7 @@ public class RecordButton extends Button {
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setAudioChannels(1);
         recorder.setAudioEncodingBitRate(4000);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         recorder.setOutputFile(mFileName);
