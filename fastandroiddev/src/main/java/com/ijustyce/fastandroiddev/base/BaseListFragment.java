@@ -193,6 +193,10 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             if (mContext != null && adapter != null && data != null) {
                 adapter.notifyDataSetChanged();
             }
+
+            if ((data == null || !data.isEmpty()) && noData != null) {
+                noData.setVisibility(View.INVISIBLE);
+            }
         }
     };
 
@@ -204,6 +208,10 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
             mPullListView.setPullLoadEnabled(false);
             mPullListView.setLastUpdatedLabel(DateUtil.getDateString(FORMATTER));
+
+            if (adapter != null){
+                adapter.notifyDataSetChanged();
+            }
 
             if (data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);

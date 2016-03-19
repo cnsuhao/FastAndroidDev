@@ -12,6 +12,16 @@ public class StringUtils {
         return text.replaceAll(" ", "").length() == 0;
     }
 
+    public static int getInt(String value){
+
+        try {
+            return Integer.parseInt(value);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     /**
      * 判断是否为网址
      */

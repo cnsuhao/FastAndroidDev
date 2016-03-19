@@ -63,9 +63,12 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         AppManager.pushActivity(this);
 
         handler = new Handler();
+        doInit();
         afterCreate();
         CallBackManager.getActivityLifeCall().onCreate(this);
     }
+
+    protected void doInit(){}
 
     @Override
     protected void onStop() {

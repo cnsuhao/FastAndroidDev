@@ -38,7 +38,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public static final int SHORT_DELAY = 100; // 刷新间隔
 
     @Override
-    public void doResume() {
+    public final void doResume() {
 
         if (handler == null) {
 
@@ -52,11 +52,17 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     }
 
     @Override
+    protected final void doInit() {
+
+        init();
+    }
+
+    @Override
     public int getLayoutId() {
         return R.layout.activity_list_common;
     }
 
-    public void init() {
+    public final void init() {
 
         mPullListView = (PullToRefreshListView) findViewById(R.id.list);
         noData = (LinearLayout) findViewById(R.id.noData);
@@ -187,6 +193,10 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             if (mContext != null && adapter != null && data != null) {
                 adapter.notifyDataSetChanged();
             }
+
+            if ((data == null || !data.isEmpty()) && noData != null) {
+                noData.setVisibility(View.INVISIBLE);
+            }
         }
     };
 
@@ -198,6 +208,10 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
             mPullListView.setPullLoadEnabled(false);
             mPullListView.setLastUpdatedLabel(DateUtil.getDateString(FORMATTER));
+
+            if (adapter != null){
+                adapter.notifyDataSetChanged();
+            }
 
             if (data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);
