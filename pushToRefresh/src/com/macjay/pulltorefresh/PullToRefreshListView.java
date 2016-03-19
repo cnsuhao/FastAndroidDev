@@ -209,7 +209,7 @@ implements OnScrollListener {
         final Adapter adapter = mListView.getAdapter();
 
         if (null == adapter || adapter.isEmpty()) {
-            return false;
+            return true;
         }
 
         int mostTop = (mListView.getChildCount() > 0) ? mListView.getChildAt(0).getTop() : 0;

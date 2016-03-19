@@ -31,7 +31,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
     public Handler handler;
     public BaseAdapter adapter;
-    public List<T> data;
+    private List<T> data;
 
     public int pageNo = 1;
 
@@ -78,13 +78,23 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         if (result instanceof IResponseData){
 
             List<T> objectsList = ((IResponseData<T>)result).getData();
-            data.addAll(objectsList);
+            if (objectsList != null){
+                data.addAll(objectsList);
+            }
         }
         if (data == null || data.isEmpty()){
             handler.post(hasNoData);
         }else{
             handler.post(newData);
         }
+    }
+
+    public T getByPosition(int position){
+
+        if (position < 0 || position >= data.size()){
+            return null;
+        }
+        return data.get(position);
     }
 
     @Override

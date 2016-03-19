@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.DateUtil;
@@ -28,7 +29,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     public Handler handler;
     public BaseAdapter adapter;
-    public List<T> data;
+    private List<T> data;
 
     private static final String FORMATTER = "yyyy-MM-dd HH:mm";
 
@@ -85,6 +86,21 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     public abstract Class getType();
 
+    public T getByPosition(int position){
+
+        if (position < 0 || position >= data.size()){
+            return null;
+        }
+        return data.get(position);
+    }
+
+    @Override
+    public void onFailed(int code, String msg, String taskId) {
+
+        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        handler.post(hasNoData);
+    }
+
     @Override
     public final void onSuccess(String object, String taskId) {
         if (data == null) {
@@ -99,7 +115,9 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if (result instanceof IResponseData){
 
             List<T> objectsList = ((IResponseData<T>)result).getData();
-            data.addAll(objectsList);
+            if (objectsList != null){
+                data.addAll(objectsList);
+            }
         }
         if (data == null || data.isEmpty()){
             handler.post(hasNoData);
