@@ -89,7 +89,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
     }
 
-    public T getByPosition(int position){
+    public T getById(int position){
 
         if (position < 0 || position >= data.size()){
             return null;

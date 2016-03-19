@@ -92,7 +92,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     public abstract Class getType();
 
-    public T getByPosition(int position){
+    public T getById(int position){
 
         if (position < 0 || position >= data.size()){
             return null;
