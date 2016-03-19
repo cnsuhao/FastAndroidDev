@@ -74,7 +74,9 @@ public class AppManager {
                 tmp.finish();
             }
         }
-        allActivity.remove(remove);
+        if (!remove.isEmpty()) {
+            allActivity.removeAll(remove);
+        }
     }
 
     private static String getClassName(Activity activity){

@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.baseLib.crash;
 
 import android.content.Context;
 
+import com.ijustyce.fastandroiddev.baseLib.BuildConfig;
 import com.ijustyce.fastandroiddev.baseLib.utils.FileUtils;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 
@@ -18,7 +19,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static CrashHandler INSTANCE = new CrashHandler();
 
     private Context mContext;
-    private boolean isDebug = false;
     private long lastCrash;
     private static final long CRASH_DELAY = 5000;    //  5秒内仅处理一次，即使5秒内崩溃了多次，也只处理一次
     private Thread.UncaughtExceptionHandler mDefaultHandler;
@@ -34,14 +34,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
-    public boolean isDebug() {
-        return isDebug;
-    }
-
-    public void setDebug(boolean debug) {
-        isDebug = debug;
-    }
-
     /**
      * 当 UncaughtException 发生时会转入该函数来处理
      */
@@ -50,7 +42,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         ex.printStackTrace();
         saveToFile(ex);
-        if (isDebug && mDefaultHandler != null){
+        if (BuildConfig.DEBUG && mDefaultHandler != null){
             mDefaultHandler.uncaughtException(thread, ex);
         }else{
             android.os.Process.killProcess(android.os.Process.myPid());

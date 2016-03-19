@@ -9,11 +9,11 @@ import android.widget.ListView;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.DateUtil;
+import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+import com.ijustyce.fastandroiddev.net.IResponseData;
 import com.macjay.pulltorefresh.PullToRefreshBase;
 import com.macjay.pulltorefresh.PullToRefreshListView;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +37,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public static final int SHORT_DELAY = 100; // 刷新间隔
 
     @Override
-    public void onResume() {
-
-        super.onResume();
+    public void doResume() {
 
         if (handler == null) {
 
@@ -85,9 +83,10 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         lv.setAdapter(adapter);
     }
 
+    public abstract Class getType();
+
     @Override
-    public final void onSuccess(JSONObject dataJson, String taskId) {
-        super.onSuccess(data, taskId);
+    public final void onSuccess(String object, String taskId) {
         if (data == null) {
             handler.post(hasNoData);
             return;
@@ -95,15 +94,19 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if (pageNo == 1){
             data.clear();
         }
-        doSuccess(dataJson, taskId);
+
+        Object result = IJson.fromJson(object, getType());
+        if (result instanceof IResponseData){
+
+            List<T> objectsList = ((IResponseData<T>)result).getData();
+            data.addAll(objectsList);
+        }
         if (data == null || data.isEmpty()){
             handler.post(hasNoData);
         }else{
             handler.post(newData);
         }
     }
-
-    public void doSuccess(JSONObject result, String taskId){};
 
     private PullToRefreshBase.OnRefreshListener<ListView> refreshListener =
             new PullToRefreshBase.OnRefreshListener<ListView>() {

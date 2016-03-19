@@ -64,10 +64,9 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         addTitle();
         setAdapter();
 
-        afterCreate();
-
         handler = new Handler();
-        CallBackManager.getActivityLifeCall().onCreate();
+        CallBackManager.getActivityLifeCall().onCreate(this);
+        afterCreate();
     }
 
     private Runnable checkExit = new Runnable() {
@@ -190,7 +189,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         super.onDestroy();
         ButterKnife.unbind(this);
         AppManager.moveActivity(this);
-        CallBackManager.getActivityLifeCall().onDestroy();
+        CallBackManager.getActivityLifeCall().onDestroy(this);
     }
 
     public final void addTab(int layoutId, int radioButtonId) {
@@ -269,18 +268,18 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        CallBackManager.getActivityLifeCall().onStop();
+        CallBackManager.getActivityLifeCall().onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        CallBackManager.getActivityLifeCall().onPause();
+        CallBackManager.getActivityLifeCall().onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume();
+        CallBackManager.getActivityLifeCall().onResume(this);
     }
 }

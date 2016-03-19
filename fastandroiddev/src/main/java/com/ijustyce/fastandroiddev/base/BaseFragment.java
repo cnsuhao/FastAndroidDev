@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ijustyce.fastandroiddev.R;
+import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.net.HttpListener;
-
-import org.json.JSONObject;
+import com.ijustyce.fastandroiddev.net.VolleyUtils;
 
 import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -20,12 +20,15 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by yc on 2015/8/14.  baseFragment for all fragment
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment<T> extends Fragment {
 
     public Context mContext;
     public View mView;
     public SweetAlertDialog dialog;
     public Handler handler;
+
+    public String TAG ;
+    private T mData;
 
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +37,7 @@ public abstract class BaseFragment extends Fragment {
         if (mView != null) {
             return mView;
         }
+        TAG = getClass().getName();
         mView = inflater.inflate(getLayoutId(), container, false);
         mContext = getActivity();
         ButterKnife.bind(this, mView);
@@ -73,17 +77,29 @@ public abstract class BaseFragment extends Fragment {
     public void onPause() {
         super.onPause();
         dismiss();
+        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+                .getVolleyRequestQueue(mContext) != null){
+            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         dismiss();
+        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+                .getVolleyRequestQueue(mContext) != null){
+            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+                .getVolleyRequestQueue(mContext) != null){
+            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        }
         dismiss();
         ButterKnife.unbind(this);
         if (mContext != null) {
@@ -105,12 +121,39 @@ public abstract class BaseFragment extends Fragment {
         }
     };
 
-    public void dismiss() {
+    /**
+     * 让dialog消失
+     * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
+     */
+    public void dismiss(int delay){
 
-        if (handler == null) {
+        if (handler == null){
             handler = new Handler();
         }
-        handler.post(dismiss);
+        if (delay <= 0){
+            handler.post(dismiss);
+            return;
+        }if (delay > 10000){
+            delay = 5000;
+        }
+        handler.postDelayed(dismiss, delay);
+    }
+
+    public void dismiss() {
+
+        dismiss(0);
+    }
+
+    public String getTAG() {
+        return TAG;
+    }
+
+    public void showProcess(String text){
+
+        dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
+        dialog.setTitleText(text);
+        dialog.getProgressHelper().setBarColor(R.color.colorAccent);
+        dialog.show();
     }
 
     public void showProcess(int resId) {
@@ -121,7 +164,7 @@ public abstract class BaseFragment extends Fragment {
         dialog.show();
     }
 
-    public void newActivity(Class<?> gotoClass) {
+    public void newActivity(Class gotoClass) {
 
         mContext.startActivity(new Intent(mContext, gotoClass));
     }
@@ -132,15 +175,6 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public HttpListener httpListener = new HttpListener() {
-        @Override
-        public void success(JSONObject data, String taskId) {
-
-            dismiss();
-            if (mContext == null) {
-                return;
-            }
-            onSuccess(data, taskId);
-        }
 
         @Override
         public void fail(int code, String msg, String taskId) {
@@ -153,17 +187,31 @@ public abstract class BaseFragment extends Fragment {
         }
 
         @Override
-        public void success(Object object, String taskId) {
+        public void success(String object, String taskId) {
+
+            dismiss();
+            if (mContext == null) {
+                return;
+            }
+            Class type = getType();
+            if (type != null) {
+                mData = IJson.fromJson(object, getType());
+            }
             onSuccess(object, taskId);
         }
     };
 
-    public void onSuccess(Object object, String taskId) {
+    public T getData(){
 
-        //  TODO 覆写这个方法，以获取http响应
+        return mData;
     }
 
-    public void onSuccess(JSONObject data, String taskId) {
+    public Class getType(){
+
+        return null;
+    }
+
+    public void onSuccess(String object, String taskId) {
 
         //  TODO 覆写这个方法，以获取http响应
     }

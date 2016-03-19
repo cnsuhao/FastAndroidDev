@@ -37,6 +37,11 @@ public class MsgFragment extends BaseListFragment<MsgModel> {
     }
 
     @Override
+    public Class getType() {
+        return null;
+    }
+
+    @Override
     public BaseAdapter buildAdapter(Context mContext, List<MsgModel> data) {
 
         if (adapter == null){

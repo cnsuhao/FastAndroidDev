@@ -6,14 +6,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.callback.CallBackManager;
+import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.manager.AppManager;
 import com.ijustyce.fastandroiddev.net.HttpListener;
+import com.ijustyce.fastandroiddev.net.VolleyUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
-
-import org.json.JSONObject;
 
 import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -23,11 +24,15 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  *
  * @author yc
  */
-public abstract class BaseActivity extends AutoLayoutActivity {
+public abstract class BaseActivity<T> extends AutoLayoutActivity {
 
     public Activity mContext;
     public SweetAlertDialog dialog;
     public Handler handler;
+    public View rootView;
+
+    public String TAG ;
+    private T mData;
 
     /**
      * onCreate .
@@ -36,7 +41,18 @@ public abstract class BaseActivity extends AutoLayoutActivity {
     protected final void onCreate(Bundle bundle) {
 
         super.onCreate(bundle);
-        setContentView(getLayoutId());
+        if (!beforeCreate()){
+
+            finish();
+            return;
+        }
+
+        mContext = this;
+        rootView = View.inflate(mContext, getLayoutId(), null);
+        setContentView(rootView);
+
+        TAG = getClass().getName();
+
         ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -46,36 +62,56 @@ public abstract class BaseActivity extends AutoLayoutActivity {
 
         AppManager.pushActivity(this);
 
-        mContext = this;
         handler = new Handler();
         afterCreate();
-
-        CallBackManager.getActivityLifeCall().onCreate();
+        CallBackManager.getActivityLifeCall().onCreate(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        CallBackManager.getActivityLifeCall().onStop();
+        VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        CallBackManager.getActivityLifeCall().onStop(this);
+    }
+
+    /**
+     *  onCreate 之前调用，返回值决定代码是否向下执行
+     * @return  true 代码继续执行 false finish 并且 return
+     */
+    public boolean beforeCreate(){
+        return true;
+    }
+
+    public void afterCreate() {
+    }
+
+    public void doResume() {
     }
 
     @Override
-    protected void onResume() {
+    protected final void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume();
+        CallBackManager.getActivityLifeCall().onResume(this);
+        doResume();
     }
 
     public abstract int getLayoutId();
 
-    public void afterCreate(){};
-
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
+        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+                .getVolleyRequestQueue(mContext) != null){
+            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        }
         if (handler != null){
             handler.post(dismiss);
         }
-        CallBackManager.getActivityLifeCall().onPause();
+        CallBackManager.getActivityLifeCall().onPause(this);
+    }
+
+    public String getTAG() {
+        return TAG;
     }
 
     private Runnable dismiss = new Runnable() {
@@ -89,17 +125,40 @@ public abstract class BaseActivity extends AutoLayoutActivity {
         }
     };
 
-    public void dismiss(){
+    /**
+     * 让dialog消失
+     * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
+     */
+    public void dismiss(int delay){
 
         if (handler == null){
             handler = new Handler();
         }
-        handler.post(dismiss);
+        if (delay <= 0){
+            handler.post(dismiss);
+            return;
+        }if (delay > 10000){
+            delay = 5000;
+        }
+        handler.postDelayed(dismiss, delay);
+    }
+
+    public void dismiss() {
+
+        dismiss(0);
     }
 
     public String getResString(int resId){
 
         return getResources().getString(resId);
+    }
+
+    public void showProcess(String text){
+
+        dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
+        dialog.setTitleText(text);
+        dialog.getProgressHelper().setBarColor(R.color.colorAccent);
+        dialog.show();
     }
 
     public void showProcess(int resId){
@@ -113,13 +172,19 @@ public abstract class BaseActivity extends AutoLayoutActivity {
     @Override
     protected void onDestroy() {
 
-        CallBackManager.getActivityLifeCall().onDestroy();
+        if (mContext != null && TAG != null && VolleyUtils.getInstance().getVolleyRequestQueue(mContext) != null){
+            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        }
+        CallBackManager.getActivityLifeCall().onDestroy(this);
         super.onDestroy();
         AppManager.moveActivity(this);
         ButterKnife.unbind(this);
         if (httpListener != null) {
             httpListener = null;
+        }if (handler != null){
+            handler.removeCallbacksAndMessages(null);
         }
+        handler = null;
         mContext = null;
     }
 
@@ -129,24 +194,17 @@ public abstract class BaseActivity extends AutoLayoutActivity {
         startActivity(intent);
     }
 
-    public void newActivity(Class<?> gotoClass) {
+    public void newActivity(Class gotoClass) {
 
         newActivity(new Intent(this, gotoClass));
     }
 
     public HttpListener httpListener = new HttpListener() {
-        @Override
-        public void success(JSONObject data, String taskId) {
-
-            if (mContext == null) {
-                return;
-            }
-            onSuccess(data, taskId);
-        }
 
         @Override
         public void fail(int code, String msg, String taskId) {
 
+            dismiss();
             if (mContext == null) {
                 return;
             }
@@ -154,22 +212,32 @@ public abstract class BaseActivity extends AutoLayoutActivity {
         }
 
         @Override
-        public void success(Object object, String taskId) {
+        public void success(String object, String taskId) {
 
+            dismiss();
             if (mContext == null) {
                 return;
+            }
+            Class type = getType();
+            if (type != null) {
+                mData = IJson.fromJson(object, getType());
             }
             onSuccess(object, taskId);
         }
     };
 
-    public void onSuccess(Object object, String taskId){
+    public T getData(){
 
+        return mData;
     }
 
-    public void onSuccess(JSONObject data, String taskId) {
+    public Class getType(){
 
-        //  TODO 覆写这个方法，以获取http响应
+        return null;
+    }
+
+    public void onSuccess(String object, String taskId){
+
     }
 
     public void onFailed(int code, String msg, String taskId) {

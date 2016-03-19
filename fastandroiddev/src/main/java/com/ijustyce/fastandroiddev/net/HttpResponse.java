@@ -1,90 +1,84 @@
 package com.ijustyce.fastandroiddev.net;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
-
-import cz.msebera.android.httpclient.Header;
-
 /**
- * Created by yc on 2015/8/14.
+ * Created by yc on 2015/8/14.  httpResponse
  */
-public class HttpResponse extends JsonHttpResponseHandler {
+public class HttpResponse {
 
-    private static final String SUCCESS = "100";
-    private WeakReference<HttpListener> httpInterface;
-    private String taskId;
+    private String url;
+    private HttpListener httpListener;
 
-    public HttpResponse(HttpListener httpInterface, String taskId) {
-        this.httpInterface = new WeakReference<>(httpInterface);
-        this.taskId = taskId;
+    private Request request;
+
+    public void setRequest(Request request){
+
+        this.request = request;
     }
 
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-        super.onSuccess(statusCode, headers, response);
-        ILog.i("===responseString===", response.toString());
+    public HttpResponse(String url, HttpListener httpListener){
+
+        this.url = url;
+        this.httpListener = httpListener;
     }
 
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, String responseString) {
-        super.onSuccess(statusCode, headers, responseString);
-        ILog.i("===responseString===", responseString);
-    }
+    public Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject jsonObject) {
 
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            if (request != null && request.isCanceled()){
 
-        ILog.i(taskId, response.toString());
-        if (httpInterface == null || httpInterface.get() == null){
-            return;
+                ILog.i("===request is canceled===");
+                return;
+            }
+
+            if (httpListener != null){
+
+                httpListener.success(String.valueOf(jsonObject), url);
+            }
         }
-        parseSuccess(response);
-    }
+    };
 
-    @Override
-    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-        throwable.printStackTrace();
-        if (httpInterface != null && httpInterface.get() != null) {
-            httpInterface.get().fail(statusCode, responseString, taskId);
-        }
-    }
+    public Response.Listener<String> stringListener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String s) {
 
-    @Override
-    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject json) {
-        throwable.printStackTrace();
-        ILog.i("===json===", "json is " + json);
-        if (httpInterface != null && httpInterface.get() != null) {
-            httpInterface.get().fail(statusCode, json == null ? "" : json.toString(), taskId);
-        }
-    }
+            if (request != null && request.isCanceled()){
 
-    private void parseSuccess(JSONObject json) {
+                ILog.i("===request is canceled===");
+                return;
+            }
+            if (httpListener != null){
 
-        int code = 0;
-        String msg = null;
-        try {
-            code = json.getInt("code");
-            msg = json.getString("message");
-            if (code != 0){
-                httpInterface.get().fail(code, msg, taskId);
-            }else{
-                Object result = json.get("result");
-                if (result instanceof  JSONObject) {
-                    httpInterface.get().success((JSONObject) result, taskId);
+                if (s == null){
+                    httpListener.fail(-2, "response is null", url);
                 }else{
-                    httpInterface.get().success(result, taskId);
-                    httpInterface.get().success(null, taskId);
+                    httpListener.success(s, url);
                 }
             }
-        }catch (JSONException e){
-            httpInterface.get().fail(code, msg, taskId);
-            e.printStackTrace();
         }
-    }
+    };
+
+    public Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+
+            if (request != null && request.isCanceled()){
+
+                ILog.i("===request is canceled===");
+                return;
+            }
+
+            if (httpListener != null){
+                httpListener.fail(-1, "request failed", url);
+            }
+        }
+    };
 }

@@ -29,14 +29,17 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.ijustyce.fastandroiddev.baseLib.R;
 
@@ -676,5 +679,63 @@ public class CommonTool {
             sendIntent.putExtra("sms_body", strMsgContext);
             mContext.startActivity(sendIntent);
         }
+    }
+
+    /**
+     * get screen width
+     * @param context context
+     * @return
+     */
+    public static int getScreenWidth(@NonNull Context context){
+
+        WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        return vm.getDefaultDisplay().getWidth();
+    }
+
+    /**
+     * get screen height
+     * @param context context
+     * @return
+     */
+    public static int getScreenHeight(@NonNull Context context){
+
+        WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        return vm.getDefaultDisplay().getHeight();
+    }
+
+    public static void showNotify(@NonNull String title, @NonNull String msg, @NonNull Intent intent,
+                                  @NonNull Context context, int resSmallIcon){
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                .setSmallIcon(resSmallIcon)
+                .setContentTitle(title) //标题
+                .setContentText(msg)    //正文
+                //  .setNumber(3)         //设置信息条数
+                //  .setContentInfo("3")      //作用同上，设置信息的条数
+                //  .setLargeIcon(resSmallIcon)
+                .setDefaults(Notification.DEFAULT_SOUND)//设置声音，此为默认声音
+                //    .setVibrate(vT) //设置震动，此震动数组为：long vT[]={300,100,300,100};
+                //.setLights(argb, onMs, offMs)
+                //   .setOngoing(true)      //true，用户不能手动清除
+                .setAutoCancel(true);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//        if (parent != null){
+//            stackBuilder.addParentStack(parent);
+//        }
+        stackBuilder.addNextIntent(intent);
+
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1000, mBuilder.build());
+    }
+
+    public static String getText(TextView view){
+
+        return view == null ? null : view.getText().toString();
     }
 }

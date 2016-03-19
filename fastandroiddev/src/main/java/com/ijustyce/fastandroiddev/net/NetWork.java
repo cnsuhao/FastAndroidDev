@@ -3,28 +3,24 @@ package com.ijustyce.fastandroiddev.net;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
-import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.baseLib.utils.ToastUtil;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import java.nio.charset.Charset;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
-
 /**
- * Created by yc on 2015/8/12.
+ * Created by yc on 2015/8/12.  负责发送网络请求的类
  */
 public class NetWork {
 
-    private static final String TAG = "NetWork";
+    private static HttpParams commonHttpParams;
+
     private static boolean showToast = true;
 
     /**
@@ -37,79 +33,116 @@ public class NetWork {
         showToast = value;
     }
 
-    private NetWork(){
+    public static void setHttpParams(HttpParams httpParams){
 
+        commonHttpParams = httpParams;
     }
 
     /**
      * send a get request
      */
-    public static synchronized boolean sendGet(Context context, Map<String, Object> map, String url,
-                                               AsyncHttpResponseHandler listener) {
+    public static synchronized boolean sendGet(Context context, final HttpParams httpParams,
+                                               HttpListener listener) {
 
-        if (!isConnected(context)){
+        if (!isConnected(context) || httpParams == null){
             return false;
         }
-        RequestParams params = new RequestParams();
-        if (map != null) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                if (null != value) {
-                    params.put(key, value);
-                }
-            }
-            map.clear();
+
+        String url = httpParams.getUrl();
+        Map<String, String> map = httpParams.getParams();
+        if (commonHttpParams != null && commonHttpParams.getParams() != null){
+            map.putAll(commonHttpParams.getParams());
         }
-        HttpTask.get(url, params, listener);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(url).append("?");
+        for (String key : map.keySet()){
+
+            stringBuilder.append(key).append("=").append(map.get(key)).append("&");
+        }
+        url = stringBuilder.toString();
+
+        HttpResponse response = new HttpResponse(url, listener);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response.stringListener, response.errorListener);
+
+        response.setRequest(stringRequest);
+
+        String tag = httpParams.getTag();
+        if (tag == null || tag.length() < 1){
+
+            VolleyUtils.addRequest(stringRequest, context);
+            ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
+        }else {
+            VolleyUtils.addRequest(stringRequest, httpParams.getTag(), context);
+        }
+        ILog.i("===NetWork url===", httpParams.getUrl());
+        ILog.i("===NetWork params===", httpParams.getParams().toString());
         return true;
     }
 
     /**
      * send a post request
      */
-    public static synchronized boolean sendPost(Context context, Map<String, Object> map, String url,
-                                                AsyncHttpResponseHandler listener) {
+    public static synchronized boolean sendPost(Context context, HttpParams httpParams,
+                                                HttpListener listener) {
 
-        Log.i("===add parameter===", "add");
 
-        if (!isConnected(context)){
-            if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
-            }
+        if (!isConnected(context)  || httpParams == null){
             return false;
         }
-        RequestParams params = new RequestParams();
-        if (map != null) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                if (null != value) {
-                    params.put(key, value);
-                }
-            }
-            map.clear();
+        final Map<String, String> map = httpParams.getParams();
+        if (commonHttpParams != null && commonHttpParams.getParams() != null){
+            map.putAll(commonHttpParams.getParams());
         }
-        HttpTask.post(url, params, listener);
+        HttpResponse response = new HttpResponse(httpParams.getUrl(), listener);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, httpParams.getUrl(),
+                response.stringListener, response.errorListener) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return map;
+            }
+        };
+
+        response.setRequest(stringRequest);
+
+        String tag = httpParams.getTag();
+        if (tag == null || tag.length() < 1){
+
+            VolleyUtils.addRequest(stringRequest, context);
+            ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
+        }else {
+            VolleyUtils.addRequest(stringRequest, httpParams.getTag(), context);
+        }
+
+        ILog.i("===NetWork url===", httpParams.getUrl());
+        ILog.i("===NetWork params===", httpParams.getParams().toString());
         return true;
     }
 
-    public static synchronized boolean postJson(Context context, String url, String json
-            , AsyncHttpResponseHandler listener){
+    public static synchronized boolean postJson(Context context, String url, HttpParams httpParams
+            , HttpListener listener){
 
-        if (!isConnected(context)){
-            if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
-            }
+        if (!isConnected(context)  || httpParams == null){
             return false;
         }
 
-        ILog.i(url, json == null ? "json is null " : json);
+        HttpResponse response = new HttpResponse(url, listener);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, httpParams.getJson(),
+                response.jsonListener, response.errorListener);
 
-        json = json == null ? "": json;
-        StringEntity entity = new StringEntity(json, Charset.forName("utf-8"));
-        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
-        HttpTask.postJson(context, url, entity, listener);
+        response.setRequest(jsonObjectRequest);
+
+        String tag = httpParams.getTag();
+        if (tag == null || tag.length() < 1){
+
+            VolleyUtils.addRequest(jsonObjectRequest, context);
+            ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
+        }else {
+            VolleyUtils.addRequest(jsonObjectRequest, httpParams.getTag(), context);
+        }
+        ILog.i("===NetWork url===", httpParams.getUrl());
+        ILog.i("===NetWork params===", httpParams.getParams().toString());
         return true;
     }
 

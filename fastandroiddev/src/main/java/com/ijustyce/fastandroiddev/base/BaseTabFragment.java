@@ -1,13 +1,9 @@
 package com.ijustyce.fastandroiddev.base;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
@@ -20,39 +16,42 @@ import butterknife.ButterKnife;
 /**
  * Created by yc on 15-12-25.   顶部是tab的fragment
  */
-public abstract class BaseTabFragment extends Fragment {
+public abstract class BaseTabFragment extends BaseFragment {
 
     private TabLayout mTabLayout;
-    private ViewPager mViewPager;
+    private BaseViewPager mViewPager;
 
     public List<String> mTitleList;
     public List<Fragment> mFragmentList;
 
-    private View mView;
+    private LinearLayout headerView;
 
-    @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public int getLayoutId() {
+        return R.layout.fragment_tab;
+    }
 
-        super.onCreateView(inflater, container, savedInstanceState);
-        if (mView != null){
-            return mView;
-        }
-        mView = inflater.inflate(R.layout.fragment_tab, container, false);
-        ButterKnife.bind(this, mView);
+    public final void afterCreate(){
+
         initData();
 
         addTitle();
         addFragment();
         setAdapter();
+    };
 
-        return mView;
+    public final void addHeaderView(View view){
+
+        if (view != null) {
+            headerView.addView(view);
+        }
     }
 
     private void initData(){
 
         mTabLayout = (TabLayout) mView.findViewById(R.id.tabTitle);
-        mViewPager = (ViewPager) mView.findViewById(R.id.viewPager);
+        headerView = (LinearLayout) mView.findViewById(R.id.headerView);
+        mViewPager = (BaseViewPager) mView.findViewById(R.id.viewPager);
         mFragmentList = new ArrayList<>();
         mTitleList = new ArrayList<>();
     }
@@ -93,27 +92,27 @@ public abstract class BaseTabFragment extends Fragment {
         super.onDestroy();
     }
 
-    public final void setScrollMode(){
+    public void setScrollMode(){
 
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
     }
 
-    public final String getResString(int resId){
+    public String getResString(int resId){
 
         return getResources().getString(resId);
     }
 
-    public final void setTabBackground(int color){
+    public void setTabBackground(int color){
 
         mTabLayout.setBackgroundColor(getResColor(color));
     }
 
-    public final void setTabIndicatorHeight(int height){
+    public void setTabIndicatorHeight(int height){
 
         mTabLayout.setSelectedTabIndicatorHeight(height);
     }
 
-    public final int getResColor(int color){
+    private int getResColor(int color){
 
         return getResources().getColor(color);
     }
@@ -122,7 +121,7 @@ public abstract class BaseTabFragment extends Fragment {
      *  设置tab的可见性
      * @param value 只能是 View.GONE、View.VISIBLE、View.INVISIBLE
      */
-    public final void setTabVisibility(int value){
+    public void setTabVisibility(int value){
 
         if (value == View.GONE || value == View.VISIBLE || value == View.INVISIBLE) {
             mTabLayout.setVisibility(value);
@@ -132,7 +131,7 @@ public abstract class BaseTabFragment extends Fragment {
         }
     }
 
-    public final void setCurrentFragment(int id){
+    public void setCurrentFragment(int id){
 
         if (id > -1 && id < mFragmentList.size() && mViewPager != null){
             mViewPager.setCurrentItem(id, true);
@@ -141,12 +140,23 @@ public abstract class BaseTabFragment extends Fragment {
         }
     }
 
-    public final void setTabIndicatorColor(int color){
+    /**
+     * 是否禁止左右滑动
+     * @param canScroll   TRUE的时候可以左右滑动，false的时候不能左右滑动，默认是true
+     */
+    public void setCanScroll(boolean canScroll){
+
+        if (mViewPager != null){
+            mViewPager.setCanScroll(canScroll);
+        }
+    }
+
+    public void setTabIndicatorColor(int color){
 
         mTabLayout.setSelectedTabIndicatorColor(getResColor(color));
     }
 
-    public final void setTabTextColor(int normalColor, int selectedColor){
+    public void setTabTextColor(int normalColor, int selectedColor){
 
         mTabLayout.setTabTextColors(getResColor(normalColor), getResColor(selectedColor));
     }

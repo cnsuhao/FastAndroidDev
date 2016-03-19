@@ -126,7 +126,7 @@ public class ViewHolder {
     public ViewHolder setText(int viewId, String text) {
         TextView tv = getView(viewId);
         if (tv != null) {
-            tv.setText(text);
+            tv.setText(text == null ? "" : text);
         }
         return this;
     }

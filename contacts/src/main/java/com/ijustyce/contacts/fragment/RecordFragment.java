@@ -24,6 +24,11 @@ public class RecordFragment extends BaseListFragment<RecordModel> {
         return true;
     }
 
+    @Override
+    public Class getType() {
+        return null;
+    }
+
     private void showData(){
 
         data.clear();
