@@ -121,14 +121,12 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if (result instanceof IResponseData){
 
             List<T> objectsList = ((IResponseData<T>)result).getData();
-            if (objectsList != null){
+            if (objectsList != null && !objectsList.isEmpty()){
                 data.addAll(objectsList);
+                handler.post(newData);
+            }else{
+                handler.post(hasNoData);
             }
-        }
-        if (data == null || data.isEmpty()){
-            handler.post(hasNoData);
-        }else{
-            handler.post(newData);
         }
     }
 
