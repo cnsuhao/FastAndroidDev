@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.annotation.NonNull;
@@ -168,6 +169,33 @@ public class CommonTool {
         return getPkgName(context) + getVersionName(context);
     }
 
+    public static boolean openUrl(String url, Activity mContext){
+
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        try {
+            mContext.startActivity( Intent.createChooser(intent, "请选择应用"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void setEditAble(boolean editAble, EditText editText){
+
+        if (editText == null){
+            return;
+        }
+        editText.setFocusableInTouchMode(editAble);
+        editText.setLongClickable(editAble);
+        if (editAble){
+            editText.requestFocus();
+        }else {
+            editText.clearFocus();
+        }
+    }
 
     public static boolean chooseFile(Activity mContext, String type, int requestCode) {
 

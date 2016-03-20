@@ -23,6 +23,22 @@ public class RegularUtils {
     }
 
     /**
+     * 判断是否是图片，即判断扩展名是否为 .jpg, .jpeg, .png
+     * @param file
+     * @return
+     */
+    public static boolean isImage(String file){
+
+        if (file == null){
+            return false;
+        }
+        if (file.endsWith(".jpg") || file.endsWith(".jpeg") || file.endsWith(".png")){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 判断是否是通用手机号，即：正常11位手机号、6位城市短号、通用固话号码
      * @param s String 字符串
      * @return
