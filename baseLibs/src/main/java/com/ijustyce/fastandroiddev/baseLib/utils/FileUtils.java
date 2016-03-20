@@ -1,7 +1,9 @@
 package com.ijustyce.fastandroiddev.baseLib.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
@@ -301,5 +303,37 @@ public class FileUtils {
         }
     }
 
+    /**
+     * 返回选择文件时 选定的文件路径
+     * @param context   context
+     * @param uri   onActivityResult里 Intent 对象 getData
+     * @return  如果存在，返回路径，否则返回null
+     */
+    public static String getPath(Context context, Uri uri) {
 
+        if (context == null || uri == null){
+            return null;
+        }
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = {"_data"};
+            Cursor cursor;
+
+            try {
+                cursor = context.getContentResolver() == null ?
+                        null : context.getContentResolver().query(uri, projection, null, null, null);
+                if (cursor == null){
+                    return null;
+                }
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
 }

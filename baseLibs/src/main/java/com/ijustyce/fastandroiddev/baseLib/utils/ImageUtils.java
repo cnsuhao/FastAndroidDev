@@ -150,6 +150,6 @@ public class ImageUtils {
      */
     public static void load(final Context context, ImageView view, final String url) {
 
-        load(context, view, url, true);
+        load(context, view, url, false);
     }
 }

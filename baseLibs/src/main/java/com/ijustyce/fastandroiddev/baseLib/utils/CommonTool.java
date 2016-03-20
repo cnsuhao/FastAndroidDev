@@ -46,6 +46,8 @@ import com.ijustyce.fastandroiddev.baseLib.R;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -164,6 +166,21 @@ public class CommonTool {
     public static String getVersion(Context context) {
 
         return getPkgName(context) + getVersionName(context);
+    }
+
+
+    public static boolean chooseFile(Activity mContext, String type, int requestCode) {
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType(type == null ? "*/*" : type + "/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            mContext.startActivityForResult( Intent.createChooser(intent, "请选择文件"), requestCode);
+        } catch (android.content.ActivityNotFoundException ex) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -377,6 +394,66 @@ public class CommonTool {
             inputManger.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
         context.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    /**
+     * save bitmap to .jpg file
+     * @param mBitmap bitmap
+     * @param bitName file path , must end with .jpg like /sdcard/jilvinfo/tmp/1.jpg
+     */
+    public static boolean savBitmapToPng(Bitmap mBitmap,String bitName)  {
+        File f = new File(bitName);
+        FileOutputStream fOut;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * save bitmap to .jpg file
+     * @param mBitmap bitmap
+     * @param bitName file path , must end with .jpg like /sdcard/jilvinfo/tmp/1.jpg
+     */
+    public static boolean savBitmapToJpg(Bitmap mBitmap,String bitName)  {
+        File f = new File(bitName);
+        FileOutputStream fOut;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     /**
