@@ -77,6 +77,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
 
         handler = new Handler();
+        pageNo = 1;
         mPullListView.setPullLoadEnabled(true);
         mPullListView.setPullRefreshEnabled(true);
         mPullListView.setOnRefreshListener(refreshListener);

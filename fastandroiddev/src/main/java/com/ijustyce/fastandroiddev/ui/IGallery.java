@@ -29,6 +29,7 @@ import android.view.animation.Transformation;
 import android.widget.Gallery;
 
 import com.ijustyce.fastandroiddev.R;
+import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 
 public class IGallery extends Gallery {
 
@@ -241,6 +242,75 @@ public class IGallery extends Gallery {
         }
 
         return true;
+    }
+
+    public int getSuggestSpace(Context context){
+
+        int width = CommonTool.getScreenWidth(context);
+        int height = CommonTool.getScreenHeight(context);
+
+        int space = (5 * width) / 720;
+
+        if (width == 480 && height == 800){
+
+            space -= 10;
+        }
+
+        return space;
+    }
+
+    public float getSuggestScale(Context context){
+
+        int width = CommonTool.getScreenWidth(context);
+        int height = CommonTool.getScreenHeight(context);
+
+        if (width == 1400 && height == 2560){
+            return 0.78f;
+        }
+
+        if (width == 480 && height == 800){
+            return 0.79f;
+        }
+
+        if (width == 480 && height == 854){
+            return 0.79f;
+        }
+
+        if (width == 540 && height == 960){
+            return 0.78f;
+        }
+
+        //  0.85f
+        if (width == 1080 && height == 1920){
+            return 0.85f;
+        }
+
+        if (width == 720 && height == 1280){
+            return 0.85f;
+        }
+
+        if (width == 640 && height == 960){
+            return 0.85f;
+        }
+
+        //  0.9f
+        if (width == 1200 && height == 1920){
+            return 0.92f;
+        }
+
+        if (width == 600 && height == 1024){
+            return 0.93f;
+        }
+
+        if (width == 1200 && height == 800){
+            return 0.9f;
+        }
+
+        if (width == 800 && height == 1280){
+            return 0.9f;
+        }
+        return 0.85f;
+
     }
 
     //  ============================================================================

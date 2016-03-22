@@ -36,7 +36,7 @@
 
                 <TextView
                     android:id="@+id/left"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     android:padding="10dp"
                     android:textSize="14sp"
                     android:textColor="@color/white"
@@ -46,7 +46,7 @@
 
                 <TextView
                     android:id="@+id/label"
-                    android:text="label"
+                    android:text=""
                     android:padding="10dp"
                     android:textSize="14sp"
                     android:textColor="@color/white"
@@ -60,11 +60,23 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:id="@+id/right"
-                    android:text="right"
                     android:padding="10dp"
                     android:layout_marginRight="10dp"
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/editText"
+                    android:hint="请输入关键字"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toRightOf="@id/back"
+                    android:layout_toLeftOf="@id/right"
+                    android:textColor="@color/white"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
 

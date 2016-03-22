@@ -39,6 +39,36 @@ public class RegularUtils {
     }
 
     /**
+     * 判断是否为域名，类似：http://22.com 不能是  http://22.22/22,  暂不支持中文域名
+     * @param string    一个url
+     * @return  true or false
+     */
+    public static boolean isHost(String string){
+
+        if (string == null){
+            return false;
+        }
+        Pattern p = Pattern.compile("^((http://)|(https://))((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"
+                + "\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
+        return p.matcher(string).matches();
+    }
+
+    /**
+     * 判断是否为网址，类似：http://22.com/222 暂不支持中文域名
+     * @param string    一个url
+     * @return  true or false
+     */
+    public static boolean isUrl(String string){
+
+        if (string == null){
+            return false;
+        }
+        Pattern p = Pattern.compile("^((http://)|(https://))((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"
+                + "\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)(/)(.+)$");
+        return p.matcher(string).matches();
+    }
+
+    /**
      * 判断是否是通用手机号，即：正常11位手机号、6位城市短号、通用固话号码
      * @param s String 字符串
      * @return
