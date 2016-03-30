@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#e6e6e6"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/infoLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="#46a0f0">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/back"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/person_info"
+            android:textSize="20sp"
+            android:textColor="@color/white"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/infoLayout"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/head"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <ImageView
+            android:id="@+id/headPic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/head_top"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/infoLayout1"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nickname"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="yclovexh"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/infoLayout2"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="你的真实姓名"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoLayout4"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/infoLayout3"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sex"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="男/女"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoLayout5"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/infoLayout4"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="17764576160"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoLayout6"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/infoLayout5"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="浙江.杭州"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

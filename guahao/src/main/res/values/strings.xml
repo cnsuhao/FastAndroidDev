@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">bishe</string>
+
+    <!-- mainActivity -->
+    <string name="main_order">预约挂号</string>
+    <string name="main_near">我的预约</string>
+    <string name="main_person">个人中心</string>
+
+    <!-- order -->
+    <string name="my_order">我要预约</string>
+    <string name="my_outpatient">门诊加号</string>
+    <string name="my_service">咨询服务</string>
+
+    <!-- person -->
+    <string name="integral">信誉积分</string>
+    <string name="order">我的预约</string>
+    <string name="collect">我的收藏</string>
+    <string name="set">设置</string>
+    <string name="share">分享</string>
+    <string name="help">帮助与反馈</string>
+    <string name="about">关于</string>
+    <string name="person_info">个人信息</string>
+    <string name="head">头像</string>
+    <string name="nickname">昵称</string>
+    <string name="name">姓名</string>
+    <string name="sex">性别</string>
+    <string name="phone">手机号码</string>
+    <string name="address">居住地区</string>
+    <string name="wechat">微信公众号：zxh15757118177</string>
+    <string name="calls">服务电话：17764576160</string>
+    <string name="version">版本更新 #version#</string>
+    <string name="modify_password">修改登录密码</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="notification_push">通知推送</string>
+    <string name="exit_login">退出登录</string>
+    <string name="cue">温馨提示</string>
+    <string name="issue">您确定要退出登录吗？</string>
+    <string name="ok">确定</string>
+    <string name="no">取消</string>
+    <string name="oldPassword">请输入原登录密码</string>
+    <string name="oldPasswords">原登录密码</string>
+    <string name="newPassword">请输入新登录密码</string>
+    <string name="newPasswords">新登录密码</string>
+    <string name="identify">短信验证码</string>
+    <string name="identify_msg">请输入短信验证码</string>
+    <string name="tip_text">*请您务必妥善管理好您的登录密码，不要轻易告知他人</string>
+    <string name="modify_ok">确认修改</string>
+
+    <!-- login -->
+    <string name="username">账号</string>
+    <string name="input_phone">请输入手机号</string>
+    <string name="login">登录</string>
+    <string name="pwd">密码</string>
+    <string name="input_pwd">请输入密码</string>
+    <string name="rem_pwd">记住密码</string>
+    <string name="forget_pwd">忘记密码?</string>
+    <string name="new_user">新用户? 立即注册</string>
+
+    <!-- register -->
+    <string name="register">注册</string>
+    <string name="reg_tip">*注册预约挂号需实名制，请填写真实有效的个人信息，一旦注册，将无法在客户端进行资料更改！</string>
+    <string name="input_name">请输入您的姓名</string>
+    <string name="input_card">请输入您的身份证号</string>
+    <string name="input_both">请输入您的出生日期</string>
+    <string name="input_phones">请输入用于登录的手机号</string>
+    <string name="set_pwd">请设置6-16位的登录密码</string>
+    <string name="agree_text">我已阅读并同意</string>
+    <string name="agreement">注册协议</string>
+
+    <!-- forget_pwd -->
+    <string name="rep_pwd">请重新设置6-16位的登录密码</string>
+    <string name="sure">确定</string>
+    <string name="forget_password">忘记密码</string>
+</resources>

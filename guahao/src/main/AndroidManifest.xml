@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ijustzxh.bishe">
+
+    <uses-permission android:name="android.permission.CALL_PHONE" /> //拨打电话权限
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        tools:replace="icon,label,theme"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activity.PersonInfoActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.PersonActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.AboutActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.PersonSetActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.ModifyPasswordActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.LoginActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.OrderActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.RegisterActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name=".activity.ForgetPwdActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
+    </application>
+
+</manifest>

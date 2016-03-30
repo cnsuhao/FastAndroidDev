@@ -8,12 +8,42 @@ import java.util.Map;
 /**
  * Created by yangchun on 16/3/8.   网络请求的参数组建类
  */
-public class HttpParams {
+public final class HttpParams {
 
-    private Map<String, String> params;
+    private static Map<String, String> params, commonParams, header;
     private String url;
     private String tag;
+    private String cacheKey = "";
+    private int cacheTime;  //  秒数
     private JSONObject json;
+
+    static {
+
+        commonParams = new HashMap<>();
+        header = new HashMap<>();
+    }
+
+    public HttpParams setCacheTime(int second){
+
+        cacheTime = second;
+        return this;
+    }
+
+    public HttpParams addCacheKey(Object key){
+
+        cacheKey += key;
+        return this;
+    }
+
+    public String getCacheKey(){
+
+        return url + cacheKey;
+    }
+
+    public int getCacheTime(){
+
+        return cacheTime;
+    }
 
     private HttpParams(){
 
@@ -25,6 +55,46 @@ public class HttpParams {
         return new HttpParams().tag(tag).url(url);
     }
 
+    /**
+     * 添加通用网络请求参数或者移出通用参数，对所有请求有效
+     * @param key   参数名称
+     * @param value 参数值 如果为null 将移出这个参数
+     * @return  HttpParams
+     */
+    public static void addCommon(String key, Object value){
+
+        if (value == null){
+            commonParams.remove(key);
+        }else {
+            commonParams.put(key, String.valueOf(value));
+        }
+    }
+
+    /**
+     * 添加请求头信息或者移出头信息，对所有请求有效
+     * @param key   参数名称
+     * @param value 参数值 如果为null 将移出这个参数
+     */
+    public static void addHeader(String key, Object value){
+
+        if (value == null){
+            header.remove(key);
+        }else{
+            header.put(key, String.valueOf(value));
+        }
+    }
+
+    public static Map<String, String> getHeader(){
+
+        return header == null || header.isEmpty() ? null : header;
+    }
+
+    /**
+     * 添加一个参数，仅本次请求有效。
+     * @param key   参数名称
+     * @param value 参数值
+     * @return  HttpParams
+     */
     public HttpParams add(String key, Object value){
 
         if (params == null){
@@ -39,7 +109,7 @@ public class HttpParams {
         return this;
     }
 
-    public HttpParams url(String url){
+    private HttpParams url(String url){
 
         if (url != null) {
             this.url = url;
@@ -47,7 +117,7 @@ public class HttpParams {
         return this;
     }
 
-    public HttpParams tag(String tag){
+    private HttpParams tag(String tag){
 
         if (tag != null) {
             this.tag = tag;
@@ -63,6 +133,12 @@ public class HttpParams {
 
     public Map<String, String> getParams(){
 
+        if (params == null){
+            params = new HashMap<>();
+        }
+        if (commonParams != null){
+            params.putAll(commonParams);
+        }
         return params;
     }
 

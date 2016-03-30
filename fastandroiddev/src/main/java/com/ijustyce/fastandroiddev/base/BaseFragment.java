@@ -37,8 +37,15 @@ public abstract class BaseFragment<T> extends Fragment {
         if (mView != null) {
             return mView;
         }
+
         TAG = getClass().getName();
         mView = inflater.inflate(getLayoutId(), container, false);
+
+        ViewGroup parent = (ViewGroup) mView.getParent();
+        if (parent != null) {
+            parent.removeView(mView);
+        }
+
         mContext = getActivity();
         ButterKnife.bind(this, mView);
         handler = new Handler();

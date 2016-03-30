@@ -27,9 +27,7 @@ import java.util.Map;
 /**
  * Created by yc on 2015/8/12.  负责发送网络请求的类
  */
-public class NetWork {
-
-    private static HttpParams commonHttpParams;
+public final class INetWork {
 
     private static boolean showToast = true;
 
@@ -43,50 +41,63 @@ public class NetWork {
         showToast = value;
     }
 
-    public static void setHttpParams(HttpParams httpParams){
+    /**
+     * 移除某个url对应的缓存，或者清空所有缓存
+     * @param url   url，如果为null，则移除所有
+     */
+    public static void removeCache(String url){
 
-        commonHttpParams = httpParams;
+        HttpResponse.removeCache(url);
     }
 
     /**
      * send a get request
      */
-    public static synchronized boolean sendGet(Context context, final HttpParams httpParams,
+    public static synchronized boolean sendGet(Context context, HttpParams httpParams,
                                                HttpListener listener) {
 
-        if (!isConnected(context) || httpParams == null){
+        if (!isConnected(context) || httpParams == null) {
             return false;
+        }
+
+        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), listener)){
+            return true;
         }
 
         String url = httpParams.getUrl();
         Map<String, String> map = httpParams.getParams();
-        if (commonHttpParams != null && commonHttpParams.getParams() != null){
-            map.putAll(commonHttpParams.getParams());
-        }
+        final Map<String, String> headers = HttpParams.getHeader();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(url).append("?");
-        for (String key : map.keySet()){
+        for (String key : map.keySet()) {
 
             stringBuilder.append(key).append("=").append(map.get(key)).append("&");
         }
         url = stringBuilder.toString();
 
-        HttpResponse response = new HttpResponse(url, listener);
+        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response.stringListener, response.errorListener);
+                response.stringListener, response.errorListener){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                return headers == null ? super.getHeaders() : headers;
+            }
+        };
 
         response.setRequest(stringRequest);
 
         String tag = httpParams.getTag();
-        if (tag == null || tag.length() < 1){
+        if (tag == null || tag.length() < 1) {
 
             VolleyUtils.addRequest(stringRequest, context);
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
-        }else {
+        } else {
             VolleyUtils.addRequest(stringRequest, httpParams.getTag(), context);
         }
-        ILog.i("===NetWork url===", httpParams.getUrl());
-        ILog.i("===NetWork params===", httpParams.getParams().toString());
+        ILog.i("===INetWork url===", httpParams.getUrl());
+        ILog.i("===INetWork params===", httpParams.getParams().toString());
         return true;
     }
 
@@ -97,83 +108,107 @@ public class NetWork {
                                                 HttpListener listener) {
 
 
-        if (!isConnected(context)  || httpParams == null){
+        if (!isConnected(context) || httpParams == null) {
             return false;
         }
-        final Map<String, String> map = httpParams.getParams();
-        if (commonHttpParams != null && commonHttpParams.getParams() != null){
-            map.putAll(commonHttpParams.getParams());
+
+        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), listener)){
+            return true;
         }
-        HttpResponse response = new HttpResponse(httpParams.getUrl(), listener);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, httpParams.getUrl(),
+
+        String url = httpParams.getUrl();
+        final Map<String, String> params = httpParams.getParams();
+        final Map<String, String> headers = HttpParams.getHeader();
+        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 response.stringListener, response.errorListener) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
-                return map;
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                return headers == null ? super.getHeaders() : headers;
             }
         };
 
         response.setRequest(stringRequest);
 
         String tag = httpParams.getTag();
-        if (tag == null || tag.length() < 1){
+        if (tag == null || tag.length() < 1) {
 
             VolleyUtils.addRequest(stringRequest, context);
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
-        }else {
+        } else {
             VolleyUtils.addRequest(stringRequest, httpParams.getTag(), context);
         }
 
-        ILog.i("===NetWork url===", httpParams.getUrl());
-        ILog.i("===NetWork params===", httpParams.getParams().toString());
+        ILog.i("===INetWork url===", httpParams.getUrl());
+        ILog.i("===INetWork params===", httpParams.getParams().toString());
         return true;
     }
 
-    public static synchronized boolean postJson(Context context, String url, HttpParams httpParams
-            , HttpListener listener){
+    public static synchronized boolean postJson(Context context, final HttpParams httpParams
+            , HttpListener listener) {
 
-        if (!isConnected(context)  || httpParams == null){
+        if (!isConnected(context) || httpParams == null) {
             return false;
         }
 
-        HttpResponse response = new HttpResponse(url, listener);
+        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), listener)){
+            return true;
+        }
+
+        String url = httpParams.getUrl();
+        final Map<String, String> headers = HttpParams.getHeader();
+        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, httpParams.getJson(),
-                response.jsonListener, response.errorListener);
+                response.jsonListener, response.errorListener){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                return headers == null ? super.getHeaders() : headers;
+            }
+        };
 
         response.setRequest(jsonObjectRequest);
 
         String tag = httpParams.getTag();
-        if (tag == null || tag.length() < 1){
+        if (tag == null || tag.length() < 1) {
 
             VolleyUtils.addRequest(jsonObjectRequest, context);
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
-        }else {
+        } else {
             VolleyUtils.addRequest(jsonObjectRequest, httpParams.getTag(), context);
         }
-        ILog.i("===NetWork url===", httpParams.getUrl());
-        ILog.i("===NetWork params===", httpParams.getParams().toString());
+        ILog.i("===INetWork url===", httpParams.getUrl());
+        ILog.i("===INetWork params===", httpParams.getParams().toString());
         return true;
     }
 
     /**
      * whether is connected to network .
      *
-     * @return true if connect or return false
+     * @return true if connect or else return false
      */
     public static boolean isConnected(Context context) {
 
         if (context == null){
-            if (showToast) {
-                ToastUtil.showTop(R.string.error_network, context);
-            }
             return false;
         }
 
         ConnectivityManager conManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isAvailable();
+        boolean value =  networkInfo != null && networkInfo.isAvailable();
+        if (!value && showToast){
+            ToastUtil.showTop(R.string.error_network, context);
+        }
+        return value;
     }
 
     public static synchronized void upLoadFile(final String uploadUrl, final String path,
@@ -183,8 +218,8 @@ public class NetWork {
             public void run() {
                 Looper.prepare();
                 try {
-                    NetWork.upload(uploadUrl, path, mContext, listener);
-                }catch (Exception e){
+                    INetWork.upload(uploadUrl, path, mContext, listener);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 Looper.loop();
@@ -193,15 +228,16 @@ public class NetWork {
     }
 
     /**
-     *  阻塞式文件上传
+     * 阻塞式文件上传
+     *
      * @param uploadUrl upload file url
-     * @param path file path to upload
+     * @param path      file path to upload
      * @return String of server response
      */
     private static synchronized String upload(String uploadUrl, String path,
-                                             Context context, HttpListener listener) throws IOException {
+                                              Context context, HttpListener listener) throws IOException {
 
-        if (!isConnected(context)){
+        if (!isConnected(context)) {
             return "false";
         }
         String end = "\r\n";
@@ -244,24 +280,38 @@ public class NetWork {
         InputStreamReader isr = new InputStreamReader(is, "utf-8");
         BufferedReader br = new BufferedReader(isr);
         String result = br.readLine();
-        ILog.i("===NetWork===", result);
+        ILog.i("===INetWork===", result);
         dos.close();
         is.close();
-        if (listener != null){
+        if (listener != null) {
             listener.success(result, uploadUrl);
         }
         return result;
     }
 
     /**
+     * 检测cache里是否有这个请求
+     */
+    private static boolean doCache(int cacheTime, String url, HttpListener listener){
+
+        String tmp = HttpResponse.getCache(cacheTime, url);
+        if (tmp == null){
+            return false;
+        }
+        listener.success(tmp, url);
+        return true;
+    }
+
+    /**
      * whether is wifi
+     *
      * @param context
      * @return true if is wifi or return false
      */
 
-    public static boolean isWifi(Context context){
+    public static boolean isWifi(Context context) {
 
-        if (context == null){
+        if (context == null) {
             return false;
         }
 
@@ -269,6 +319,6 @@ public class NetWork {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo info = connectMgr.getActiveNetworkInfo();
-        return info!=null && info.getType() == ConnectivityManager.TYPE_WIFI;
+        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
     }
 }

@@ -39,6 +39,13 @@ public class ViewHolder {
         mConvertView.setTag(KEY, this);
     }
 
+    public ViewHolder(Context context, View view){
+
+        this.mContext = context;
+        this.mConvertView = view;
+        this.mViews = new SparseArray<>();
+    }
+
     public static ViewHolder get(Context context, View convertView,
                                  ViewGroup parent, int layoutId, int position) {
         if (convertView == null) {
@@ -52,9 +59,15 @@ public class ViewHolder {
             }else{
                 ILog.e("===ViewHolder===", "holder is null, maybe you call " +
                         "setTag(R.string.ViewHolder, ***) in somewhere ...");
+                return new ViewHolder(context, parent, layoutId, position);
             }
             return holder;
         }
+    }
+
+    public void setPosition(int mPosition){
+
+        this.mPosition = mPosition;
     }
 
     public int getPosition() {

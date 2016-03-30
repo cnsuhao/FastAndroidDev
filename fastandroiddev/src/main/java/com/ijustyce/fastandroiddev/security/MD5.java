@@ -2,6 +2,8 @@ package com.ijustyce.fastandroiddev.security;
 
 import android.annotation.SuppressLint;
 
+import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -56,15 +58,19 @@ public class MD5 {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String encrypt32byte(String data) throws Exception {
+	public static String encrypt32byte(String data)  {
 		byte[] hash;
 		try {
 			hash = MessageDigest.getInstance("MD5").digest(
 					data.getBytes("UTF-8"));
 		} catch (NoSuchAlgorithmException e) {
-			throw new Exception("Huh, MD5 should be supported?", e);
+			ILog.e("Huh, MD5 should be supported?", e.getLocalizedMessage());
+			e.printStackTrace();
+			return null;
 		} catch (UnsupportedEncodingException e) {
-			throw new Exception("Huh, UTF-8 should be supported?", e);
+			ILog.e("Huh, UTF-8 should be supported?", e.getLocalizedMessage());
+			e.printStackTrace();
+			return null;
 		}
 
 		StringBuilder hex = new StringBuilder(hash.length * 2);

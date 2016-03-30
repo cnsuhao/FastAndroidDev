@@ -36,6 +36,7 @@ public class VolleyUtils {
     public RequestQueue getVolleyRequestQueue(Context context) {
 
         if (mRequestQueue == null && context != null) {
+            mRequestQueue = Volley.newRequestQueue(context);
             mRequestQueue = Volley.newRequestQueue(context, new IOkHttpStack(new OkHttpClient()));
         }
         return mRequestQueue;

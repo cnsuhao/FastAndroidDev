@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/titlelayout"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="68dp" >
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/activity_main_one"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:paddingLeft="0dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="@string/main_order"
+                android:textSize="30px"
+                android:drawableTop="@drawable/order_bg"
+                android:paddingTop="8dp"
+                android:textColor="@drawable/tab_text_color" />
+
+            <RadioButton
+                android:id="@+id/activity_main_two"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:paddingLeft="0dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/main_near"
+                android:textSize="30px"
+                android:drawableTop="@drawable/near_bg"
+                android:paddingTop="8dp"
+                android:textColor="@drawable/tab_text_color" />
+
+            <RadioButton
+                android:id="@+id/activity_main_three"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:gravity="center"
+                android:paddingLeft="0dp"
+                android:text="@string/main_person"
+                android:textSize="30px"
+                android:drawableTop="@drawable/person_bg"
+                android:paddingTop="8dp"
+                android:textColor="@drawable/tab_text_color" />
+
+        </RadioGroup>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/cursor"
+        android:layout_width="fill_parent"
+        android:layout_height="4dip"
+        android:layout_above="@id/titlelayout"
+        android:layout_marginTop="-3dip"
+        android:background="@drawable/header_bg"
+        android:scaleType="matrix" />
+
+    <com.ijustyce.fastandroiddev.ui.SlidingViewPager
+        android:id="@+id/msg_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/cursor"
+        android:background="#fff" />
+</RelativeLayout>

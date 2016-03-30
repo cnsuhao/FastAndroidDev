@@ -30,6 +30,7 @@ import android.widget.Gallery;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
+import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 
 public class IGallery extends Gallery {
 
@@ -76,6 +77,8 @@ public class IGallery extends Gallery {
      * Saturation factor (0-1) of items that reach the outer effects distance.
      */
     private float unselectedSaturation;
+
+//    private int lastWidth, lastHeight;
 
     // =============================================================================
     // Constructors
@@ -182,6 +185,18 @@ public class IGallery extends Gallery {
     @Override
     protected boolean getChildStaticTransformation(View child, Transformation t) {
 
+        final int childWidth = child.getWidth();
+        final int childHeight = child.getHeight();
+
+//        if (childWidth == lastWidth && childHeight == lastHeight){
+//            return true;
+//        }
+//        lastWidth = childWidth;
+//        lastHeight = childHeight;
+
+        final float translateX = childWidth / 2.0f;
+        final float translateY = childHeight * this.scaleDownGravity;
+
         // We can cast here because FancyCoverFlowAdapter only creates wrappers.
       //  View item = (View) child;
 
@@ -192,8 +207,6 @@ public class IGallery extends Gallery {
 
         final int coverFlowWidth = this.getWidth();
         final int coverFlowCenter = coverFlowWidth / 2;
-        final int childWidth = child.getWidth();
-        final int childHeight = child.getHeight();
         final int childCenter = child.getLeft() + childWidth / 2;
 
         // Use coverflow width when its defined as automatic.
@@ -234,8 +247,7 @@ public class IGallery extends Gallery {
         if (this.unselectedScale != 1) {
             final float zoomAmount = (this.unselectedScale - 1) * Math.abs(effectsAmount) + 1;
             // Calculate the scale anchor (y anchor can be altered)
-            final float translateX = childWidth / 2.0f;
-            final float translateY = childHeight * this.scaleDownGravity;
+
             imageMatrix.preTranslate(-translateX, -translateY);
             imageMatrix.postScale(zoomAmount, zoomAmount);
             imageMatrix.postTranslate(translateX, translateY);
@@ -316,6 +328,8 @@ public class IGallery extends Gallery {
     //  ============================================================================
     //  add by yangchun ， one time scroll one picture
     //  ============================================================================
+
+
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,

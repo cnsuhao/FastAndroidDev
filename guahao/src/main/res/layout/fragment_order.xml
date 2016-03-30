@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/orderLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="#46a0f0">
+
+        <RadioButton
+            android:id="@+id/orderLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:button="@null"
+            android:gravity="right"
+            android:text="@string/login"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/head_pic" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/orderLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/orderLayout">
+
+        <com.ijustyce.fastandroiddev.ui.SlidingViewPager
+            android:id="@+id/order_pager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <RadioGroup
+            android:id="@+id/RadioOrder1"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/RadioOrder_one"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/point_bg"
+                android:gravity="center"
+                android:paddingLeft="0dp" />
+
+            <RadioButton
+                android:id="@+id/RadioOrder_two"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/point_bg"
+                android:gravity="center"
+                android:paddingLeft="0dp" />
+
+            <RadioButton
+                android:id="@+id/RadioOrder_three"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/point_bg"
+                android:gravity="center"
+                android:paddingLeft="0dp" />
+        </RadioGroup>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/orderLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/orderLayout1"
+        android:layout_marginTop="20dp">
+
+        <RadioGroup
+            android:id="@+id/RadioOrder2"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/myOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/my_order"
+                android:gravity="center"
+                android:paddingLeft="0dp"
+                android:paddingTop="8dp"
+                android:text="@string/my_order"
+                android:textColor="@color/black"
+                android:textSize="30px" />
+
+            <RadioButton
+                android:id="@+id/myOutpatient"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/my_outpatient"
+                android:gravity="center"
+                android:paddingLeft="0dp"
+                android:paddingTop="8dp"
+                android:text="@string/my_outpatient"
+                android:textColor="@color/black"
+                android:textSize="30px" />
+
+            <RadioButton
+                android:id="@+id/myService"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/my_service"
+                android:gravity="center"
+                android:paddingLeft="0dp"
+                android:paddingTop="8dp"
+                android:text="@string/my_service"
+                android:textColor="@color/black"
+                android:textSize="30px" />
+        </RadioGroup>
+    </RelativeLayout>
+
+</RelativeLayout>

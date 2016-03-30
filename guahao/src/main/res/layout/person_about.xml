@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#e6e6e6"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/aboutLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="#46a0f0">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/back"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/about"
+            android:textSize="20sp"
+            android:textColor="@color/white"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/aboutLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/aboutLayout"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/image1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/wechat"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image1"
+            android:text="@string/wechat"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/aboutLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="1dp"
+        android:layout_below="@id/aboutLayout1"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/image2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/calls"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image2"
+            android:text="@string/calls"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/aboutLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="1dp"
+        android:layout_below="@id/aboutLayout2"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/image3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/version"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image3"
+            android:text="@string/version"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>
