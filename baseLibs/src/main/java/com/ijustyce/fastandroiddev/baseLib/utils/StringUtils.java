@@ -22,6 +22,16 @@ public class StringUtils {
         return 0;
     }
 
+    public static long getLong(String value){
+
+        try {
+            return Long.parseLong(value);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     /**
      * 判断是否为网址
      */
