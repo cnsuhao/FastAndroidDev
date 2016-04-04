@@ -1,10 +1,8 @@
 package com.ijustyce.fastandroiddev.net;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Looper;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -14,14 +12,7 @@ import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.baseLib.utils.ToastUtil;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -190,6 +181,26 @@ public final class INetWork {
         return true;
     }
 
+    public static boolean uploadFile(HttpParams httpParams, String filePartName,
+                                  File file, HttpListener listener, Context context){
+
+        if (!isConnected(context) || httpParams == null) {
+            return false;
+        }
+        HttpResponse response = new HttpResponse(0, null, httpParams.getUrl(), listener);
+        MultipartRequest request = new MultipartRequest(httpParams.getUrl(),response.stringListener, response.errorListener, filePartName,
+                file, httpParams.getParams());
+        String tag = httpParams.getTag();
+        if (tag == null || tag.length() < 1) {
+
+            VolleyUtils.addRequest(request, context);
+            ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
+        } else {
+            VolleyUtils.addRequest(request, httpParams.getTag(), context);
+        }
+        return true;
+    }
+
     /**
      * whether is connected to network .
      *
@@ -209,84 +220,6 @@ public final class INetWork {
             ToastUtil.showTop(R.string.error_network, context);
         }
         return value;
-    }
-
-    public static synchronized void upLoadFile(final String uploadUrl, final String path,
-                                               final Activity mContext, final HttpListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                try {
-                    INetWork.upload(uploadUrl, path, mContext, listener);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }).start();
-    }
-
-    /**
-     * 阻塞式文件上传
-     *
-     * @param uploadUrl upload file url
-     * @param path      file path to upload
-     * @return String of server response
-     */
-    private static synchronized String upload(String uploadUrl, String path,
-                                              Context context, HttpListener listener) throws IOException {
-
-        if (!isConnected(context)) {
-            return "false";
-        }
-        String end = "\r\n";
-        String twoHyphens = "--";
-        String boundary = "******";
-        URL url = new URL(uploadUrl);
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url
-                .openConnection();
-        httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
-        // 允许输入输出流
-        httpURLConnection.setDoInput(true);
-        httpURLConnection.setDoOutput(true);
-        httpURLConnection.setUseCaches(false);
-        // 使用POST方法
-        httpURLConnection.setRequestMethod("POST");
-        httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
-        httpURLConnection.setRequestProperty("Charset", "UTF-8");
-        httpURLConnection.setRequestProperty("Content-Type",
-                "multipart/form-data;boundary=" + boundary);
-
-        DataOutputStream dos = new DataOutputStream(
-                httpURLConnection.getOutputStream());
-        dos.writeBytes(twoHyphens + boundary + end);
-        dos.writeBytes("Content-Disposition: form-data; name=\"uploadfile\"; filename=\""
-                + path.substring(path.lastIndexOf("/") + 1) + "\"" + end);
-        dos.writeBytes(end);
-
-        FileInputStream fis = new FileInputStream(path);
-        byte[] buffer = new byte[8192]; // 8k
-        int count = 0;
-        // 读取文件
-        while ((count = fis.read(buffer)) != -1) {
-            dos.write(buffer, 0, count);
-        }
-        fis.close();
-        dos.writeBytes(end);
-        dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
-        dos.flush();
-        InputStream is = httpURLConnection.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is, "utf-8");
-        BufferedReader br = new BufferedReader(isr);
-        String result = br.readLine();
-        ILog.i("===INetWork===", result);
-        dos.close();
-        is.close();
-        if (listener != null) {
-            listener.success(result, uploadUrl);
-        }
-        return result;
     }
 
     /**
