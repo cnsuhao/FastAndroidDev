@@ -4,180 +4,138 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyLog;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yc on 16-4-4. 文件上传类
- */
-class MultipartRequest extends Request<String> {
-
-    private MultipartEntity entity = new MultipartEntity();
-
-    private final Response.Listener<String> mListener;
-    private List<File> mFileParts;
-    private String mFilePartName;
+public class MultipartRequest extends Request<String> {
+    private ProcessListener mListener;
+    private Map<String, String> headerMap;
     private Map<String, String> mParams;
+    private FormFile[] files;
+    private String BOUNDARY = "---------7dc05dba8f3e19";
 
-    private String url;
+    static Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
 
-    /**
-     * 单个文件
-     *
-     * @param url
-     * @param listener
-     * @param filePartName
-     * @param file
-     * @param params
-     */
-    public MultipartRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                            String filePartName, File file,
-                            Map<String, String> params) {
-        super(Method.POST, url, errorListener);
-
-        mFileParts = new ArrayList<File>();
-        if (file != null) {
-            mFileParts.add(file);
+            volleyError.printStackTrace();
         }
-        mFilePartName = filePartName;
-        mListener = listener;
-        mParams = params;
-        this.url = url;
-        buildMultipartEntity();
+    };
+
+    public MultipartRequest(String url, ProcessListener listener, Map<String, String> params, FormFile[] files) {
+        this(Method.POST, url, listener, params, files);
     }
 
-    /**
-     * 多个文件，对应一个key
-     *
-     * @param url
-     * @param listener
-     * @param filePartName
-     * @param files
-     * @param params
-     */
-    public MultipartRequest(String url,Response.Listener<String> listener, Response.ErrorListener errorListener
-            , String filePartName, List<File> files, Map<String, String> params) {
-        super(Method.POST, url, errorListener);
-        mFilePartName = filePartName;
+    public MultipartRequest(int method, String url, ProcessListener listener, Map<String, String> params, FormFile[] files) {
+        super(method, url, errorListener);
         mListener = listener;
-        mFileParts = files;
         mParams = params;
-        this.url = url;
-        buildMultipartEntity();
-    }
-
-    private void buildMultipartEntity() {
-        if (mFileParts != null && mFileParts.size() > 0) {
-            for (File file : mFileParts) {
-                entity.addPart(mFilePartName, new FileBody(file));
-            }
-            long l = entity.getContentLength();
-            ILog.i(mFileParts.size() + "个，长度：" + l);
-        }
-
-        try {
-            if (mParams != null && mParams.size() > 0) {
-                for (Map.Entry<String, String> entry : mParams.entrySet()) {
-                    entity.addPart(
-                            entry.getKey(),
-                            new StringBody(entry.getValue(), Charset
-                                    .forName("UTF-8")));
-                }
-            }
-        } catch (UnsupportedEncodingException e) {
-            ILog.e("UnsupportedEncodingException");
-        }
+        this.files = files;
     }
 
     @Override
-    public String getBodyContentType() {
-        return entity.getContentType().getValue();
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        headerMap = new HashMap<>();
+        headerMap.put("Charset", "UTF-8");
+        //Keep-Alive
+        headerMap.put("Connection", "Keep-Alive");
+        headerMap.put("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+        return headerMap;
     }
 
     @Override
     public byte[] getBody() throws AuthFailureError {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            entity.writeTo(bos);
-        } catch (IOException e) {
-            VolleyLog.e("IOException writing to ByteArrayOutputStream");
+        //传参数
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : mParams.entrySet()) {
+            // 构建表单字段内容
+            sb.append("--");
+            sb.append(BOUNDARY);
+            sb.append("\r\n");
+            sb.append("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"\r\n\r\n");
+            sb.append(entry.getValue());
+            sb.append("\r\n");
         }
-        return bos.toByteArray();
+        return sb.toString().getBytes();
     }
 
+    public void handRequest(OutputStream out) {
+        DataOutputStream dos = (DataOutputStream) out;
+        try {
+            //发送文件数据
+            if (files != null) {
+                for (FormFile file : files) {
+                    // 发送文件数据
+                    StringBuilder split = new StringBuilder();
+                    split.append("--");
+                    split.append(BOUNDARY);
+                    split.append("\r\n");
+                    split.append("Content-Disposition: form-data;name=\"")
+                            .append(file.getParameterName())
+                            .append("\";filename=\"")
+                            .append(file.getFileName())
+                            .append("\"\r\n");
+                    split.append("Content-Type: ")
+                            .append(file.getContentType())
+                            .append("\r\n\r\n");
+                    dos.write(split.toString().getBytes());
+                    if (file.getInStream() != null) {
+                        byte[] buffer = new byte[1024];
+                        int len = -1;
+                        int count = 0;
+                        while ((len = file.getInStream().read(buffer)) != -1) {
+                            dos.write(buffer, 0, len);
+                            count += len;
+                            if (mListener != null) {
+                                mListener.onProcess(file.getFileSize(), count);
+                            }
+                        }
+                        file.getInStream().close();
+                    } else {
+                        dos.write(file.getData(), 0, file.getData().length);
+                    }
+                    dos.write("\r\n".getBytes());
+                }
+            }
+            dos.writeBytes("--" + BOUNDARY + "--\r\n");
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            try {
+                dos.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {
             parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-        } catch (UnsupportedEncodingException var4) {
+        } catch (UnsupportedEncodingException e) {
             parsed = new String(response.data);
         }
-
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
-    }
-
-//    @Override
-//    protected Response<String> parseNetworkResponse(NetworkResponse response) {
-//        ILog.i("parseNetworkResponse");
-//        if (VolleyLog.DEBUG) {
-//            if (response.headers != null) {
-//                for (Map.Entry<String, String> entry : response.headers
-//                        .entrySet()) {
-//                    VolleyLog.d(entry.getKey() + "=" + entry.getValue());
-//                }
-//            }
-//        }
-//
-//        String parsed;
-//        try {
-//            parsed = new String(response.data,
-//                    HttpHeaderParser.parseCharset(response.headers));
-//        } catch (UnsupportedEncodingException e) {
-//            parsed = new String(response.data);
-//        }
-//        return Response.success(parsed,
-//                HttpHeaderParser.parseCacheHeaders(response));
-//    }
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.android.volley.Request#getHeaders()
-     */
-    @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
-        VolleyLog.d("getHeaders");
-        Map<String, String> headers = super.getHeaders();
-
-        if (headers == null || headers.equals(Collections.emptyMap())) {
-            headers = new HashMap<String, String>();
-        }
-        return headers;
     }
 
     @Override
     protected void deliverResponse(String response) {
-
-        ILog.i("===response===", "response is " + response);
         if (mListener != null) {
-            mListener.onResponse(response);
+            mListener.onSuccess(response);
         }
+    }
+
+    @Override
+    public void deliverError(VolleyError error) {
+        error.printStackTrace();
     }
 }

@@ -12,7 +12,6 @@ import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.baseLib.utils.ToastUtil;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -181,15 +180,18 @@ public final class INetWork {
         return true;
     }
 
-    public static boolean uploadFile(HttpParams httpParams, String filePartName,
-                                  File file, HttpListener listener, Context context){
+    /**
+     * 上传一组文件
+     * files    文件
+     * @return  true if success or return false
+     */
+    public static boolean uploadFile(FormFile[] files, Context context, HttpParams httpParams, ProcessListener listener){
 
         if (!isConnected(context) || httpParams == null) {
             return false;
         }
-        HttpResponse response = new HttpResponse(0, null, httpParams.getUrl(), listener);
-        MultipartRequest request = new MultipartRequest(httpParams.getUrl(),response.stringListener, response.errorListener, filePartName,
-                file, httpParams.getParams());
+
+        MultipartRequest request = new MultipartRequest(httpParams.getUrl(),listener, httpParams.getParams(), files);
         String tag = httpParams.getTag();
         if (tag == null || tag.length() < 1) {
 

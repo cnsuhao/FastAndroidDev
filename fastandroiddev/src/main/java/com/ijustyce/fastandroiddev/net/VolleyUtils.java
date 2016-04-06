@@ -5,6 +5,7 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.squareup.okhttp.OkHttpClient;
 
 /**
@@ -12,7 +13,7 @@ import com.squareup.okhttp.OkHttpClient;
  */
 public class VolleyUtils {
 
-    private static RequestQueue mRequestQueue;
+    private static RequestQueue mRequestQueue, transferQueue;
     private static VolleyUtils volleyUtils;
 
     private VolleyUtils() {
@@ -36,7 +37,7 @@ public class VolleyUtils {
     public RequestQueue getVolleyRequestQueue(Context context) {
 
         if (mRequestQueue == null && context != null) {
-            mRequestQueue = Volley.newRequestQueue(context);
+          //  mRequestQueue = Volley.newRequestQueue(context);
             mRequestQueue = Volley.newRequestQueue(context, new IOkHttpStack(new OkHttpClient()));
         }
         return mRequestQueue;
@@ -61,6 +62,17 @@ public class VolleyUtils {
      */
     public static void addRequest(Request<?> request, Context context) {
 
+        if (request instanceof MultipartRequest){
+
+            if (transferQueue == null && context != null){
+                transferQueue = Volley.newRequestQueue(context, new TransferStack());
+            }if (transferQueue != null){
+                transferQueue.add(request);
+            }else{
+                ILog.e("===error===", "transferQueue is null ...");
+            }
+            return;
+        }
         getInstance().getVolleyRequestQueue(context).add(request);
     }
 
@@ -73,6 +85,8 @@ public class VolleyUtils {
 
         if (getInstance().getVolleyRequestQueue(context) != null) {
             getInstance().getVolleyRequestQueue(context).cancelAll(tag);
+        }if (transferQueue != null){
+            transferQueue.cancelAll(tag);
         }
     }
 
@@ -86,17 +100,15 @@ public class VolleyUtils {
                 }
             });
         }
-    }
 
-//    public interface Method {
-//        int DEPRECATED_GET_OR_POST = -1;
-//        int GET = 0;
-//        int POST = 1;
-//        int PUT = 2;
-//        int DELETE = 3;
-//        int HEAD = 4;
-//        int OPTIONS = 5;
-//        int TRACE = 6;
-//        int PATCH = 7;
-//    }
+        if (transferQueue != null) {
+            transferQueue.cancelAll(new RequestQueue.RequestFilter() {
+
+                @Override
+                public boolean apply(Request<?> request) {
+                    return true;
+                }
+            });
+        }
+    }
 }
