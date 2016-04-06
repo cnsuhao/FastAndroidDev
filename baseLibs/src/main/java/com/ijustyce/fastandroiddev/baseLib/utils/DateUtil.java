@@ -96,7 +96,7 @@ public class DateUtil {
 	 */
 	public static String dateToString(Date date , String formatter){
 		SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.CHINA);
-		return ft == null ? null : ft.format(date);
+		return ft.format(date);
 	}
 
     /**

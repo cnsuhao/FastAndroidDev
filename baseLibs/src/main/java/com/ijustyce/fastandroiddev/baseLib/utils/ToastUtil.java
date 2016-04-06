@@ -14,16 +14,30 @@ import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.baseLib.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ToastUtil {
 
 	private static String PKG;
 	private static Context context;
+	private static List<String> notShowList;
+
+	static {
+
+		notShowList = new ArrayList<>();
+	}
+
+	public static void addNotShowWord(String word){
+
+		if (!notShowList.contains(word)){
+			notShowList.add(word);
+		}
+	}
 
 	private static boolean shouldShow(String text){
 
-		if (StringUtils.isEmpty(text)){
+		if (StringUtils.isEmpty(text) || notShowList.contains(text)){
 			return false;
 		}
 
