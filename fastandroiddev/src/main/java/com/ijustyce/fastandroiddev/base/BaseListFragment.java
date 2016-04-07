@@ -31,7 +31,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
     public Handler handler;
     public BaseAdapter adapter;
-    private List<T> data;
+    public List<T> data;
 
     public int pageNo = 1;
 
