@@ -109,7 +109,7 @@ public class ImageUtils {
             return;
         }
 
-        if (onlyWiFi && !CommonTool.isWifi(context) && StringUtils.isUrl(url) && !isCached(url)) {
+        if (onlyWiFi && !CommonTool.isWifi(context) && RegularUtils.isUrl(url) && !isCached(url)) {
 
             ILog.i("do not display network picture , return ");
             view.setImageDrawable(view.getDrawable());

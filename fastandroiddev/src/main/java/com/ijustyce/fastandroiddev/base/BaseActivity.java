@@ -66,6 +66,16 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         doInit();
         afterCreate();
         CallBackManager.getActivityLifeCall().onCreate(this);
+
+        View view = findViewById(R.id.back);
+        if (view != null){
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    backPress();
+                }
+            });
+        }
     }
 
     protected void doInit(){}
@@ -191,15 +201,31 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         mContext = null;
     }
 
+    public void newActivity(Intent intent, Bundle bundle){
+
+        if (intent == null){
+            return;
+        }
+        if (bundle != null){
+            intent.putExtras(bundle);
+        }
+        startActivity(intent);
+    }
+
     //  你可以在这里加入界面切换的动画，或者统计页面等
     public void newActivity(Intent intent) {
 
-        startActivity(intent);
+        newActivity(intent, null);
     }
 
     public void newActivity(Class gotoClass) {
 
-        newActivity(new Intent(this, gotoClass));
+        newActivity(new Intent(this, gotoClass), null);
+    }
+
+    public void newActivity(Class gotoClass, Bundle bundle) {
+
+        newActivity(new Intent(this, gotoClass), bundle);
     }
 
     public HttpListener httpListener = new HttpListener() {
@@ -229,7 +255,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }
     };
 
-    public T getData(){
+    public final T getData(){
 
         return mData;
     }

@@ -34,8 +34,9 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public List<T> data;
 
     public int pageNo = 1;
-
     public static final int SHORT_DELAY = 100; // 刷新间隔
+
+    private LinearLayout header;
 
     @Override
     public void afterCreate() {
@@ -46,6 +47,15 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public final void refresh() {
 
         doResume();
+    }
+
+    public final void addHeader(View child){
+
+        if (header == null){
+            header = (LinearLayout)mView.findViewById(R.id.header);
+            header.setVisibility(View.VISIBLE);
+        }
+        header.addView(child);
     }
 
     @Override

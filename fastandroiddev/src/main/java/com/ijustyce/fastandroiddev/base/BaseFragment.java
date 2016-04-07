@@ -171,14 +171,31 @@ public abstract class BaseFragment<T> extends Fragment {
         dialog.show();
     }
 
-    public void newActivity(Class gotoClass) {
+    public void newActivity(Intent intent, Bundle bundle){
 
-        mContext.startActivity(new Intent(mContext, gotoClass));
+        if (intent == null){
+            return;
+        }
+        if (bundle != null){
+            intent.putExtras(bundle);
+        }
+        startActivity(intent);
     }
 
+    //  你可以在这里加入界面切换的动画，或者统计页面等
     public void newActivity(Intent intent) {
 
-        mContext.startActivity(intent);
+        newActivity(intent, null);
+    }
+
+    public void newActivity(Class gotoClass) {
+
+        newActivity(new Intent(mContext, gotoClass), null);
+    }
+
+    public void newActivity(Class gotoClass, Bundle bundle) {
+
+        newActivity(new Intent(mContext, gotoClass), bundle);
     }
 
     public HttpListener httpListener = new HttpListener() {
@@ -226,5 +243,12 @@ public abstract class BaseFragment<T> extends Fragment {
     public void onFailed(int code, String msg, String taskId) {
 
         //  ToastUtil.show(mContext, msg);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putString("FOR_BUG", "FOR_BUG");
+        super.onSaveInstanceState(outState);
     }
 }
