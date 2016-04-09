@@ -38,13 +38,12 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public static final int SHORT_DELAY = 100; // 刷新间隔
 
     @Override
-    public final void doResume() {
+    public void doResume() {
 
         if (handler == null) {
 
             init();
         }
-
         //  刷新数据
         if (mPullListView != null) {
             mPullListView.doPullRefreshing(true, SHORT_DELAY);

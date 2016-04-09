@@ -49,6 +49,7 @@ public abstract class BaseFragment<T> extends Fragment {
         mContext = getActivity();
         ButterKnife.bind(this, mView);
         handler = new Handler();
+        doInit();
         afterCreate();
         return mView;
     }
@@ -57,6 +58,8 @@ public abstract class BaseFragment<T> extends Fragment {
 
     public void afterCreate() {
     }
+
+    void doInit(){}
 
     public void doResume() {
     }

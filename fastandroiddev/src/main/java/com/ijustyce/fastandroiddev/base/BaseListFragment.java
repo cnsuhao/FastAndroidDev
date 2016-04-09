@@ -39,7 +39,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     private LinearLayout header;
 
     @Override
-    public void afterCreate() {
+    final void doInit() {
 
         init();
     }
@@ -97,7 +97,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
     }
 
-    public T getById(int position){
+    public final T getById(int position){
 
         if (position < 0 || position >= data.size()){
             return null;
@@ -112,7 +112,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         handler.post(hasNoData);
     }
 
-    public void init() {
+    private void init() {
 
         mPullListView = (PullToRefreshListView) mView.findViewById(R.id.list);
         noData = (LinearLayout) mView.findViewById(R.id.noData);

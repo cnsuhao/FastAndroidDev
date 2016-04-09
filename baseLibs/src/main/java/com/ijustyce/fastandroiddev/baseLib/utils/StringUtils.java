@@ -10,14 +10,19 @@ public class StringUtils {
         return text == null || text.replaceAll(" ", "").length() == 0;
     }
 
-    public static int getInt(String value){
+    public static int getInt(String value, int defaultValue){
 
         try {
             return Integer.parseInt(value);
         }catch (Exception e){
             e.printStackTrace();
         }
-        return 0;
+        return defaultValue;
+    }
+
+    public static int getInt(String value){
+
+        return getInt(value, 0);
     }
 
     public static long getLong(String value){
