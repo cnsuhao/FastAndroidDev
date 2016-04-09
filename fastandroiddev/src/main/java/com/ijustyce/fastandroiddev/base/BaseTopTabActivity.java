@@ -14,9 +14,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 /**
- * Created by yc on 15-12-25.   顶部是tab的fragment
+ * Created by yc on 15-12-25.   顶部是tab的Activity
  */
-public abstract class BaseTabFragment extends BaseFragment {
+public abstract class BaseTopTabActivity extends BaseActivity {
 
     private TabLayout mTabLayout;
     private BaseViewPager mViewPager;
@@ -49,9 +49,9 @@ public abstract class BaseTabFragment extends BaseFragment {
 
     private void initData(){
 
-        mTabLayout = (TabLayout) mView.findViewById(R.id.tabTitle);
-        headerView = (LinearLayout) mView.findViewById(R.id.headerView);
-        mViewPager = (BaseViewPager) mView.findViewById(R.id.viewPager);
+        mTabLayout = (TabLayout) findViewById(R.id.tabTitle);
+        headerView = (LinearLayout) findViewById(R.id.headerView);
+        mViewPager = (BaseViewPager) findViewById(R.id.viewPager);
         mFragmentList = new ArrayList<>();
         mTitleList = new ArrayList<>();
     }
@@ -75,7 +75,7 @@ public abstract class BaseTabFragment extends BaseFragment {
         setTabBackground(R.color.home_tab);
         setTabTextColor(R.color.textColor, R.color.colorPrimaryDark);
 
-        FragmentAdapter mFragmentAdapter = new FragmentAdapter(getChildFragmentManager(),
+        FragmentAdapter mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(),
                 mFragmentList, mTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
         mViewPager.setOffscreenPageLimit(mFragmentList.size() -1 );
