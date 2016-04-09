@@ -28,7 +28,7 @@ public abstract class BaseTopTabActivity extends BaseActivity {
 
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_tab;
+        return R.layout.activity_top_tab;
     }
 
     protected final void doInit(){
