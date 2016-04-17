@@ -23,6 +23,11 @@ public final class HttpParams {
         header = new HashMap<>();
     }
 
+    /**
+     * 设置缓存的时间，单位是秒
+     * @param second
+     * @return
+     */
     public HttpParams setCacheTime(int second){
 
         cacheTime = second;

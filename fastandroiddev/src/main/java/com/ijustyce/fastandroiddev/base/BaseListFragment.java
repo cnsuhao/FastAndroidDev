@@ -35,7 +35,6 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
     public int pageNo = 1;
     public static final int SHORT_DELAY = 100; // 刷新间隔
-
     private LinearLayout header;
 
     @Override
@@ -49,13 +48,25 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         doResume();
     }
 
+    public boolean showNoData(){
+        return true;
+    }
+
+    public View getHeaderView(){return null;}
+    public View getFooterView(){return null;}
+
+    /**
+     * 添加header ，不是向listView添加，也不会滚动
+     * @param child headerView
+     */
     public final void addHeader(View child){
 
         if (header == null){
             header = (LinearLayout)mView.findViewById(R.id.header);
+        }if (header != null && child != null) {
             header.setVisibility(View.VISIBLE);
+            header.addView(child);
         }
-        header.addView(child);
     }
 
     @Override
@@ -137,6 +148,11 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         if(adapter == null){
             ILog.e("===BaseListFragment===", "adapter can not be null ...");
         }
+        if (getHeaderView() != null) {
+            lv.addHeaderView(getHeaderView());
+        }if (getFooterView() != null) {
+            lv.addFooterView(getFooterView());
+        }
         lv.setAdapter(adapter);
     }
 
@@ -203,7 +219,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
-                noData.setVisibility(View.INVISIBLE);
+                noData.setVisibility(View.GONE);
             }
         }
     };
@@ -221,7 +237,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
                 adapter.notifyDataSetChanged();
             }
 
-            if (data != null && data.isEmpty() && noData != null) {
+            if (showNoData() && data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }

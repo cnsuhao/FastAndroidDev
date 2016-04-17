@@ -78,7 +78,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }
     }
 
-    protected void doInit(){}
+     void doInit(){}
 
     @Override
     protected void onStop() {

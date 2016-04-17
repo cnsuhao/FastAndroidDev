@@ -29,18 +29,20 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 
 import com.ijustyce.fastandroiddev.baseLib.R;
 
@@ -499,6 +501,26 @@ public class CommonTool {
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    /**
+     * 显示或隐藏密码
+     * @param showPw    true 则显示，否则隐藏
+     * @param view      若为空，则直接return
+     */
+    public static void showPw(boolean showPw, TextView view){
+
+        if (view == null){
+            ILog.e("===CommonTool===", "showPw view can not be null ...");
+            return;
+        }
+        if(showPw){
+            //如果选中，显示密码
+            view.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+        }else{
+            //否则隐藏密码
+            view.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        }
     }
 
     /**
