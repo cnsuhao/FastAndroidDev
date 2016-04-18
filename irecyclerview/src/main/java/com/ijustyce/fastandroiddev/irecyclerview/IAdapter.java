@@ -95,7 +95,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     @Override
     public final void onBindViewHolder(CommonHolder holder, int position) {
 
-        isFooterVisible = position == getItemCount() -1;
+        isFooterVisible = position >= getItemCount() -2;
         createView(holder, getObject(position));
     }
 

@@ -24,7 +24,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     private RecyclerView mRecyclerView;
     private View mView;
-    private LinearLayout mHeader, mFooter;
+    private LinearLayout mHeader, mFooter, mFooterLoading;
     private Context mContext;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -46,7 +46,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     private void createRecyclerView(Context context){
 
-        mView = LayoutInflater.from(context).inflate(R.layout.view_recycler, this);
+        mView = LayoutInflater.from(context).inflate(R.layout.irecyclerview_view_recycler, this);
         if (mView == null){
             ILog.e(TAG, "mView is null, it is a fastandroiddev error, please contact developer... ");
             return;
@@ -119,15 +119,15 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     public final void onLoadEnd(){
 
         initFooter();
-        if (footerLabel != null){
-            footerLabel.setVisibility(GONE);
+        if (mFooterLoading != null){
+            mFooterLoading.setVisibility(INVISIBLE);
         }
     }
 
     public final void addHeaderView(View view){
 
         if (mHeader == null){
-            mHeader = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.view_container, null)
+            mHeader = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_header, null)
                     .findViewById(R.id.container);
         }
         if (mHeader != null && view != null){
@@ -140,9 +140,10 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     private void initFooter(){
 
         if (mFooter == null){
-            mFooter = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.view_container, null)
+            mFooter = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_footer, null)
                     .findViewById(R.id.container);
             footerLabel = (TextView) mFooter.findViewById(R.id.footerLabel);
+            mFooterLoading = (LinearLayout) mFooter.findViewById(R.id.footerLoading);
         }
     }
 
@@ -170,8 +171,8 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
                 if (adapter.isFooterVisible() && hasMore) {
                     mRefreshListener.onLoadMore();
                     initFooter();
-                    if (footerLabel != null){
-                        footerLabel.setVisibility(VISIBLE);
+                    if (mFooterLoading != null){
+                        mFooterLoading.setVisibility(VISIBLE);
                     }
                 }
             }
