@@ -49,7 +49,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tab);
+        setContentView(R.layout.fastandroiddev_activity_tab);
         ButterKnife.bind(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);

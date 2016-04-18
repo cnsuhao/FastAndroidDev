@@ -24,9 +24,8 @@ public final class HttpParams {
     }
 
     /**
-     * 设置缓存的时间，单位是秒
-     * @param second
-     * @return
+     * 设置缓存秒数
+     * @param second    缓存秒数
      */
     public HttpParams setCacheTime(int second){
 
@@ -34,6 +33,10 @@ public final class HttpParams {
         return this;
     }
 
+    /**
+     * 设置缓存的key，只有key一致才会读取缓存
+     * @param key 缓存的key
+     */
     public HttpParams addCacheKey(Object key){
 
         cacheKey += key;

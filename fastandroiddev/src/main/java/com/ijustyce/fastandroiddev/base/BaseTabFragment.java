@@ -28,10 +28,10 @@ public abstract class BaseTabFragment extends BaseFragment {
 
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_tab;
+        return R.layout.fastandroiddev_fragment_tab;
     }
 
-    protected final void doInit(){
+    final void doInit(){
 
         initData();
 
@@ -40,12 +40,9 @@ public abstract class BaseTabFragment extends BaseFragment {
         setAdapter();
     };
 
-    public final void addHeader(View view){
+    public final void addHeaderView(View view){
 
-        if (headerView == null){
-            headerView = (LinearLayout)mView.findViewById(R.id.header);
-        }if (headerView != null && view != null) {
-            headerView.setVisibility(View.VISIBLE);
+        if (view != null) {
             headerView.addView(view);
         }
     }
@@ -95,22 +92,17 @@ public abstract class BaseTabFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    public void setScrollMode(){
+    public final void setScrollMode(){
 
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
     }
 
-    public String getResString(int resId){
-
-        return getResources().getString(resId);
-    }
-
-    public void setTabBackground(int color){
+    public final void setTabBackground(int color){
 
         mTabLayout.setBackgroundColor(getResColor(color));
     }
 
-    public void setTabIndicatorHeight(int height){
+    public final void setTabIndicatorHeight(int height){
 
         mTabLayout.setSelectedTabIndicatorHeight(height);
     }
@@ -124,7 +116,7 @@ public abstract class BaseTabFragment extends BaseFragment {
      *  设置tab的可见性
      * @param value 只能是 View.GONE、View.VISIBLE、View.INVISIBLE
      */
-    public void setTabVisibility(int value){
+    public final void setTabVisibility(int value){
 
         if (value == View.GONE || value == View.VISIBLE || value == View.INVISIBLE) {
             mTabLayout.setVisibility(value);
@@ -134,7 +126,7 @@ public abstract class BaseTabFragment extends BaseFragment {
         }
     }
 
-    public void setCurrentFragment(int id){
+    public final void setCurrentFragment(int id){
 
         if (id > -1 && id < mFragmentList.size() && mViewPager != null){
             mViewPager.setCurrentItem(id, true);
@@ -147,19 +139,19 @@ public abstract class BaseTabFragment extends BaseFragment {
      * 是否禁止左右滑动
      * @param canScroll   TRUE的时候可以左右滑动，false的时候不能左右滑动，默认是true
      */
-    public void setCanScroll(boolean canScroll){
+    public final void setCanScroll(boolean canScroll){
 
         if (mViewPager != null){
             mViewPager.setCanScroll(canScroll);
         }
     }
 
-    public void setTabIndicatorColor(int color){
+    public final void setTabIndicatorColor(int color){
 
         mTabLayout.setSelectedTabIndicatorColor(getResColor(color));
     }
 
-    public void setTabTextColor(int normalColor, int selectedColor){
+    public final void setTabTextColor(int normalColor, int selectedColor){
 
         mTabLayout.setTabTextColors(getResColor(normalColor), getResColor(selectedColor));
     }

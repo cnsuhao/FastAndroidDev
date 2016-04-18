@@ -1,3 +1,2 @@
-include ':baseLibs', ':fastandroiddev', ':autolayout', ':leyinghong',
-        ':SweetAlert', ':umenglib', ':pushToRefresh',
-        ':contacts', ':alipay', ':guahao', ':school', ':qrcode'
+include ':baseLibs', ':fastandroiddev', ':autolayout',
+        ':SweetAlert', ':umenglib', ':alipay', ':qrcode', 'irecyclerview'

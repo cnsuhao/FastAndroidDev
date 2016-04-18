@@ -15,6 +15,10 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name=".ShowScan" />
+
     </application>
 
 </manifest>

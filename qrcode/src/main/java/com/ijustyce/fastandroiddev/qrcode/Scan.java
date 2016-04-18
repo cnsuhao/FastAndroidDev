@@ -25,7 +25,6 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
-import com.ijustyce.fastandroiddev.qrcode.R;
 import com.ijustyce.fastandroiddev.zxing.camera.CameraManager;
 import com.ijustyce.fastandroiddev.zxing.camera.RGBLuminanceSource;
 import com.ijustyce.fastandroiddev.zxing.decoding.InactivityTimer;
@@ -52,7 +51,7 @@ public class Scan extends Activity implements Callback {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.scan);
+		setContentView(R.layout.qrcode_activity_scan);
 		CameraManager.init(getApplication());
 
 		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);

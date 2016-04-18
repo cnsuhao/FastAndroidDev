@@ -3,18 +3,16 @@ package com.ijustyce.fastandroiddev.base;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
-import com.ijustyce.fastandroiddev.baseLib.utils.DateUtil;
 import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
+import com.ijustyce.fastandroiddev.irecyclerview.IRecyclerView;
+import com.ijustyce.fastandroiddev.irecyclerview.PullToRefreshListener;
 import com.ijustyce.fastandroiddev.net.IResponseData;
-import com.macjay.pulltorefresh.PullToRefreshBase;
-import com.macjay.pulltorefresh.PullToRefreshListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +22,11 @@ import java.util.List;
  */
 public abstract class BaseListActivity<T> extends BaseActivity {
 
-    public PullToRefreshListView mPullListView;
+    public IRecyclerView mIRecyclerView;
     public LinearLayout noData;
 
     public Handler handler;
-    public BaseAdapter adapter;
+    public IAdapter<T> adapter;
     private List<T> data;
 
     private static final String FORMATTER = "yyyy-MM-dd HH:mm";
@@ -36,91 +34,60 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public int pageNo = 1;
 
     public static final int SHORT_DELAY = 100; // 刷新间隔
-    private LinearLayout header;
 
     @Override
-    public void doResume() {
+    public final void doResume() {
 
         if (handler == null) {
 
             init();
         }
+
         //  刷新数据
-        if (mPullListView != null) {
-            mPullListView.doPullRefreshing(true, SHORT_DELAY);
+        if (mIRecyclerView != null) {
+            mIRecyclerView.onRefresh();
         }
     }
 
-    @Override
-    protected final void doInit() {
+    final void doInit() {
 
         init();
     }
 
-    public boolean showNoData(){
-        return true;
-    }
-
     @Override
     public int getLayoutId() {
-        return R.layout.activity_list_common;
+        return R.layout.fastandroiddev_activity_list_common;
     }
 
-    public final void init() {
+    private void init() {
 
-        mPullListView = (PullToRefreshListView) findViewById(R.id.list);
+        mIRecyclerView = (IRecyclerView) findViewById(R.id.list);
         noData = (LinearLayout) findViewById(R.id.noData);
 
         if (noData != null){
             noData.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPullListView.doPullRefreshing(true, SHORT_DELAY);
+                    mIRecyclerView.onRefresh();
                 }
             });
         }
 
         handler = new Handler();
         pageNo = 1;
-        mPullListView.setPullLoadEnabled(true);
-        mPullListView.setPullRefreshEnabled(true);
-        mPullListView.setOnRefreshListener(refreshListener);
-        ListView lv = mPullListView.getRefreshableView();
-        lv.setDivider(null);
+        mIRecyclerView.setHasMore(true);
+        mIRecyclerView.setPullToRefreshListener(refreshListener);
         data = new ArrayList<>();
         adapter = buildAdapter(mContext, data);
         if(adapter == null){
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
         }
-
-        if (getHeaderView() != null) {
-            lv.addHeaderView(getHeaderView());
-        }if (getFooterView() != null) {
-            lv.addFooterView(getFooterView());
-        }
-        lv.setAdapter(adapter);
+        mIRecyclerView.setAdapter(adapter);
     }
-
-    /**
-     * 添加header ，不是向listView添加，也不会滚动
-     * @param child headerView
-     */
-    public final void addHeader(View child){
-
-        if (header == null){
-            header = (LinearLayout)findViewById(R.id.header);
-        }if (header != null && child != null) {
-            header.setVisibility(View.VISIBLE);
-            header.addView(child);
-        }
-    }
-
-    public View getHeaderView(){return null;}
-    public View getFooterView(){return null;}
 
     public abstract Class getType();
 
-    public T getById(int position){
+    public final T getById(int position){
 
         if (position < 0 || position >= data.size()){
             return null;
@@ -158,38 +125,35 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
     }
 
-    private PullToRefreshBase.OnRefreshListener<ListView> refreshListener =
-            new PullToRefreshBase.OnRefreshListener<ListView>() {
-                @Override
-                public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+    private PullToRefreshListener refreshListener = new PullToRefreshListener() {
+        @Override
+        public void onRefresh() {
 
-                    if (noData == null) {  //  发生异常
-                        handler.post(hasNoData);
-                        return;
-                    }
-                    noData.setVisibility(View.GONE);  //  隐藏没有数据时，显示的view
+            if (noData == null) {  //  发生异常
+                handler.post(hasNoData);
+                return;
+            }
+            noData.setVisibility(View.GONE);  //  隐藏没有数据时，显示的view
 
-                    pageNo = 1;
-                    mPullListView.setHasMoreData(true);
-                    mPullListView.setPullLoadEnabled(true);
-                    mPullListView.setPullRefreshEnabled(true);
-                    if (!getMoreData()) {
-                        handler.post(hasNoData);
-                    }
-                }
+            pageNo = 1;
+            mIRecyclerView.setHasMore(true);
+            if (!getMoreData()) {
+                handler.post(hasNoData);
+            }
+        }
 
-                @Override
-                public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+        @Override
+        public void onLoadMore() {
 
-                    pageNo++;
-                    getMoreData();
-                }
-            };
+            pageNo++;
+            getMoreData();
+        }
+    };
 
     //  获取更多数据
     public abstract boolean getMoreData();
 
-    public abstract BaseAdapter buildAdapter(Context mContext, List<T> data);
+    public abstract IAdapter<T> buildAdapter(Context mContext, List<T> data);
 
     @Override
     public void onDestroy() {
@@ -213,15 +177,14 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         @Override
         public void run() {
 
-            mPullListView.onPullDownRefreshComplete();
-            mPullListView.onPullUpRefreshComplete();
-            mPullListView.setLastUpdatedLabel(DateUtil.getDateString(FORMATTER));
+            mIRecyclerView.onLoadEnd();
+            mIRecyclerView.onRefreshEnd();
             if (mContext != null && adapter != null && data != null) {
                 adapter.notifyDataSetChanged();
             }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
-                noData.setVisibility(View.GONE);
+                noData.setVisibility(View.INVISIBLE);
             }
         }
     };
@@ -229,17 +192,16 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public final Runnable hasNoData = new Runnable() {
         @Override
         public void run() {
-            mPullListView.onPullDownRefreshComplete();
-            mPullListView.onPullUpRefreshComplete();
+            mIRecyclerView.onLoadEnd();
+            mIRecyclerView.onRefreshEnd();
 
-            mPullListView.setPullLoadEnabled(false);
-            mPullListView.setLastUpdatedLabel(DateUtil.getDateString(FORMATTER));
+            mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
                 adapter.notifyDataSetChanged();
             }
 
-            if (showNoData() && data != null && data.isEmpty() && noData != null) {
+            if (data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }

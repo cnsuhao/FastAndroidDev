@@ -21,7 +21,7 @@ public class ShowScan extends Activity {
     private String res;
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_scan);
+        setContentView(R.layout.qrcode_activity_show_scan);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle == null){

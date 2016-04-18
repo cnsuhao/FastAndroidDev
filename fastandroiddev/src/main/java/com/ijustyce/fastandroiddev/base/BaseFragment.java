@@ -38,7 +38,6 @@ public abstract class BaseFragment<T> extends Fragment {
             return mView;
         }
 
-        TAG = getClass().getName();
         mView = inflater.inflate(getLayoutId(), container, false);
 
         ViewGroup parent = (ViewGroup) mView.getParent();
@@ -46,10 +45,14 @@ public abstract class BaseFragment<T> extends Fragment {
             parent.removeView(mView);
         }
 
-        mContext = getActivity();
+        if (TAG == null) {
+            TAG = getClass().getName();
+        }if (mContext == null) {
+            mContext = getActivity();
+        }if (handler == null){
+            handler = new Handler();
+        }
         ButterKnife.bind(this, mView);
-        handler = new Handler();
-        doInit();
         afterCreate();
         return mView;
     }
@@ -58,8 +61,6 @@ public abstract class BaseFragment<T> extends Fragment {
 
     public void afterCreate() {
     }
-
-    void doInit(){}
 
     public void doResume() {
     }
@@ -78,7 +79,9 @@ public abstract class BaseFragment<T> extends Fragment {
         doResume();
     }
 
-    public String getResString(int id) {
+    void doInit(){}
+
+    public final String getResString(int id) {
 
         return getResources().getString(id);
     }
@@ -135,7 +138,7 @@ public abstract class BaseFragment<T> extends Fragment {
      * 让dialog消失
      * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
      */
-    public void dismiss(int delay){
+    public final void dismiss(int delay){
 
         if (handler == null){
             handler = new Handler();
@@ -149,7 +152,7 @@ public abstract class BaseFragment<T> extends Fragment {
         handler.postDelayed(dismiss, delay);
     }
 
-    public void dismiss() {
+    public final void dismiss() {
 
         dismiss(0);
     }
@@ -158,7 +161,7 @@ public abstract class BaseFragment<T> extends Fragment {
         return TAG;
     }
 
-    public void showProcess(String text){
+    public final void showProcess(String text){
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(text);
@@ -166,7 +169,7 @@ public abstract class BaseFragment<T> extends Fragment {
         dialog.show();
     }
 
-    public void showProcess(int resId) {
+    public final void showProcess(int resId) {
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(getResString(resId));
@@ -174,7 +177,7 @@ public abstract class BaseFragment<T> extends Fragment {
         dialog.show();
     }
 
-    public void newActivity(Intent intent, Bundle bundle){
+    public final void newActivity(Intent intent, Bundle bundle){
 
         if (intent == null){
             return;
@@ -182,21 +185,20 @@ public abstract class BaseFragment<T> extends Fragment {
         if (bundle != null){
             intent.putExtras(bundle);
         }
-        startActivity(intent);
+        mContext.startActivity(intent);
     }
 
-    //  你可以在这里加入界面切换的动画，或者统计页面等
-    public void newActivity(Intent intent) {
+    public final void newActivity(Intent intent) {
 
         newActivity(intent, null);
     }
 
-    public void newActivity(Class gotoClass) {
+    public final void newActivity(Class gotoClass) {
 
         newActivity(new Intent(mContext, gotoClass), null);
     }
 
-    public void newActivity(Class gotoClass, Bundle bundle) {
+    public final void newActivity(Class gotoClass, Bundle bundle) {
 
         newActivity(new Intent(mContext, gotoClass), bundle);
     }
@@ -228,7 +230,7 @@ public abstract class BaseFragment<T> extends Fragment {
         }
     };
 
-    public T getData(){
+    public final T getData(){
 
         return mData;
     }
@@ -246,12 +248,5 @@ public abstract class BaseFragment<T> extends Fragment {
     public void onFailed(int code, String msg, String taskId) {
 
         //  ToastUtil.show(mContext, msg);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-
-        outState.putString("FOR_BUG", "FOR_BUG");
-        super.onSaveInstanceState(outState);
     }
 }

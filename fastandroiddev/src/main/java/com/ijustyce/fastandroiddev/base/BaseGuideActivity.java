@@ -29,7 +29,7 @@ public abstract class BaseGuideActivity extends AutoLayoutActivity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_guide);
+        setContentView(R.layout.fastandroiddev_activity_guide);
         ButterKnife.bind(this);
 
         AppManager.pushActivity(this);

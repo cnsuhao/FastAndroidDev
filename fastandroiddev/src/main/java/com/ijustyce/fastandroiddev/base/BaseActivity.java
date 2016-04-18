@@ -66,19 +66,9 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         doInit();
         afterCreate();
         CallBackManager.getActivityLifeCall().onCreate(this);
-
-        View view = findViewById(R.id.back);
-        if (view != null){
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    backPress();
-                }
-            });
-        }
     }
 
-     void doInit(){}
+    void doInit(){}
 
     @Override
     protected void onStop() {
@@ -142,7 +132,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
      * 让dialog消失
      * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
      */
-    public void dismiss(int delay){
+    public final void dismiss(int delay){
 
         if (handler == null){
             handler = new Handler();
@@ -156,17 +146,17 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         handler.postDelayed(dismiss, delay);
     }
 
-    public void dismiss() {
+    public final void dismiss() {
 
         dismiss(0);
     }
 
-    public String getResString(int resId){
+    public final String getResString(int resId){
 
         return getResources().getString(resId);
     }
 
-    public void showProcess(String text){
+    public final void showProcess(String text){
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(text);
@@ -174,7 +164,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         dialog.show();
     }
 
-    public void showProcess(int resId){
+    public final void showProcess(int resId){
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(getResString(resId));
@@ -201,7 +191,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         mContext = null;
     }
 
-    public void newActivity(Intent intent, Bundle bundle){
+    public final void newActivity(Intent intent, Bundle bundle){
 
         if (intent == null){
             return;
@@ -209,21 +199,20 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (bundle != null){
             intent.putExtras(bundle);
         }
-        startActivity(intent);
+        mContext.startActivity(intent);
     }
 
-    //  你可以在这里加入界面切换的动画，或者统计页面等
-    public void newActivity(Intent intent) {
+    public final void newActivity(Intent intent) {
 
         newActivity(intent, null);
     }
 
-    public void newActivity(Class gotoClass) {
+    public final void newActivity(Class gotoClass) {
 
-        newActivity(new Intent(this, gotoClass), null);
+        newActivity(new Intent(mContext, gotoClass), null);
     }
 
-    public void newActivity(Class gotoClass, Bundle bundle) {
+    public final void newActivity(Class gotoClass, Bundle bundle) {
 
         newActivity(new Intent(this, gotoClass), bundle);
     }
@@ -280,7 +269,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         this.finish();
     }
 
-    public String getResText(int id){
+    public final String getResText(int id){
 
         return getResources().getString(id);
     }

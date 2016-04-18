@@ -125,7 +125,7 @@ public class RecordButton extends Button {
         recordIndicator = new Dialog(getContext(),
                 R.style.like_toast_dialog_style);
         hint = getContext().getResources().getString(R.string.record_hint);
-        View recordBt = LayoutInflater.from(getContext()).inflate(R.layout.record_button, null);
+        View recordBt = LayoutInflater.from(getContext()).inflate(R.layout.fastandroiddev_record_button, null);
         view = (ImageView) recordBt.findViewById(R.id.imageView);
         textView = (TextView) recordBt.findViewById(R.id.textView);
         recordIndicator.setContentView(recordBt, new LayoutParams(

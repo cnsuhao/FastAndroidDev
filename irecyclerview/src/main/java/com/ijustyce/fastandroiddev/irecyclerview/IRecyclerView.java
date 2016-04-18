@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
@@ -25,6 +26,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     private RecyclerView mRecyclerView;
     private View mView;
     private LinearLayout mHeader, mFooter, mFooterLoading;
+    private ProgressBar processBar;
     private Context mContext;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -41,7 +43,16 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
         if (mRefreshListener != null){
             mRefreshListener.onRefresh();
+        }if (!mSwipeRefreshLayout.isRefreshing()){
+            mSwipeRefreshLayout.setRefreshing(true);
         }
+    }
+
+    public final void setFooterLabel(String text){
+
+        initFooter();
+        if (footerLabel == null) return;
+        footerLabel.setText(text);
     }
 
     private void createRecyclerView(Context context){
@@ -76,6 +87,9 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     public final void setHasMore(boolean hasMore){
 
+        initFooter();
+        footerLabel.setText(hasMore ? "正在加载..." : "没有更多数据了");
+        processBar.setVisibility(hasMore ? VISIBLE : INVISIBLE);
         this.hasMore = hasMore;
     }
 
@@ -144,6 +158,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
                     .findViewById(R.id.container);
             footerLabel = (TextView) mFooter.findViewById(R.id.footerLabel);
             mFooterLoading = (LinearLayout) mFooter.findViewById(R.id.footerLoading);
+            processBar = (ProgressBar) mFooter.findViewById(R.id.processBar);
         }
     }
 
