@@ -31,7 +31,7 @@ public abstract class BaseTabFragment extends BaseFragment {
         return R.layout.fragment_tab;
     }
 
-    public final void afterCreate(){
+    protected final void doInit(){
 
         initData();
 
@@ -40,9 +40,12 @@ public abstract class BaseTabFragment extends BaseFragment {
         setAdapter();
     };
 
-    public final void addHeaderView(View view){
+    public final void addHeader(View view){
 
-        if (view != null) {
+        if (headerView == null){
+            headerView = (LinearLayout)mView.findViewById(R.id.header);
+        }if (headerView != null && view != null) {
+            headerView.setVisibility(View.VISIBLE);
             headerView.addView(view);
         }
     }

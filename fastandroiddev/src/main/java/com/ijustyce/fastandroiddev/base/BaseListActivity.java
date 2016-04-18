@@ -36,15 +36,15 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public int pageNo = 1;
 
     public static final int SHORT_DELAY = 100; // 刷新间隔
+    private LinearLayout header;
 
     @Override
-    public final void doResume() {
+    public void doResume() {
 
         if (handler == null) {
 
             init();
         }
-
         //  刷新数据
         if (mPullListView != null) {
             mPullListView.doPullRefreshing(true, SHORT_DELAY);
@@ -55,6 +55,10 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     protected final void doInit() {
 
         init();
+    }
+
+    public boolean showNoData(){
+        return true;
     }
 
     @Override
@@ -88,8 +92,31 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if(adapter == null){
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
         }
+
+        if (getHeaderView() != null) {
+            lv.addHeaderView(getHeaderView());
+        }if (getFooterView() != null) {
+            lv.addFooterView(getFooterView());
+        }
         lv.setAdapter(adapter);
     }
+
+    /**
+     * 添加header ，不是向listView添加，也不会滚动
+     * @param child headerView
+     */
+    public final void addHeader(View child){
+
+        if (header == null){
+            header = (LinearLayout)findViewById(R.id.header);
+        }if (header != null && child != null) {
+            header.setVisibility(View.VISIBLE);
+            header.addView(child);
+        }
+    }
+
+    public View getHeaderView(){return null;}
+    public View getFooterView(){return null;}
 
     public abstract Class getType();
 
@@ -194,7 +221,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
-                noData.setVisibility(View.INVISIBLE);
+                noData.setVisibility(View.GONE);
             }
         }
     };
@@ -212,7 +239,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
                 adapter.notifyDataSetChanged();
             }
 
-            if (data != null && data.isEmpty() && noData != null) {
+            if (showNoData() && data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }

@@ -55,6 +55,7 @@ public final class INetWork {
         }
 
         String url = httpParams.getUrl();
+        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         Map<String, String> map = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
         StringBuilder stringBuilder = new StringBuilder();
@@ -64,8 +65,6 @@ public final class INetWork {
             stringBuilder.append(key).append("=").append(map.get(key)).append("&");
         }
         url = stringBuilder.toString();
-
-        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response.stringListener, response.errorListener){
 
