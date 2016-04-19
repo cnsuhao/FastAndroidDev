@@ -31,6 +31,7 @@ public abstract class BaseTabFragment extends BaseFragment {
         return R.layout.fastandroiddev_fragment_tab;
     }
 
+    @Override
     final void doInit(){
 
         initData();
