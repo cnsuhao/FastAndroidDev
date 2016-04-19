@@ -12,7 +12,6 @@ import com.example.myapplication.model.DaoMaster;
 import com.example.myapplication.model.DaoSession;
 import com.example.myapplication.model.Note;
 import com.example.myapplication.model.NoteDao;
-import com.ijustyce.fastandroiddev.baseLib.utils.FileUtils;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.irecyclerview.CommonHolder;
 import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         initData();
         doInit();
 
-        FileUtils.showFile(FileUtils.getAvailablePath(this, "my"), this);
+     //   FileUtils.showFile(FileUtils.getAvailablePath(this, "my"), this);
     }
 
     class myAdapter extends IAdapter<Note>{
