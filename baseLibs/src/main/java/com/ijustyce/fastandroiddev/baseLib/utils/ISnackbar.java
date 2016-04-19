@@ -1,6 +1,5 @@
 package com.ijustyce.fastandroiddev.baseLib.utils;
 
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
@@ -23,7 +22,7 @@ public class ISnackbar {
      * 添加敏感词汇
      * @param value 关键词
      */
-    public static void addNotShowWorld(@NonNull String value){
+    public static void addNotShowWorld(String value){
 
         if (notShouldWords == null){
             notShouldWords = new ArrayList<>();
@@ -31,7 +30,7 @@ public class ISnackbar {
         notShouldWords.add(value);
     }
 
-    private static boolean isContains(@NonNull  String text){
+    private static boolean isContains(String text){
 
         if (notShouldWords == null){
             return false;
@@ -45,7 +44,7 @@ public class ISnackbar {
         return false;
     }
 
-    public static boolean shouldShow(@NonNull String text){
+    public static boolean shouldShow(String text){
 
         return showSnack && !isContains(text);
     }
@@ -56,8 +55,9 @@ public class ISnackbar {
      * @param text The text to show.  Can be formatted text.
      * @return Snackbar object
      */
-    public static Snackbar show(@NonNull View view, @NonNull String text) {
+    public static Snackbar show(View view, String text) {
 
+        if (view == null) return null;
        return show(view, text, null, null);
     }
 
@@ -69,10 +69,10 @@ public class ISnackbar {
      * @param listener a onClickListener
      * @return Snackbar object
      */
-    public static Snackbar show(@NonNull View view, @NonNull String text,
+    public static Snackbar show(View view, String text,
                                     String action, View.OnClickListener listener){
 
-        if (!shouldShow(text)){
+        if (!shouldShow(text) || view == null){
             return null;
         }
         Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);

@@ -5,7 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+
 import java.util.List;
 
 /**
@@ -17,14 +18,25 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     private Context mContext;
     private View mHeaderView, mFooterView;
     private boolean isFooterVisible;
+    private int size;
 
     private static final int TYPE_FOOTER = 1, TYPE_HEADER = 2, TYPE_NORMAL = 3;
 
     public IAdapter(List<T> mData, Context mContext) {
 
-        this.mData = new ArrayList<>();
-        this.mData.addAll(mData);
+        this.mData = mData;
+        this.size = mData.size();
         this.mContext = mContext;
+    }
+
+    void reAddFooter(){
+
+        size = mData.size();
+        if (mFooterView != null){
+            size++;
+        }if (mHeaderView != null){
+            size++;
+        }
     }
 
     public boolean isFooterVisible() {
@@ -37,7 +49,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
             return;
         }
         if (this.mFooterView == null){
-            mData.add(mData.size(), null);
+            this.size++;
         }
         this.mFooterView = mFooterView;
     }
@@ -47,7 +59,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         if (mHeaderView == null){
             return;
         }if (this.mHeaderView == null){
-            mData.add(0, null);
+            this.size++;
         }
         this.mHeaderView = mHeaderView;
     }
@@ -67,7 +79,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
 
     @Override
     public final int getItemCount() {
-        return mData == null ? 0 : mData.size();
+        return size;
     }
 
     @Override
@@ -96,7 +108,12 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     public final void onBindViewHolder(CommonHolder holder, int position) {
 
         isFooterVisible = position >= getItemCount() -2;
-        createView(holder, getObject(position));
+        if ((position == 0 && mHeaderView != null) || (position == size -1 && mFooterView != null)){
+
+            ILog.i("===object===", "is footer or header not createView ...");
+        }else {
+            createView(holder, getObject(position-1));  //  扣除header占用的位置
+        }
     }
 
     public T getObject(int position) {

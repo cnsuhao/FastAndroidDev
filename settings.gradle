@@ -1,2 +1,4 @@
 include ':baseLibs', ':fastandroiddev', ':autolayout',
-        ':SweetAlert', ':umenglib', ':alipay', ':qrcode', 'irecyclerview'
+        ':SweetAlert', ':umenglib', ':alipay', ':qrcode',
+        'irecyclerview', 'greendaojava','myapplication'
+

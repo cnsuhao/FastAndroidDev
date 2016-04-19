@@ -10,11 +10,8 @@ public class RegularUtils {
 
     public static boolean isMobilePhone(String s){
 
-        if (s == null){
-            return false;
-        }if (s.startsWith("+86")){
-            s = s.replace("+86", "");
-        }
+        if (s == null) return false;
+        if (s.startsWith("+86")) s = s.replace("+86", "");
 
         Pattern p = Pattern
                 .compile("^((13[0-9])|(15[^4,\\D])|(18[0-9])|(145)|(147)|(17[6-8]))\\d{8}$");
@@ -22,20 +19,59 @@ public class RegularUtils {
         return m.matches();
     }
 
+    public static boolean isInt(String value){
+
+        if (StringUtils.isEmpty(value)) return false;
+        Pattern p = Pattern
+                .compile("^([0-9])+$");
+        Matcher m = p.matcher(value);
+        return m.matches();
+    }
+
+    public static boolean isNumber(String value){
+
+        if (StringUtils.isEmpty(value)) return false;
+        Pattern p = Pattern
+                .compile("^(([0-9])|(\\.))+$");
+        Matcher m = p.matcher(value);
+        return m.matches();
+    }
+
+    /**
+     * 删除不是0-9 以及. 的内容
+     * @param value 原始字符串
+     * @return  删除不是0-9以及.剩余的部分
+     */
+    public static String deleteNoNumber(String value){
+
+        if (StringUtils.isEmpty(value)) return "";
+        Pattern p = Pattern
+                .compile("[^0-9.]");
+        Matcher m = p.matcher(value);
+        return m.replaceAll("").trim();
+    }
+
+    /**
+     * 删除不是0-9 的内容
+     * @param value 原始字符串
+     * @return  删除不是0-9 剩余的部分
+     */
+    public static String deleteNoInt(String value){
+
+        if (StringUtils.isEmpty(value)) return "";
+        Pattern p = Pattern
+                .compile("[^0-9]");
+        Matcher m = p.matcher(value);
+        return m.replaceAll("").trim();
+    }
+
     /**
      * 判断是否是图片，即判断扩展名是否为 .jpg, .jpeg, .png
-     * @param file
-     * @return
      */
     public static boolean isImage(String file){
 
-        if (file == null){
-            return false;
-        }
-        if (file.endsWith(".jpg") || file.endsWith(".jpeg") || file.endsWith(".png")){
-            return true;
-        }
-        return false;
+        return file != null && (file.endsWith(".jpg") || file.endsWith(".jpeg")
+                || file.endsWith(".png"));
     }
 
     /**
@@ -44,6 +80,7 @@ public class RegularUtils {
      */
     public static boolean isCard(String cardNum){
 
+        if (StringUtils.isEmpty(cardNum) || (cardNum.length() != 15 && cardNum.length() != 18)) return false;
         //定义判别用户身份证号的正则表达式（要么是15位，要么是18位，最后一位可以为字母）
         Pattern idNumPattern = Pattern.compile("(\\d{14}[0-9a-zA-Z])|(\\d{17}[0-9a-zA-Z])");
         Matcher idNumMatcher = idNumPattern.matcher(cardNum);
@@ -72,9 +109,7 @@ public class RegularUtils {
      */
     public static boolean isHost(String string){
 
-        if (string == null){
-            return false;
-        }
+        if (string == null) return false;
         Pattern p = Pattern.compile("^((http://)|(https://))((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"
                 + "\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
         return p.matcher(string).matches();
@@ -87,18 +122,24 @@ public class RegularUtils {
      */
     public static boolean isUrl(String string){
 
-        if (string == null){
-            return false;
-        }
+        if (string == null) return false;
         Pattern p = Pattern.compile("^((http://)|(https://))((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"
                 + "\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)(/)(.+)$");
         return p.matcher(string).matches();
     }
 
     /**
+     * 判断是否为网址  包括域名、url
+     * @param text  url
+     */
+    public static boolean isCommonUrl(String text){
+
+        return isUrl(text) || isHost(text);
+    }
+
+    /**
      * 判断是否是通用手机号，即：正常11位手机号、6位城市短号、通用固话号码
      * @param s String 字符串
-     * @return
      */
     public static boolean isCommonPhone(String s){
 
@@ -107,10 +148,7 @@ public class RegularUtils {
 
     public static boolean isShortPhone(String s){
 
-        if (s == null){
-            return false;
-        }
-
+        if (s == null) return false;
         Pattern p = Pattern
                 .compile("^([0-9]{6})$");
         Matcher m = p.matcher(s);
@@ -119,10 +157,7 @@ public class RegularUtils {
 
     public static boolean isFixedPhone(String s){
 
-        if (s == null){
-            return false;
-        }
-
+        if (s == null) return false;
         Pattern p = Pattern.compile("^([0-9]{3,5}(-)?)?([0-9]{7,8})((-)?[0-9]{1,4})?$");
         Matcher m = p.matcher(s);
         return m.matches();
@@ -130,10 +165,7 @@ public class RegularUtils {
 
     public static boolean isEmail(String s){
 
-        if (s == null){
-            return false;
-        }
-
+        if (s == null) return false;
         Pattern p = Pattern
                 .compile("^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"
                         + "\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
@@ -143,9 +175,7 @@ public class RegularUtils {
 
     public static String delStringBlank(String s){
 
-        if (s == null){
-            return null;
-        }
+        if (s == null) return null;
         return s.replaceAll(" ", "");
     }
 }

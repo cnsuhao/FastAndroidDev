@@ -24,6 +24,7 @@ public class IJson {
      */
     public static String toJson(Object object, Type type){
 
+        if (object == null || type == null) return null;
         String string = null;
         try{
             string = gson.toJson(object, type);
@@ -35,13 +36,10 @@ public class IJson {
 
     /**
      * 将json 转为对象
-     * @param jsonString
-     * @param type
-     * @param <T>
-     * @return
      */
     public static <T> T fromJson(String jsonString, Type type){
 
+        if (StringUtils.isEmpty(jsonString) || type == null) return null;
         T tmp = null;
         try{
             tmp = gson.fromJson(jsonString, type);

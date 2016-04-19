@@ -29,7 +29,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.PhoneNumberUtils;
@@ -49,8 +48,6 @@ import com.ijustyce.fastandroiddev.baseLib.R;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -75,8 +72,9 @@ public class CommonTool {
      * @return 如果是wifi 则返回true，否则返回false
      */
 
-    public static boolean isWifi(@NonNull Context context){
+    public static boolean isWifi(Context context){
 
+        if (context == null) return false;
         ConnectivityManager connectMgr = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -91,6 +89,8 @@ public class CommonTool {
      * @return soundId
      */
     public static int playNotifi(Context context) {
+
+        if (context == null) return -1;
         NotificationManager mgr = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         Notification nt = new Notification();
@@ -114,6 +114,7 @@ public class CommonTool {
      */
     public static String getVersionName(Context context) {
 
+        if (context == null) return null;
         try {
             PackageManager manager = context.getPackageManager();
             PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
@@ -132,6 +133,7 @@ public class CommonTool {
      */
     public static String getPkgName(Context context) {
 
+        if (context == null) return null;
         try {
             PackageManager manager = context.getPackageManager();
             PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
@@ -151,6 +153,7 @@ public class CommonTool {
      */
     public static int getVersionCode(Context context) {
 
+        if (context == null) return -1;
         try {
             PackageManager manager = context.getPackageManager();
             PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
@@ -172,6 +175,8 @@ public class CommonTool {
     }
 
     public static boolean openUrl(String url, Activity mContext){
+
+        if (mContext == null || !RegularUtils.isCommonUrl(url)) return false;
 
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
@@ -201,6 +206,7 @@ public class CommonTool {
 
     public static boolean chooseFile(Activity mContext, String type, int requestCode) {
 
+        if (mContext == null) return false;
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType(type == null ? "*/*" : type + "/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -220,6 +226,8 @@ public class CommonTool {
      * @return MediaPlayer , by it you call stop current play
      */
     public static MediaPlayer playSound(Context context) {
+
+        if (context == null) return null;
 
         Uri alert = RingtoneManager
                 .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
@@ -250,6 +258,8 @@ public class CommonTool {
      */
     public static MediaPlayer playSound(Context context, int id) {
 
+        if (context == null) return null;
+
         MediaPlayer mMediaPlayer = MediaPlayer.create(context, id);
 
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -267,6 +277,8 @@ public class CommonTool {
      * @param playFinish PlayFinish listener , 可以为空
      */
     public static MediaPlayer startPlaying(String file, PlayFinish playFinish) {
+
+        if (StringUtils.isEmpty(file) || !new File(file).exists()) return null;
 
         final WeakReference<PlayFinish> playListener = new WeakReference<>(playFinish);
         try {
@@ -337,6 +349,7 @@ public class CommonTool {
      */
     public static boolean isConnected(Context context) {
 
+        if (context == null) return false;
         ConnectivityManager conManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
@@ -352,6 +365,7 @@ public class CommonTool {
      */
     public static void systemShare(Context context, String text) {
 
+        if (context == null || StringUtils.isEmpty(text)) return;
         Intent intent = new Intent(Intent.ACTION_SEND);
         //  intent.putExtra(Intent.EXTRA_SUBJECT, text);
         intent.putExtra(Intent.EXTRA_TEXT, text);
@@ -367,16 +381,13 @@ public class CommonTool {
      * @param context  mContext
      * @param text     text to share
      * @param filePath file to share, usually is picture
-     * @return true if success or false
      */
     public static void systemShare(Context context, String text,
                                    String filePath) {
 
+        if (context == null || (StringUtils.isEmpty(text) && StringUtils.isEmpty(filePath))) return;
         File f = new File(filePath);
-        if (!f.exists()) {
-
-            return;
-        }
+        if (!f.exists()) return;
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/*");
 //		intent.putExtra(Intent.EXTRA_SUBJECT, text);
@@ -388,11 +399,13 @@ public class CommonTool {
     }
 
     public static String getString(Context context, int id) {
+        if (context == null) return null;
         return context.getResources().getString(id);
     }
 
     public static String getUUID(Context context) {
 
+        if (context == null) return null;
         String res;
         TelephonyManager manage = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         try {
@@ -418,72 +431,13 @@ public class CommonTool {
      */
     public static void closeIme(Activity context) {
 
+        if (context == null) return;
         View view = context.getWindow().peekDecorView();
         if (view != null) {
             InputMethodManager inputManger = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManger.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
         context.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-    }
-
-    /**
-     * save bitmap to .jpg file
-     * @param mBitmap bitmap
-     * @param bitName file path , must end with .jpg like /sdcard/jilvinfo/tmp/1.jpg
-     */
-    public static boolean savBitmapToPng(Bitmap mBitmap,String bitName)  {
-        File f = new File(bitName);
-        FileOutputStream fOut;
-        try {
-            fOut = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-        try {
-            fOut.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            fOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * save bitmap to .jpg file
-     * @param mBitmap bitmap
-     * @param bitName file path , must end with .jpg like /sdcard/jilvinfo/tmp/1.jpg
-     */
-    public static boolean savBitmapToJpg(Bitmap mBitmap,String bitName)  {
-        File f = new File(bitName);
-        FileOutputStream fOut;
-        try {
-            fOut = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-        try {
-            fOut.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            fOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -610,7 +564,7 @@ public class CommonTool {
     @SuppressWarnings("static-access")
     public static Bitmap compressImageFromFile(String filePath) {
 
-
+        if (StringUtils.isEmpty(filePath) || !new File(filePath).exists()) return null;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
@@ -626,7 +580,7 @@ public class CommonTool {
      */
     public static Bitmap compressImageFromFile(String filePath, int angle) {
 
-
+        if (StringUtils.isEmpty(filePath) || !new File(filePath).exists()) return null;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
@@ -663,6 +617,7 @@ public class CommonTool {
      */
     public static long getBitmapsize(Bitmap bitmap) {
 
+        if (bitmap == null) return 0;
         long size;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
             size = bitmap.getByteCount() / 1024;
@@ -682,6 +637,7 @@ public class CommonTool {
      */
     public static Bitmap compressImage(Bitmap image, long notComPressSize) {
 
+        if (image == null) return null;
         if (getBitmapsize(image) > notComPressSize) {
 
             compressImage(image);
@@ -697,6 +653,7 @@ public class CommonTool {
      */
     public static Bitmap compressImage(Bitmap image) {
 
+        if (image == null) return null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 80, baos);
         int options = 100;
@@ -713,12 +670,14 @@ public class CommonTool {
     }
 
     /**
-     * 直接呼叫指定的号码(需要<uses-permission android:name="android.permission.CALL_PHONE"/>权限)
+     * 直接呼叫指定的号码
      *
      * @param mContext    上下文Context
      * @param phoneNumber 需要呼叫的手机号码
      */
     public static void callPhone(Context mContext, String phoneNumber) {
+
+        if (mContext == null || StringUtils.isEmpty(phoneNumber)) return;
         Uri uri = Uri.parse("tel:" + phoneNumber);
         Intent call = new Intent(Intent.ACTION_CALL, uri);
         try {
@@ -735,6 +694,8 @@ public class CommonTool {
      * @param phoneNumber 需要呼叫的手机号码
      */
     public static void toCallPhoneActivity(Context mContext, String phoneNumber) {
+
+        if (mContext == null || StringUtils.isEmpty(phoneNumber)) return;
         Uri uri = Uri.parse("tel:" + phoneNumber);
         Intent call = new Intent(Intent.ACTION_DIAL, uri);
         mContext.startActivity(call);
@@ -744,10 +705,11 @@ public class CommonTool {
      * 直接调用短信API发送信息(设置监听发送和接收状态)
      *
      * @param strPhone      手机号码
-     * @param strMsgContext 短信内容
+     * @param strMsg 短信内容
      */
-    public static void sendMessage(final Context mContext, final String strPhone, final String strMsgContext) {
+    public static void sendMessage(final Context mContext, final String strPhone, final String strMsg) {
 
+        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg)) return;
         //处理返回的发送状态
         String SENT_SMS_ACTION = "SENT_SMS_ACTION";
         Intent sentIntent = new Intent(SENT_SMS_ACTION);
@@ -786,7 +748,7 @@ public class CommonTool {
 
         //拆分短信内容（手机短信长度限制）
         SmsManager smsManager = SmsManager.getDefault();
-        ArrayList<String> msgList = smsManager.divideMessage(strMsgContext);
+        ArrayList<String> msgList = smsManager.divideMessage(strMsg);
         for (String text : msgList) {
             smsManager.sendTextMessage(strPhone, null, text, sendIntent, backIntent);
         }
@@ -797,13 +759,15 @@ public class CommonTool {
      *
      * @param mContext      context
      * @param strPhone      手机号码
-     * @param strMsgContext 短信内容
+     * @param strMsg        短信内容
      */
-    public static void toSendMessageActivity(Context mContext, String strPhone, String strMsgContext) {
+    public static void toSendMessageActivity(Context mContext, String strPhone, String strMsg) {
+
+        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg)) return;
         if (PhoneNumberUtils.isGlobalPhoneNumber(strPhone)) {
             Uri uri = Uri.parse("smsto:" + strPhone);
             Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
-            sendIntent.putExtra("sms_body", strMsgContext);
+            sendIntent.putExtra("sms_body", strMsg);
             mContext.startActivity(sendIntent);
         }
     }
@@ -813,8 +777,9 @@ public class CommonTool {
      * @param context context
      * @return
      */
-    public static int getScreenWidth(@NonNull Context context){
+    public static int getScreenWidth(Context context){
 
+        if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return vm.getDefaultDisplay().getWidth();
     }
@@ -824,14 +789,17 @@ public class CommonTool {
      * @param context context
      * @return
      */
-    public static int getScreenHeight(@NonNull Context context){
+    public static int getScreenHeight(Context context){
 
+        if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return vm.getDefaultDisplay().getHeight();
     }
 
-    public static void showNotify(@NonNull String title, @NonNull String msg, @NonNull Intent intent,
-                                  @NonNull Context context, int resSmallIcon){
+    public static void showNotify(String title, String msg, Intent intent,
+                                  Context context, int resSmallIcon){
+
+        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(msg)) return;
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(resSmallIcon)
@@ -846,16 +814,15 @@ public class CommonTool {
                 //   .setOngoing(true)      //true，用户不能手动清除
                 .setAutoCancel(true);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-//        if (parent != null){
-//            stackBuilder.addParentStack(parent);
-//        }
-        stackBuilder.addNextIntent(intent);
+       if (intent != null){
+           TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+           stackBuilder.addNextIntent(intent);
 
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+           PendingIntent resultPendingIntent =
+                   stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mBuilder.setContentIntent(resultPendingIntent);
+           mBuilder.setContentIntent(resultPendingIntent);
+       }
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1000, mBuilder.build());

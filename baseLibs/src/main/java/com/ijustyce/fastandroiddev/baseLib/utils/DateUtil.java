@@ -23,6 +23,7 @@ public class DateUtil {
      */
     public static String parseDate(Date date) {
 
+        if (date == null ) return null;
         long old = dateToTimesTamp(date);
         long now = dateToTimesTamp(getDate(DAY_FORMATTER));
         long time = (old - now) / (24 * 60 * 60);
@@ -57,10 +58,12 @@ public class DateUtil {
      * get current date like yyyy/MM/dd HH:mm:ss
      *
      * @param formatter like yyyy/MM/dd HH:mm:ss
-     * @return
      */
     public static String getDateString(String formatter) {
-        SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.CHINA);
+
+        if (StringUtils.isEmpty(formatter)) return null;
+
+        SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.getDefault());
         Date dd = new Date();
         return ft.format(dd);
     }
@@ -69,10 +72,11 @@ public class DateUtil {
      * get current date like yyyy/MM/dd HH:mm:ss
      *
      * @param formatter like yyyy/MM/dd HH:mm:ss
-     * @return
      */
     public static Date getDate(String formatter) {
-        SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.CHINA);
+
+        if (StringUtils.isEmpty(formatter)) return null;
+        SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.getDefault());
         Date dd = new Date();
         return stringToDate(ft.format(dd), formatter);
     }
@@ -83,35 +87,33 @@ public class DateUtil {
      * @return current date formatted like yyyy/MM/dd HH:mm:ss
      */
     public static Date getDate() {
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
         Date dd = new Date();
         return stringToDate(ft.format(dd), "yyyy/MM/dd HH:mm:ss");
     }
 
     /**
      * convert date to string
-     *
-     * @param date
-     * @param formatter
      * @return String
      */
     public static String dateToString(Date date, String formatter) {
-        SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.CHINA);
+
+        if (StringUtils.isEmpty(formatter) || date == null) return null;
+        SimpleDateFormat ft = new SimpleDateFormat(formatter, Locale.getDefault());
         return ft.format(date);
     }
 
     /**
      * get current timesTamp , date formatted like yyyy/MM/dd HH:mm:ss
-     *
-     * @return
      */
     public static Long getTimesTamp() {
 
         return dateToTimesTamp(getDate("yyyy/MM/dd HH:mm:ss"));
     }
 
-    public static Long subTimeTamp(Date first, Date second) {
+    public static long subTimeTamp(Date first, Date second) {
 
+        if (first == null || second == null) return 0;
         return dateToTimesTamp(first) - dateToTimesTamp(second);
     }
 
@@ -121,8 +123,9 @@ public class DateUtil {
      * @param formatter like yyyy/MM/dd HH:mm:ss
      * @return timesTamp
      */
-    public static Long getTimesTamp(String formatter) {
+    public static long getTimesTamp(String formatter) {
 
+        if (StringUtils.isEmpty(formatter)) return 0;
         return dateToTimesTamp(getDate(formatter));
     }
 
@@ -136,7 +139,8 @@ public class DateUtil {
 
     public static Date stringToDate(String value, String format) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        if (StringUtils.isEmpty(format) || StringUtils.isEmpty(value)) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
         try {
             return sdf.parse(value);
         } catch (ParseException e) {
@@ -154,9 +158,7 @@ public class DateUtil {
      */
     public static long dateToTimesTamp(Date date) {
 
-        if (date == null) {
-            return 0;
-        }
+        if (date == null) return 0;
         long l = date.getTime();
         String str = String.valueOf(l);
         return Long.parseLong(str.substring(0, 10));
@@ -170,21 +172,21 @@ public class DateUtil {
      */
     public static String timesTampToDate(String timesTamp, String format) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        if (StringUtils.isEmpty(format) || StringUtils.isEmpty(timesTamp)) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
         long lcc_time = Long.valueOf(timesTamp);
         return sdf.format(new Date(lcc_time * 1000L));
     }
 
     public static long stringToTimesTamp(String date, String format) {
 
+        if (StringUtils.isEmpty(format) || StringUtils.isEmpty(date)) return 0;
         Date tmp = stringToDate(date, format);
         return dateToTimesTamp(tmp);
     }
 
     /**
      * system.out.println(text)
-     *
-     * @param text
      */
     public static void Jout(String text) {
 

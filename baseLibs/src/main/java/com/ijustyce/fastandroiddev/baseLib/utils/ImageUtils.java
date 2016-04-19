@@ -51,6 +51,7 @@ public class ImageUtils {
 
     public static void init(Context context) {
 
+        if (context == null) return;
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         config = new ImageLoaderConfiguration
                 .Builder(context)
@@ -62,11 +63,10 @@ public class ImageUtils {
 
     /**
      * 设置点击图片启动的Intent，但如果展示图片时context为null，则不生效
-     *
-     * @param intent
      */
     public static void setViewIntent(Intent intent) {
 
+        if (intent == null) return;
         setViewEnabled(true);
         ImageUtils.mIntent = intent;
     }
@@ -81,9 +81,12 @@ public class ImageUtils {
         onlyWiFi = value;
     }
 
+    /**
+     *  网络图片是否缓存到本地
+     */
     private static boolean isCached(String url) {
 
-        return DiskCacheUtils.findInCache(url, imageLoader.getDiskCache()) == null
+        return RegularUtils.isUrl(url) && DiskCacheUtils.findInCache(url, imageLoader.getDiskCache()) == null
                 || MemoryCacheUtils.findCacheKeysForImageUri(url,
                 imageLoader.getMemoryCache()).isEmpty();
     }
@@ -91,16 +94,8 @@ public class ImageUtils {
     public static void load(final Context context, ImageView view, final String url,
                             final boolean clickToView) {
 
-        if (config == null || !imageLoader.isInited()) {
-
-            init(context);
-        }
-
-        if (view == null) {
-
-            ILog.e("view is null, cancel display image ... ");
-            return;
-        }
+        if (context == null || view == null ) return;
+        if (config == null || !imageLoader.isInited()) init(context);
 
         if (StringUtils.isEmpty(url)) {
 
@@ -118,11 +113,6 @@ public class ImageUtils {
 
         view.setImageBitmap(null);
         imageLoader.displayImage(url, view);
-
-        //  如果context 不为空则添加图片浏览功能
-        if (context == null || url.startsWith("drawable://")) {
-            return;
-        }
 
         if (!clickToView) {
             return;

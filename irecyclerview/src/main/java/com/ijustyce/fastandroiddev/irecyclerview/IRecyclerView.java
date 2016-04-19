@@ -24,7 +24,6 @@ import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
-    private View mView;
     private LinearLayout mHeader, mFooter, mFooterLoading;
     private ProgressBar processBar;
     private Context mContext;
@@ -57,7 +56,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     private void createRecyclerView(Context context){
 
-        mView = LayoutInflater.from(context).inflate(R.layout.irecyclerview_view_recycler, this);
+        View mView = LayoutInflater.from(context).inflate(R.layout.irecyclerview_view_recycler, this);
         if (mView == null){
             ILog.e(TAG, "mView is null, it is a fastandroiddev error, please contact developer... ");
             return;
@@ -104,6 +103,11 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
+    public final RecyclerView getRecyclerView(){
+
+        return mRecyclerView;
+    }
+
     /**
      * 瀑布流式 布局
      * @param num 列数或行数（竖直即true为列数，false为行数）
@@ -138,6 +142,15 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         }
     }
 
+    public final void notifyDataSetChanged(){
+
+        if (adapter != null) {
+            ILog.i("===notifyDataSetChanged===");
+            adapter.reAddFooter();
+            adapter.notifyDataSetChanged();
+        }
+    }
+
     public final void addHeaderView(View view){
 
         if (mHeader == null){
@@ -166,7 +179,6 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
         initFooter();
         if (mFooter != null && view != null){
-            ILog.i("===count===", mFooter.getChildCount() + "");
             mFooter.addView(view, mFooter.getChildCount() -1);
         }if (adapter != null){
             adapter.setFooterView(mFooter);
