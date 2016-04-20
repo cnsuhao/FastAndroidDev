@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Bind(R.id.recyclerView)
+    @Bind(R.id.list)
     IRecyclerView recyclerView;
 
     private Handler handler;
