@@ -33,7 +33,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'de.greenrobot:greendao:2.1.0'    //  如果使用greendao请删除注释
     compile project(':autolayout')
-    compile project(':baseLibs')
     compile project(':SweetAlert')
     compile project(':irecyclerview')
 }

@@ -102,7 +102,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
     private void init() {
 
-        mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.list);
+        mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.recyclerView);
         noData = (LinearLayout) mView.findViewById(R.id.noData);
 
         if (noData != null){
@@ -122,6 +122,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         adapter = buildAdapter(mContext, data);
         if(adapter == null){
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
+            return;
         }
         mIRecyclerView.setAdapter(adapter);
     }

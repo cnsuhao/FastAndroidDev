@@ -17,10 +17,7 @@ gradle/*
 captures/*
 .DS_Store
 .idea/*
-school/*
-guahao/*
-androidLib/*
-leyinghong/*
+health/*
 settings.gradle
 
 # Local configuration file (sdk path, etc)

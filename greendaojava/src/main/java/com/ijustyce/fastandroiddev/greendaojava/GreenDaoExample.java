@@ -1,5 +1,6 @@
 package com.ijustyce.fastandroiddev.greendaojava;
 
+import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Schema;
 
@@ -10,14 +11,14 @@ public class GreenDaoExample {
         //  使用greendao你需要先修改fastandroiddev的build.gradle文件，去掉相应注释！
         //  这里是一些原码
 
-//        Schema schema = new Schema(5, "com.example.myapplication.model");
-//        schema.enableKeepSectionsByDefault();
-//        addNote(schema);
-//        try {
-//            new DaoGenerator().generateAll(schema, "greendaojava/src-model");
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
+        Schema schema = new Schema(1, "com.ijustyce.health.model");
+        addRecord(schema);
+        addUser(schema);
+        try {
+            new DaoGenerator().generateAll(schema, "greendaojava/src-model");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private static void showExample(){
@@ -45,12 +46,27 @@ public class GreenDaoExample {
          */
     }
 
-    private static void addNote(Schema schema) {
-        Entity note = schema.addEntity("Note");
+    private static void addRecord(Schema schema){
+        Entity note = schema.addEntity("Record");
 
         note.addIdProperty();
-        note.addStringProperty("text");
-        note.addStringProperty("comment");
-        note.addStringProperty("content");
+        note.addStringProperty("desc");
+        note.addIntProperty("userId");
+        note.addIntProperty("ownerId");
+        note.addIntProperty("type");
+        note.addBooleanProperty("delete");
+        note.addIntProperty("status");
+    }
+
+    private static void addUser(Schema schema) {
+        Entity note = schema.addEntity("User");
+
+        note.addIdProperty();
+        note.addStringProperty("phone");
+        note.addStringProperty("pw");
+        note.addStringProperty("name");
+        note.addIntProperty("identity");
+        note.addStringProperty("head");
+        note.addBooleanProperty("delete");
     }
 }

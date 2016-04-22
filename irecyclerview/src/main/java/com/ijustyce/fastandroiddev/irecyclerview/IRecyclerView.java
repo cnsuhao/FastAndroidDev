@@ -62,8 +62,15 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
             return;
         }
 
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.list);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh);
+        View view = mView.findViewById(R.id.irecyclerview_list);
+        if (view instanceof RecyclerView) mRecyclerView = (RecyclerView) view;
+        else throw new RuntimeException("can not get RecyclerView, is your xml file " +
+                "already have a view and it's id is R.id.irecyclerview_list ? ");
+
+        View view2 = mView.findViewById(R.id.irecyclerview_swipe_refresh);
+        if (view2 instanceof SwipeRefreshLayout) mSwipeRefreshLayout = (SwipeRefreshLayout) view2;
+        else throw new RuntimeException("can not get SwipeRefreshLayout, is your xml file " +
+                "already have a view and it's id is R.id.irecyclerview_swipe_refresh ? ");
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));

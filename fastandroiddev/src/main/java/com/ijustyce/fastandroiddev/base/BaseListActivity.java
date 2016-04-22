@@ -61,7 +61,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     private void init() {
 
-        mIRecyclerView = (IRecyclerView) findViewById(R.id.list);
+        mIRecyclerView = (IRecyclerView) findViewById(R.id.recyclerView);
         noData = (LinearLayout) findViewById(R.id.noData);
 
         if (noData != null){
@@ -81,6 +81,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         adapter = buildAdapter(mContext, data);
         if(adapter == null){
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
+            return;
         }
         mIRecyclerView.setAdapter(adapter);
     }

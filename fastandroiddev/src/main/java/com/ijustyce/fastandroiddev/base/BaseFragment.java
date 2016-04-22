@@ -53,6 +53,7 @@ public abstract class BaseFragment<T> extends Fragment {
             handler = new Handler();
         }
         ButterKnife.bind(this, mView);
+        doInit();
         afterCreate();
         return mView;
     }
