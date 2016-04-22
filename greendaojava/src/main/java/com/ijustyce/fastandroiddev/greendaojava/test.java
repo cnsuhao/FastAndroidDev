@@ -10,20 +10,19 @@ public class test {
 
     public static void main(String[] args){
 
-        System.out.println(deleteNoNumber("v 0 哈哈. —— 999"));
-        System.out.println(deleteNoInt("v 0 哈哈. —— 999"));
+        System.out.println(isNewVersion("v1.0.5beta1", "1.0.5"));
+        System.out.println(isNewVersion("v1.0.5beta1", "1.0.5beta2"));
+        System.out.println(isNewVersion("v1.0.51", "1.0.5beta2"));
+        System.out.println(isNewVersion("v1.0.5", "v1.0.5.1"));
 
-        System.out.println(deleteNoNumber("v0.9.5.4"));
-        System.out.println(deleteNoInt("v09.5.4."));
+        System.out.println(isNewVersion("v1.0.51", "v1.0.52"));
+        System.out.println(isNewVersion("v1.0.52", "v1.0.51"));
 
-        System.out.println(deleteNoInt("v0.9.5.4"));
-        System.out.println(deleteNoNumber("v09.5.4."));
+        System.out.println(isNewVersion("v1.0.51", "1.0.52"));
+        System.out.println(isNewVersion("v1.0.52", "1.0.51"));
 
-        System.out.println(deleteNoNumber("v1.0.3.2beta"));
-        System.out.println(deleteNoInt("v1.0.3.2beta"));
-
-        System.out.println(deleteNoNumber("v1.0.3.2beta2"));
-        System.out.println(deleteNoInt("v1.0.3.2beta2"));
+        System.out.println(isNewVersion("1.0.51", "v1.0.52"));
+        System.out.println(isNewVersion(" hahhaha1.0.52", "xixiv1.0.51"));
     }
 
     /**
@@ -37,6 +36,63 @@ public class test {
                 .compile("[^0-9.]");
         Matcher m = p.matcher(value);
         return m.replaceAll("").trim();
+    }
+
+    /**
+     * 判断是否为新版本
+     * @param net   网络返回的版本 比如 0.5.09
+     * @param local 本地版本      比如 0.5.1
+     * @return  是否为新版本
+     */
+    public static boolean isNewVersion(String net, String local){
+
+        net = deleteNoNumber(net);
+        local = deleteNoNumber(local);
+        if (isEmpty(net) || isEmpty(local)) return false;
+        String[] netVersion = net.split("\\.");
+        String[] localVersion = local.split("\\.");
+
+        int size = netVersion.length > localVersion.length ? localVersion.length : netVersion.length;
+        for (int i =0; i < size; i++){
+            double netTmp = getDouble("0." + netVersion[i]);
+            double localTmp = getDouble("0." + localVersion[i]);
+            if (netTmp > localTmp){
+                return true;
+            }if (netTmp < localTmp){
+                return false;
+            }
+        }
+        return netVersion.length > localVersion.length; //  除非长度不一且前面每位都相等，否则不可能到这步，
+    }
+
+    public static double getDouble(String value){
+
+        return getDouble(value, 0.0);
+    }
+
+    public static double getDouble(String value, double defaultValue){
+
+        if (!isNumber(value)) return defaultValue;
+        try {
+            return Double.parseDouble(value);
+        }catch (Exception e){
+            e.printStackTrace();
+            return defaultValue;
+        }
+    }
+
+    public static boolean isNumber(String value){
+
+        if (isEmpty(value)) return false;
+        Pattern p = Pattern
+                .compile("^(([0-9])|(\\.))+$");
+        Matcher m = p.matcher(value);
+        return m.matches();
+    }
+
+    public static boolean isEmpty(String text){
+
+        return text== null || text.replaceAll(" ", "").length() == 0;
     }
 
     /**
