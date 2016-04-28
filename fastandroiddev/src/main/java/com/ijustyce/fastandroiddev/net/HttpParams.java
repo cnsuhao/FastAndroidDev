@@ -10,7 +10,8 @@ import java.util.Map;
  */
 public final class HttpParams {
 
-    private static Map<String, String> params, commonParams, header;
+    private static Map<String, String> commonParams, header;
+    private Map<String, String> params;
     private String url;
     private String tag;
     private String cacheKey = "";
