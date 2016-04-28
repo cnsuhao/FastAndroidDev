@@ -195,6 +195,11 @@ public class CommonHolder extends RecyclerView.ViewHolder{
         return this;
     }
 
+    public Context getContext(){
+
+        return mContext;
+    }
+
     public CommonHolder setOnClickListener(int viewId,
                                          View.OnClickListener listener) {
         View view = getView(viewId);

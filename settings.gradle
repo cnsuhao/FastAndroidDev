@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 include ':baseLibs', ':fastandroiddev', ':autolayout', ':linecount',
-=======
-include ':baseLibs', ':fastandroiddev', ':autolayout', ':health',
->>>>>>> c0a0d37167ebb5b60e858d5d49cd754090a3caa8
         ':SweetAlert', ':umenglib', ':alipay', ':qrcode',
         'irecyclerview', 'greendaojava','myapplication'
 
