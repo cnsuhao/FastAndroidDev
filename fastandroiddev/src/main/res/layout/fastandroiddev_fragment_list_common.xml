@@ -20,11 +20,13 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/noDataImg"
             android:src="@drawable/no_data"
             android:layout_width="96dp"
             android:layout_height="96dp" />
 
         <TextView
+            android:id="@+id/noDataMsg"
             android:textSize="12sp"
             android:text="@string/error_no_record"
             android:layout_marginTop="20px"

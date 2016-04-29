@@ -3,10 +3,13 @@ package com.ijustyce.fastandroiddev.base;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
+import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
@@ -29,11 +32,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public IAdapter<T> adapter;
     private List<T> data;
 
-    private static final String FORMATTER = "yyyy-MM-dd HH:mm";
-
     public int pageNo = 1;
-
-    public static final int SHORT_DELAY = 100; // 刷新间隔
 
     @Override
     public final void doResume() {
@@ -67,7 +66,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         mIRecyclerView = (IRecyclerView) findViewById(getRecyclerViewId());
         noData = (LinearLayout) findViewById(getNoDataId());
 
-        if (noData != null){
+        if (noData != null && clickNoDataToRefresh()){
             noData.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -83,6 +82,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         data = new ArrayList<>();
         adapter = buildAdapter(mContext, data);
         if(adapter == null){
+            noData.setVisibility(View.VISIBLE);
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
             return;
         }
@@ -154,6 +154,10 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
     };
 
+    public boolean clickNoDataToRefresh(){
+        return true;
+    }
+
     //  获取更多数据
     public abstract boolean getMoreData();
 
@@ -175,6 +179,26 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if (data != null) {
             data = null;
         }
+    }
+
+    public final void setNoDataImg(int resId){
+
+        if (noData == null) return;
+        ImageView imgView = (ImageView) noData.findViewById(R.id.noDataImg);
+        if (imgView != null)
+            imgView.setImageBitmap(CommonTool.drawableToBitmap(getResources().getDrawable(resId)));
+    }
+
+    public final void setNoDataMsg(int resId){
+
+        setNoDataMsg(getResString(resId));
+    }
+
+    public final void setNoDataMsg(String msg){
+
+        if (noData == null) return;
+        TextView msgView = (TextView) noData.findViewById(R.id.noDataMsg);
+        if (msgView != null) msgView.setText(msg);
     }
 
     public final Runnable newData = new Runnable() {
