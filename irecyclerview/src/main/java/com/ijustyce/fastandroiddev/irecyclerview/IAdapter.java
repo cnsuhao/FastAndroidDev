@@ -112,7 +112,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
 
             ILog.i("===object===", "is footer or header not createView ...");
         }else {
-            createView(holder, getObject(position-1));  //  扣除header占用的位置
+            createView(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
         }
     }
 

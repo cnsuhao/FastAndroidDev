@@ -3,6 +3,7 @@ package com.ijustyce.fastandroiddev.base;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.ijustyce.fastandroiddev.R;
@@ -144,6 +145,13 @@ public abstract class BaseTopTabActivity extends BaseActivity {
         if (mViewPager != null){
             mViewPager.setCanScroll(canScroll);
         }
+    }
+
+    public final void setTabHeight(int height){
+
+        ViewGroup.LayoutParams params = mTabLayout.getLayoutParams();
+        params.height = height;
+        mTabLayout.setLayoutParams(params);
     }
 
     public final void setTabIndicatorColor(int color){

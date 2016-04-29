@@ -30,7 +30,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
@@ -60,26 +59,27 @@ import java.util.UUID;
 public class CommonTool {
 
     /**
-     *  对double 类型数据进行四舍五入，并保留两位小数
+     * 对double 类型数据进行四舍五入，并保留两位小数
      */
-    public static double getShortDouble(double value){
+    public static double getShortDouble(double value) {
 
         return Math.round(value * 100) / 100.0;
     }
 
     /**
      * 判断是否是wifi
+     *
      * @return 如果是wifi 则返回true，否则返回false
      */
 
-    public static boolean isWifi(Context context){
+    public static boolean isWifi(Context context) {
 
         if (context == null) return false;
         ConnectivityManager connectMgr = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo info = connectMgr.getActiveNetworkInfo();
-        return info!=null && info.getType() == ConnectivityManager.TYPE_WIFI;
+        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
     /**
@@ -174,7 +174,7 @@ public class CommonTool {
         return getPkgName(context) + getVersionName(context);
     }
 
-    public static boolean openUrl(String url, Activity mContext){
+    public static boolean openUrl(String url, Activity mContext) {
 
         if (mContext == null || !RegularUtils.isCommonUrl(url)) return false;
 
@@ -183,23 +183,23 @@ public class CommonTool {
         Uri content_url = Uri.parse(url);
         intent.setData(content_url);
         try {
-            mContext.startActivity( Intent.createChooser(intent, "请选择应用"));
+            mContext.startActivity(Intent.createChooser(intent, "请选择应用"));
         } catch (android.content.ActivityNotFoundException ex) {
             return false;
         }
         return true;
     }
 
-    public static void setEditAble(boolean editAble, EditText editText){
+    public static void setEditAble(boolean editAble, EditText editText) {
 
-        if (editText == null){
+        if (editText == null) {
             return;
         }
         editText.setFocusableInTouchMode(editAble);
         editText.setLongClickable(editAble);
-        if (editAble){
+        if (editAble) {
             editText.requestFocus();
-        }else {
+        } else {
             editText.clearFocus();
         }
     }
@@ -212,7 +212,7 @@ public class CommonTool {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
-            mContext.startActivityForResult( Intent.createChooser(intent, "请选择文件"), requestCode);
+            mContext.startActivityForResult(Intent.createChooser(intent, "请选择文件"), requestCode);
         } catch (android.content.ActivityNotFoundException ex) {
             return false;
         }
@@ -459,19 +459,20 @@ public class CommonTool {
 
     /**
      * 显示或隐藏密码
-     * @param showPw    true 则显示，否则隐藏
-     * @param view      若为空，则直接return
+     *
+     * @param showPw true 则显示，否则隐藏
+     * @param view   若为空，则直接return
      */
-    public static void showPw(boolean showPw, TextView view){
+    public static void showPw(boolean showPw, TextView view) {
 
-        if (view == null){
+        if (view == null) {
             ILog.e("===CommonTool===", "showPw view can not be null ...");
             return;
         }
-        if(showPw){
+        if (showPw) {
             //如果选中，显示密码
             view.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-        }else{
+        } else {
             //否则隐藏密码
             view.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
@@ -704,12 +705,13 @@ public class CommonTool {
     /**
      * 直接调用短信API发送信息(设置监听发送和接收状态)
      *
-     * @param strPhone      手机号码
-     * @param strMsg 短信内容
+     * @param strPhone 手机号码
+     * @param strMsg   短信内容
      */
     public static void sendMessage(final Context mContext, final String strPhone, final String strMsg) {
 
-        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg)) return;
+        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg))
+            return;
         //处理返回的发送状态
         String SENT_SMS_ACTION = "SENT_SMS_ACTION";
         Intent sentIntent = new Intent(SENT_SMS_ACTION);
@@ -757,13 +759,14 @@ public class CommonTool {
     /**
      * 跳转至发送短信界面(自动设置接收方的号码以及短信内容)
      *
-     * @param mContext      context
-     * @param strPhone      手机号码
-     * @param strMsg        短信内容
+     * @param mContext context
+     * @param strPhone 手机号码
+     * @param strMsg   短信内容
      */
     public static void toSendMessageActivity(Context mContext, String strPhone, String strMsg) {
 
-        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg)) return;
+        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg))
+            return;
         if (PhoneNumberUtils.isGlobalPhoneNumber(strPhone)) {
             Uri uri = Uri.parse("smsto:" + strPhone);
             Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
@@ -774,10 +777,11 @@ public class CommonTool {
 
     /**
      * get screen width
+     *
      * @param context context
      * @return
      */
-    public static int getScreenWidth(Context context){
+    public static int getScreenWidth(Context context) {
 
         if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -786,49 +790,47 @@ public class CommonTool {
 
     /**
      * get screen height
+     *
      * @param context context
      * @return
      */
-    public static int getScreenHeight(Context context){
+    public static int getScreenHeight(Context context) {
 
         if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return vm.getDefaultDisplay().getHeight();
     }
 
-    public static void showNotify(String title, String msg, Intent intent,
-                                  Context context, int resSmallIcon){
+    public static void showNotify(String title, String msg, Intent intent, Class<? extends Activity> activity,
+                                  Context context, int resSmallIcon) {
 
         if (StringUtils.isEmpty(title) || StringUtils.isEmpty(msg)) return;
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        int id = (int)System.currentTimeMillis();
+
+        PendingIntent pi = PendingIntent.getActivity(context, id, intent, 0);
+        Notification notification = new NotificationCompat.Builder(context)
+                .setTicker(title)
                 .setSmallIcon(resSmallIcon)
-                .setContentTitle(title) //标题
-                .setContentText(msg)    //正文
-                //  .setNumber(3)         //设置信息条数
-                //  .setContentInfo("3")      //作用同上，设置信息的条数
-                //  .setLargeIcon(resSmallIcon)
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setContentIntent(pi)
+                .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_SOUND)//设置声音，此为默认声音
                 //    .setVibrate(vT) //设置震动，此震动数组为：long vT[]={300,100,300,100};
                 //.setLights(argb, onMs, offMs)
                 //   .setOngoing(true)      //true，用户不能手动清除
-                .setAutoCancel(true);
+                //  .setNumber(3)         //设置信息条数
+                //  .setContentInfo("3")      //作用同上，设置信息的条数
+                //  .setLargeIcon(resSmallIcon)
+                .build();
 
-       if (intent != null){
-           TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-           stackBuilder.addNextIntent(intent);
-
-           PendingIntent resultPendingIntent =
-                   stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-           mBuilder.setContentIntent(resultPendingIntent);
-       }
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1000, mBuilder.build());
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(id, notification);
     }
 
-    public static String getText(TextView view){
+    public static String getText(TextView view) {
 
         return view == null ? null : view.getText().toString();
     }

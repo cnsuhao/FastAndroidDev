@@ -50,11 +50,9 @@ public final class INetWork {
             return false;
         }
 
-        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), listener)){
-            return true;
-        }
-
         String url = httpParams.getUrl();
+        doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+
         Map<String, String> map = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
         StringBuilder stringBuilder = new StringBuilder();
@@ -102,11 +100,9 @@ public final class INetWork {
             return false;
         }
 
-        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), listener)){
-            return true;
-        }
-
         String url = httpParams.getUrl();
+        doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+
         final Map<String, String> params = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
         HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
@@ -148,11 +144,9 @@ public final class INetWork {
             return false;
         }
 
-        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), listener)){
-            return true;
-        }
-
         String url = httpParams.getUrl();
+        doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+
         final Map<String, String> headers = HttpParams.getHeader();
         HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, httpParams.getJson(),
@@ -227,9 +221,9 @@ public final class INetWork {
     /**
      * 检测cache里是否有这个请求
      */
-    private static boolean doCache(int cacheTime, String url, HttpListener listener){
+    private static boolean doCache(int cacheTime, String key, String url , HttpListener listener){
 
-        String tmp = HttpResponse.getCache(cacheTime, url);
+        String tmp = HttpResponse.getCache(cacheTime, key);
         if (tmp == null){
             return false;
         }

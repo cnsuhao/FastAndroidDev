@@ -59,10 +59,13 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         return R.layout.fastandroiddev_activity_list_common;
     }
 
-    private void init() {
+    public int getRecyclerViewId(){return R.id.list;};
+    public int getNoDataId(){return R.id.noData;};
 
-        mIRecyclerView = (IRecyclerView) findViewById(R.id.recyclerView);
-        noData = (LinearLayout) findViewById(R.id.noData);
+    public final void init() {
+
+        mIRecyclerView = (IRecyclerView) findViewById(getRecyclerViewId());
+        noData = (LinearLayout) findViewById(getNoDataId());
 
         if (noData != null){
             noData.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +184,8 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
             if (mContext != null && adapter != null && data != null) {
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                mIRecyclerView.notifyDataSetChanged();
             }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
@@ -199,7 +203,8 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                mIRecyclerView.notifyDataSetChanged();
             }
 
             if (data != null && data.isEmpty() && noData != null) {

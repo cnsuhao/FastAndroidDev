@@ -100,10 +100,13 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         handler.post(hasNoData);
     }
 
-    private void init() {
+    public int getRecyclerViewId(){return R.id.list;};
+    public int getNoDataId(){return R.id.noData;};
 
-        mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.recyclerView);
-        noData = (LinearLayout) mView.findViewById(R.id.noData);
+    public final void init() {
+
+        mIRecyclerView = (IRecyclerView) mView.findViewById(getRecyclerViewId());
+        noData = (LinearLayout) mView.findViewById(getNoDataId());
 
         if (noData != null){
             noData.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +185,8 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
             if (mContext != null && adapter != null && data != null) {
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                mIRecyclerView.notifyDataSetChanged();
             }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
@@ -200,7 +204,8 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                mIRecyclerView.notifyDataSetChanged();
             }
 
             if (data != null && data.isEmpty() && noData != null) {
