@@ -174,8 +174,9 @@ public class DateUtil {
 
         if (StringUtils.isEmpty(format) || StringUtils.isEmpty(timesTamp)) return null;
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
-        long lcc_time = Long.valueOf(timesTamp);
-        return sdf.format(new Date(lcc_time * 1000L));
+        long lcc_time = StringUtils.getLong(timesTamp);
+        if (lcc_time == 0) return null;
+        return sdf.format(new Date(lcc_time * 1000));
     }
 
     public static long stringToTimesTamp(String date, String format) {
