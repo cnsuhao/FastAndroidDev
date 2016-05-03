@@ -172,10 +172,13 @@ public class DateUtil {
      */
     public static String timesTampToDate(String timesTamp, String format) {
 
-        if (StringUtils.isEmpty(format) || StringUtils.isEmpty(timesTamp)) return null;
+        if (format == null || timesTamp ==null
+                ) return null;
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
-        long lcc_time = Long.valueOf(timesTamp);
-        return sdf.format(new Date(lcc_time * 1000L));
+        long lcc_time = Long.parseLong(timesTamp);
+        if (lcc_time == 0) return null;
+        if (timesTamp.length() <= 10) lcc_time *= 1000;
+        return sdf.format(new Date(lcc_time));
     }
 
     public static long stringToTimesTamp(String date, String format) {
