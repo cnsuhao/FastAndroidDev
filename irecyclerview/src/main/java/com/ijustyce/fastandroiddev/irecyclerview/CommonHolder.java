@@ -25,6 +25,7 @@ public class CommonHolder extends RecyclerView.ViewHolder{
     private View itemView;
     private Context mContext;
     private SparseArray<View> mView;
+    private int position;
     
     public CommonHolder(View itemView, Context mContext) {
         super(itemView);
@@ -35,6 +36,22 @@ public class CommonHolder extends RecyclerView.ViewHolder{
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         this.itemView.setLayoutParams(lp);
         mView = new SparseArray<>();
+    }
+
+    /**
+     * 设置当前的model在list的id，通常用于 notifyItemChanged(holder.getItemPosition());
+     */
+    protected final void setItemPosition(int position){
+
+        this.position = position;
+    }
+
+    /**
+     * 获取当前的model在list的id，一般用于 notifyItemChanged(holder.getItemPosition());
+     */
+    public final int getItemPosition(){
+
+        return position;
     }
 
     public static CommonHolder getInstance(@LayoutRes int id, Context mContext, ViewGroup parent){

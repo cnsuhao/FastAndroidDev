@@ -29,6 +29,10 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         this.mContext = mContext;
     }
 
+    public final Context getContext(){
+        return mContext;
+    }
+
     void reAddFooter(){
 
         size = mData.size();
@@ -37,6 +41,14 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }if (mHeaderView != null){
             size++;
         }
+    }
+
+    public final void removeItem(int position){
+
+        if (mData == null || position < 0 || position >= mData.size()) return;
+        mData.remove(position);
+        reAddFooter();
+        notifyItemRemoved(position);
     }
 
     public boolean isFooterVisible() {
@@ -62,6 +74,11 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
             this.size++;
         }
         this.mHeaderView = mHeaderView;
+    }
+
+    public final int getDataSize(){
+
+        return mData == null ? 0 : mData.size();
     }
 
     @Override
@@ -112,13 +129,14 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
 
             ILog.i("===object===", "is footer or header not createView ...");
         }else {
+            if (holder != null) holder.setItemPosition(position);
             createView(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
         }
     }
 
     public T getObject(int position) {
 
-        if (mData == null || position < 0 || position > mData.size()) {
+        if (mData == null || position < 0 || position >= mData.size()) {
 
             return null;
         }

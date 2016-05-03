@@ -102,7 +102,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     @Override
     public void onFailed(int code, String msg, String taskId) {
 
-        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+     //   Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         handler.post(hasNoData);
     }
 

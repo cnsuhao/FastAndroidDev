@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/yangchun/code/lzh/FastAndroidDev/autolayout/src/main/jniLibs"/></dataSet><dataSet config="debug"><source path="/Users/yangchun/code/lzh/FastAndroidDev/autolayout/src/debug/jniLibs"/></dataSet></merger>

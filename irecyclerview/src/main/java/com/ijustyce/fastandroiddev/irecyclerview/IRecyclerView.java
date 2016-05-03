@@ -9,8 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -30,10 +32,13 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private IAdapter adapter;
-    private boolean hasMore = true;
+    private boolean hasMore = true; //  是否还有更多数据
+    private boolean showFooter = true;  //  如果没有更多数据了，是否允许显示footer
     private PullToRefreshListener mRefreshListener;
 
     private TextView footerLabel;
+
+    private int pageSize = 10;
 
     private final static String TAG = "IRecyclerView";
 
@@ -45,6 +50,21 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         }if (!mSwipeRefreshLayout.isRefreshing()){
             mSwipeRefreshLayout.setRefreshing(true);
         }
+    }
+
+    public final void setPageSize(int size){
+
+        this.pageSize = size;
+    }
+
+    public final int getPageSize(){
+
+        return pageSize;
+    }
+
+    public final void showFooterWhenNoMoreData(boolean showFooter){
+
+        this.showFooter = showFooter;
     }
 
     public final void setFooterLabel(String text){
@@ -137,16 +157,17 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
         if (num <= 0){
             num = 1;
+        }if (num > 3){
+            ILog.e("===IRecyclerView===", "you set girdlayout with " +
+                    "more than 3 span count ...");
         }
+        pageSize *= num;
         mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, num));
     }
 
     public final void onLoadEnd(){
 
         initFooter();
-        if (mFooterLoading != null){
-            mFooterLoading.setVisibility(INVISIBLE);
-        }
     }
 
     public final void notifyDataSetChanged(){
@@ -176,9 +197,19 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         if (mFooter == null){
             mFooter = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_footer, null)
                     .findViewById(R.id.container);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            mFooter.setLayoutParams(params1);
             footerLabel = (TextView) mFooter.findViewById(R.id.footerLabel);
             mFooterLoading = (LinearLayout) mFooter.findViewById(R.id.footerLoading);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            mFooterLoading.setGravity(Gravity.CENTER);
+            mFooterLoading.setLayoutParams(params);
             processBar = (ProgressBar) mFooter.findViewById(R.id.processBar);
+        }
+        if (mFooterLoading != null){
+            mFooterLoading.setVisibility(adapter != null && adapter.getDataSize() >= pageSize && (hasMore || showFooter) ? VISIBLE : GONE);
         }
     }
 
@@ -202,12 +233,11 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (mRefreshListener == null || newState != RecyclerView.SCROLL_STATE_IDLE)return;
-                if (adapter.isFooterVisible() && hasMore) {
-                    mRefreshListener.onLoadMore();
-                    initFooter();
-                    if (mFooterLoading != null){
-                        mFooterLoading.setVisibility(VISIBLE);
+                if (adapter.isFooterVisible()) {
+                    if (hasMore && adapter != null && adapter.getDataSize() >= pageSize){
+                        mRefreshListener.onLoadMore();
                     }
+                    initFooter();
                 }
             }
 

@@ -138,7 +138,7 @@ public class HttpResponse {
             }
 
             if (httpListener != null){
-                httpListener.fail(-1, "request failed", url);
+                httpListener.fail(-1, "数据请求失败", url);
             }
         }
     };
