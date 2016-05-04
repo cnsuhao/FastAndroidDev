@@ -166,7 +166,6 @@ public class DateUtil {
 
     /**
      * convert Unix timestamp to a certain date
-     *
      * @param timesTamp Unix timestamp
      * @return date , like 2014-04-27 11:42:00
      */

@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
@@ -117,6 +116,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
 
         Object result = IJson.fromJson(object, getType());
+        onGetData(result);
         if (result instanceof IResponseData){
 
             List<T> objectsList = ((IResponseData<T>)result).getData();
@@ -128,6 +128,8 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             }
         }
     }
+
+    public void onGetData(Object object){};
 
     private PullToRefreshListener refreshListener = new PullToRefreshListener() {
         @Override

@@ -17,8 +17,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     private List<T> mData;
     private Context mContext;
     private View mHeaderView, mFooterView;
-    private boolean isFooterVisible;
-    private int size;
+    private int size, position;
 
     private static final int TYPE_FOOTER = 1, TYPE_HEADER = 2, TYPE_NORMAL = 3;
 
@@ -51,11 +50,19 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         notifyItemRemoved(position);
     }
 
-    public boolean isFooterVisible() {
-        return isFooterVisible;
+    public final boolean isFooterVisible() {
+        return position >= getItemCount() -2;
     }
 
-    public void setFooterView(View mFooterView) {
+    /**
+     * 返回最后可见的item的position
+     */
+    public final int getLastPosition(){
+
+        return position;
+    }
+
+    public final void setFooterView(View mFooterView) {
 
         if (mFooterView == null){
             return;
@@ -66,7 +73,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         this.mFooterView = mFooterView;
     }
 
-    public void setHeaderView(View mHeaderView) {
+    public final void setHeaderView(View mHeaderView) {
 
         if (mHeaderView == null){
             return;
@@ -124,7 +131,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     @Override
     public final void onBindViewHolder(CommonHolder holder, int position) {
 
-        isFooterVisible = position >= getItemCount() -2;
+        this.position = position;
         if ((position == 0 && mHeaderView != null) || (position == size -1 && mFooterView != null)){
 
             ILog.i("===object===", "is footer or header not createView ...");
@@ -134,7 +141,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }
     }
 
-    public T getObject(int position) {
+    public final T getObject(int position) {
 
         if (mData == null || position < 0 || position >= mData.size()) {
 
