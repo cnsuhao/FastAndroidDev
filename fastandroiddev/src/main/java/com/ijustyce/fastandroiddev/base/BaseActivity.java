@@ -275,6 +275,14 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //first saving my state, so the bundle wont be empty.
+        //https://code.google.com/p/android/issues/detail?id=19917
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {

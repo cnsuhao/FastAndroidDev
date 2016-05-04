@@ -191,7 +191,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public final void scrollToPosition(int position){
 
         if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null) return;
-        mIRecyclerView.getRecyclerView().scrollToPosition(position);
+        mIRecyclerView.getRecyclerView().smoothScrollToPosition(position);
     }
 
     public final void setNoDataImg(int resId){
