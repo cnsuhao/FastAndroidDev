@@ -183,6 +183,16 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
     }
 
+    /**
+     * 滚动到某个item所在的位置
+     * @param position item的位置
+     */
+    public final void scrollToPosition(int position){
+
+        if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null) return;
+        mIRecyclerView.getRecyclerView().scrollToPosition(position);
+    }
+
     public final void setNoDataImg(int resId){
 
         if (noData == null) return;
