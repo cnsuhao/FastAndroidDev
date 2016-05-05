@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.manager;
 
 import android.app.Activity;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class AppManager {
 
-    private static List<Activity> allActivity;
+    private static List<WeakReference<Activity>> allActivity;
 
     static {
 
@@ -19,12 +20,12 @@ public class AppManager {
 
     public static void pushActivity(Activity activity) {
 
-        allActivity.add(activity);
+        allActivity.add(new WeakReference<>(activity));
     }
 
     public static void moveActivity(Activity activity) {
 
-        allActivity.remove(activity);
+        finishExcept(getClass(activity));
     }
 
     public static void finishActivity(Class className){
@@ -33,22 +34,22 @@ public class AppManager {
             return;
         }
 
-        for (Activity tmp : allActivity) {
-            if (tmp == null) {
+        for (WeakReference<Activity> tmp : allActivity) {
+            if (tmp == null || tmp.get() == null) {
                 continue;
             }
-            String tmpClass = getClassName(tmp);
+            String tmpClass = getClassName(tmp.get());
             if (tmpClass.equals(className.getName())) {
-                tmp.finish();
+                tmp.get().finish();
             }
         }
     }
 
     public static void finishAll(){
 
-        for (Activity tmp : allActivity) {
-            if (tmp != null){
-                tmp.finish();
+        for (WeakReference<Activity> tmp : allActivity) {
+            if (tmp != null && tmp.get() != null){
+                tmp.get().finish();
             }
         }
         allActivity.clear();
@@ -60,23 +61,28 @@ public class AppManager {
      */
     public static void finishExcept(Class className) {
 
-        if (allActivity == null) {
+        if (allActivity == null || className == null) {
             return;
         }
-        List<Activity> remove = new ArrayList<>();
-        for (Activity tmp : allActivity) {
-            if (tmp == null) {
+        List<WeakReference<Activity>> remove = new ArrayList<>();
+        for (WeakReference<Activity> tmp : allActivity) {
+            if (tmp == null || tmp.get() == null) {
                 continue;
             }
-            String tmpClass = getClassName(tmp);
+            String tmpClass = getClassName(tmp.get());
             if (!tmpClass.equals(className.getName())) {
                 remove.add(tmp);
-                tmp.finish();
+                tmp.get().finish();
             }
         }
         if (!remove.isEmpty()) {
             allActivity.removeAll(remove);
         }
+    }
+
+    private static Class getClass(Activity activity){
+
+        return activity == null ? null : activity.getClass();
     }
 
     private static String getClassName(Activity activity){
