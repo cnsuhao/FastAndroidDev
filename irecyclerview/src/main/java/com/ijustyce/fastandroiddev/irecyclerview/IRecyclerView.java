@@ -184,6 +184,9 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         if (mHeader == null){
             mHeader = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_header, null)
                     .findViewById(R.id.container);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
+                    (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            mHeader.setLayoutParams(params);
         }
         if (mHeader != null && view != null){
             mHeader.addView(view);
@@ -198,7 +201,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
             mFooter = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_footer, null)
                     .findViewById(R.id.container);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             mFooter.setLayoutParams(params1);
             footerLabel = (TextView) mFooter.findViewById(R.id.footerLabel);
             mFooterLoading = (LinearLayout) mFooter.findViewById(R.id.footerLoading);
