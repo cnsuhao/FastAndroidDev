@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.ijustyce.fastandroiddev.R;
@@ -65,7 +66,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         handler = new Handler();
         doInit();
         afterCreate();
-        CallBackManager.getActivityLifeCall().onCreate(this);
+        CallBackManager.onCreate(this);
     }
 
     void doInit(){}
@@ -74,7 +75,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     protected void onStop() {
         super.onStop();
         VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
-        CallBackManager.getActivityLifeCall().onStop(this);
+        CallBackManager.onStop(this);
     }
 
     /**
@@ -94,7 +95,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected final void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume(this);
+        CallBackManager.onResume(this);
         doResume();
     }
 
@@ -110,7 +111,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (handler != null){
             handler.post(dismiss);
         }
-        CallBackManager.getActivityLifeCall().onPause(this);
+        CallBackManager.onPause(this);
     }
 
     public String getTAG() {
@@ -178,7 +179,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (mContext != null && TAG != null && VolleyUtils.getInstance().getVolleyRequestQueue(mContext) != null){
             VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
-        CallBackManager.getActivityLifeCall().onDestroy(this);
+        CallBackManager.onDestroy(this);
         super.onDestroy();
         AppManager.moveActivity(this);
         ButterKnife.unbind(this);
@@ -189,6 +190,13 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }
         handler = null;
         mContext = null;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        CallBackManager.dispatchTouchEvent(event, this);
+        return super.dispatchTouchEvent(event);
     }
 
     public final void newActivity(Intent intent, Bundle bundle){

@@ -30,7 +30,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     public Handler handler;
     public IAdapter<T> adapter;
-    private List<T> data;
+    public List<T> data;
 
     public int pageNo = 1;
 

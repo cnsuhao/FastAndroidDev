@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.umenglib;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.ijustyce.fastandroiddev.baseLib.callback.ActivityLifeCall;
 import com.umeng.analytics.MobclickAgent;
@@ -37,6 +38,11 @@ public class ActivityLifeTongJi implements ActivityLifeCall {
 
     @Override
     public void onDestroy(Activity activity) {
+
+    }
+
+    @Override
+    public void dispatchTouchEvent(MotionEvent event, Activity activity) {
 
     }
 }
