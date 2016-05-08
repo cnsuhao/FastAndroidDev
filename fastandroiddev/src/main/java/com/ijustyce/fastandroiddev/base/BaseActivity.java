@@ -61,6 +61,14 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
             setSupportActionBar(toolbar);
         }
 
+        View back = findViewById(R.id.back);
+        if (back != null) back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backPress();
+            }
+        });
+
         AppManager.pushActivity(this);
 
         handler = new Handler();
