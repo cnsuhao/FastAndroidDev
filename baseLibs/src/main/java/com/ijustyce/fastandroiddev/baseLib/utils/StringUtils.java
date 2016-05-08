@@ -1,5 +1,10 @@
 package com.ijustyce.fastandroiddev.baseLib.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by yc on 15-12-24.   string 工具类
  */
@@ -72,6 +77,44 @@ public class StringUtils {
     public static long getLong(String value){
 
         return getLong(value, 0);
+    }
+
+    /**
+     * 解析并返回url的参数
+     * @param url url 比如： https://mclient.alipay.com/home/exterfaceAssign.htm?alipay_exterface
+     *            _invoke_assign_client_ip=115.192.220.130&body=测试
+     */
+    public static Map<String, String> getUrlParams(String url){
+
+        if (url.isEmpty()) return null;
+        String[] urls = url.split("\\?");
+        int size = urls.length;
+        if (size < 1) return null;
+
+        if (urls[1].isEmpty()) return null;
+        String[] keyAndValus = urls[1].split("=");
+        size = keyAndValus.length;
+        if (size < 1) return null;
+        List<String> values = new ArrayList<>();
+        for (int i =0 ; i< size; i++){
+            String keyValue = keyAndValus[i];
+            if (keyValue.isEmpty()) continue;
+            String[] result = keyValue.split("&");
+            int len = result.length;
+            if (len < 1) continue;
+            for (String tmp : result){
+                values.add(tmp);
+            }
+        }
+        int j = 1;
+        Map<String, String> map = new HashMap<>();
+        for (String tmp : values){
+            if (j % 2 == 0){
+                map.put(values.get(j -2), values.get(j-1));
+            }
+            j++;
+        }
+        return map;
     }
 
     /**

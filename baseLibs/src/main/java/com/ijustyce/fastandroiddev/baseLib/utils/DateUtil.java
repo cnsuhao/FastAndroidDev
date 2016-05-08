@@ -166,14 +166,14 @@ public class DateUtil {
 
     /**
      * convert Unix timestamp to a certain date
-     *
      * @param timesTamp Unix timestamp
      * @return date , like 2014-04-27 11:42:00
      */
     public static String timesTampToDate(String timesTamp, String format) {
 
-        if (StringUtils.isEmpty(format) || StringUtils.isEmpty(timesTamp)) return null;
+        if (format == null || timesTamp ==null) return null;
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+
         long lcc_time = StringUtils.getLong(timesTamp);
         if (lcc_time == 0) return null;
         return sdf.format(new Date(lcc_time * 1000));
