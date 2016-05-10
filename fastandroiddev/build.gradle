@@ -36,4 +36,5 @@ dependencies {
     compile 'com.zhy:autolayout:1.4.3'
     compile project(':SweetAlert')
     compile project(':irecyclerview')
+    compile 'com.bugtags.library:bugtags-lib:latest.integration'
 }

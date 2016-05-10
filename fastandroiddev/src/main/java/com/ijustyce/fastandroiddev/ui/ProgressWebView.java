@@ -32,31 +32,6 @@ public class ProgressWebView extends WebView {
         getSettings().setAppCacheEnabled(true);
         getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         getSettings().setJavaScriptEnabled(true);
-        addJavascriptInterface(new ShowContent(), "handler");
-        setWebViewClient(new WebViewClient() {
-
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
-            }
-
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-          //      view.loadUrl("javascript:window.handler.showSource(document.body.innerHTML);");
-                String main = "javascript:function getClass(parent, sClass) { var " +
-                        "aEle=parent.getElementsByTagName('div'); var aResult=[]; " +
-                        "var i=0; for(i<0;i<aEle.length;i++) { if(aEle[i].className==sClass) " +
-                        "{ aResult.push(aEle[i]); } }; return aResult; }";
-                view.loadUrl(main);
-                view.loadUrl("javascript:window.handler.showSource('<head>'+"
-                        + "getClass(document,'main')[0].innerHTML+'</head>');");
-            }
-        });
         setWebChromeClient(new WebChromeClient());
         setDownloadListener(new DownloadListener() {
             @Override
@@ -65,19 +40,6 @@ public class ProgressWebView extends WebView {
                 downManager.startDown();
             }
         });
-    }
-
-    final class ShowContent {
-        @JavascriptInterface
-        public void showSource(final String html) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-                }
-            });
-            System.out.println("====>html="+html);
-        }
     }
 
     @Override

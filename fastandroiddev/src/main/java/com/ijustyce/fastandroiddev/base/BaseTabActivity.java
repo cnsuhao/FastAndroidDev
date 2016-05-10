@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -57,6 +58,9 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
             setSupportActionBar(toolbar);
         }
 
+        View back = findViewById(R.id.back);
+        if (back != null) back.setVisibility(View.GONE);
+
         AppManager.pushActivity(this);
         initData();
 
@@ -65,7 +69,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         setAdapter();
 
         handler = new Handler();
-        CallBackManager.getActivityLifeCall().onCreate(this);
+        CallBackManager.onCreate(this);
         afterCreate();
     }
 
@@ -189,7 +193,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         super.onDestroy();
         ButterKnife.unbind(this);
         AppManager.moveActivity(this);
-        CallBackManager.getActivityLifeCall().onDestroy(this);
+        CallBackManager.onDestroy(this);
     }
 
     public final void addTab(int layoutId, int radioButtonId) {
@@ -268,18 +272,25 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        CallBackManager.getActivityLifeCall().onStop(this);
+        CallBackManager.onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        CallBackManager.getActivityLifeCall().onPause(this);
+        CallBackManager.onPause(this);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        CallBackManager.dispatchTouchEvent(event, this);
+        return super.dispatchTouchEvent(event);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume(this);
+        CallBackManager.onResume(this);
     }
 }

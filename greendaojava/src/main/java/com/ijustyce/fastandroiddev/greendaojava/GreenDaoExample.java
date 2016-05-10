@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.greendaojava;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
 public class GreenDaoExample {
@@ -11,8 +12,8 @@ public class GreenDaoExample {
         //  使用greendao你需要先修改fastandroiddev的build.gradle文件，去掉相应注释！
         //  这里是一些原码
 
-        Schema schema = new Schema(1, "com.ijustyce.health.model");
-        addRecord(schema);
+        Schema schema = new Schema(2, "com.ijustyce.health.model");
+ //       addRecord(schema);
         addUser(schema);
         try {
             new DaoGenerator().generateAll(schema, "greendaojava/src-model");
@@ -46,16 +47,19 @@ public class GreenDaoExample {
          */
     }
 
-    private static void addRecord(Schema schema){
+    private static void addRecord(Schema schema, Entity entity){
         Entity note = schema.addEntity("Record");
 
         note.addIdProperty();
-        note.addStringProperty("desc");
-        note.addIntProperty("userId");
-        note.addIntProperty("ownerId");
+        note.addStringProperty("title");
+        note.addLongProperty("ownerId");
         note.addIntProperty("type");
+        note.addStringProperty("content");
         note.addBooleanProperty("delete");
         note.addIntProperty("status");
+        note.addStringProperty("phone");
+//        Property phone = note.addStringProperty("phone").notNull().getProperty();
+//        note.addToOne(entity, phone);
     }
 
     private static void addUser(Schema schema) {
@@ -68,5 +72,7 @@ public class GreenDaoExample {
         note.addIntProperty("identity");
         note.addStringProperty("head");
         note.addBooleanProperty("delete");
+
+        addRecord(schema, note);
     }
 }

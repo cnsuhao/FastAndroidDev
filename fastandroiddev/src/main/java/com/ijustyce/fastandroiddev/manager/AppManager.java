@@ -25,7 +25,7 @@ public class AppManager {
 
     public static void moveActivity(Activity activity) {
 
-        finishExcept(getClass(activity));
+        finishActivity(getClass(activity));
     }
 
     public static void finishActivity(Class className){

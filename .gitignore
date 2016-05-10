@@ -19,6 +19,8 @@ captures/*
 .idea/*
 health/*
 news/*
+school/*
+diancan/*
 settings.gradle
 
 # Local configuration file (sdk path, etc)

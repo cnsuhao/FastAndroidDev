@@ -1,4 +1,4 @@
-include ':baseLibs', ':fastandroiddev', ':linecount',
-        ':SweetAlert', ':umenglib', ':alipay', ':qrcode',
-        'irecyclerview', 'greendaojava','myapplication', 'news'
-
+include ':baseLibs', ':fastandroiddev',
+        ':SweetAlert', ':umenglib', ':qrcode',
+        'irecyclerview', 'greendaojava',
+        'health','school'
