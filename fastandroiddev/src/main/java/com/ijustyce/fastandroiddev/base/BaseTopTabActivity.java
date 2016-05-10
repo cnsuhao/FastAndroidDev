@@ -79,7 +79,7 @@ public abstract class BaseTopTabActivity extends BaseActivity {
         FragmentAdapter mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(),
                 mFragmentList, mTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.setOffscreenPageLimit(mFragmentList.size() -1 );
+        mViewPager.setOffscreenPageLimit(mFragmentList.size() > 3 ? 3 : mFragmentList.size());
 
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
