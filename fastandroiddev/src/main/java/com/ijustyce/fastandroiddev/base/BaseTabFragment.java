@@ -12,8 +12,6 @@ import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by yc on 15-12-25.   顶部是tab的fragment
  */
@@ -87,10 +85,25 @@ public abstract class BaseTabFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroy(){
+    public void toolBarClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarClick();
+    }
 
-        ButterKnife.unbind(this);
-        super.onDestroy();
+    @Override
+    public void toolBarDoubleClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
     }
 
     public final void setScrollMode(){

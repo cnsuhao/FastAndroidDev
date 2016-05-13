@@ -29,48 +29,32 @@ import butterknife.ButterKnife;
 /**
  * Created by yc on 15-12-25.   底部是tab的activity的父类
  */
-public abstract class BaseTabActivity extends AutoLayoutActivity {
+public abstract class BaseTabActivity extends BaseActivity {
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private TextView label;
 
-    private Toolbar toolbar;
-
-    public List<String> mTitleList;
     public List<Fragment> mFragmentList;
     private List<RadioButton> mRadioButton;
 
-    private Handler handler;
     private boolean isPressed;
     private static final int DELAY = 2000, SHORT_DELAY = 1000;
-
     private boolean canClick = true;
 
     @Override
-    protected final void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fastandroiddev_activity_tab);
-        ButterKnife.bind(this);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
-
+    void doInit() {
         View back = findViewById(R.id.back);
         if (back != null) back.setVisibility(View.GONE);
-
-        AppManager.pushActivity(this);
         initData();
 
         addFragment();
-        addTitle();
         setAdapter();
+    }
 
-        handler = new Handler();
-        CallBackManager.onCreate(this);
-        afterCreate();
+    @Override
+    public int getLayoutId() {
+        return R.layout.fastandroiddev_activity_tab;
     }
 
     private Runnable checkExit = new Runnable() {
@@ -81,9 +65,26 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         }
     };
 
-    public final void showToolBar(boolean isShow) {
+    @Override
+    public void toolBarClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarClick();
+    }
 
-        toolbar.setVisibility(isShow ? View.VISIBLE : View.GONE);
+    @Override
+    public void toolBarDoubleClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
     }
 
     public final void backPress() {
@@ -106,6 +107,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         label = (TextView) findViewById(R.id.label);
         mFragmentList = new ArrayList<>();
+        mRadioButton = new ArrayList<>(mFragmentList.size());
     }
 
     public final int getCurrentTab() {
@@ -113,21 +115,10 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         return mViewPager == null ? 0 : mViewPager.getCurrentItem();
     }
 
-    private void addTitle() {
-
-        mTitleList = new ArrayList<>();
-        mTitleList.add("tmp");
-        mTitleList.add("tmp");
-        mTitleList.add("tmp");
-        mRadioButton = new ArrayList<>(mFragmentList.size());
-    }
-
     /**
      * 添加fragment
      */
     public abstract void addFragment();
-
-    public abstract void afterCreate();
 
     public void onPageSelect(int position) {
     }
@@ -138,7 +129,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     private void setAdapter() {
 
         FragmentAdapter mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(),
-                mFragmentList, mTitleList);
+                mFragmentList, null);
         mViewPager.setAdapter(mFragmentAdapter);
         mViewPager.setOffscreenPageLimit(mFragmentList.size() > 3 ? 3 : mFragmentList.size());
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
@@ -186,19 +177,9 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         onPageSelect(position);
     }
 
-    @Override
-    public void onDestroy() {
-
-        super.onDestroy();
-        ButterKnife.unbind(this);
-        AppManager.moveActivity(this);
-        CallBackManager.onDestroy(this);
-    }
-
     public final void addTab(int layoutId, int radioButtonId) {
 
-        if (mTitleList == null || mRadioButton == null) {
-
+        if (mRadioButton == null) {
             ILog.e("===mTitleList or mRadioButton is null ...return...");
             return;
         }
@@ -248,48 +229,8 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         }
     };
 
-    @Override
-    public final boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-            backPress();
-        }
-        return true;
-    }
-
-    public final void newActivity(Class className) {
-
-        startActivity(new Intent(this, className));
-    }
-
     public final void setScrollMode() {
 
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        CallBackManager.onStop(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        CallBackManager.onPause(this);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        CallBackManager.dispatchTouchEvent(event, this);
-        return super.dispatchTouchEvent(event);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        CallBackManager.onResume(this);
     }
 }
