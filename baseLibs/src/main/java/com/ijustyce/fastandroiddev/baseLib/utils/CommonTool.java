@@ -801,7 +801,7 @@ public class CommonTool {
         return vm.getDefaultDisplay().getHeight();
     }
 
-    public static void showNotify(String title, String msg, Intent intent, Class<? extends Activity> activity,
+    public static void showNotify(String title, String msg, Intent intent,
                                   Context context, int resSmallIcon) {
 
         if (StringUtils.isEmpty(title) || StringUtils.isEmpty(msg)) return;

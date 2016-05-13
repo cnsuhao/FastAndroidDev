@@ -2,7 +2,6 @@ package com.ijustyce.fastandroiddev.greendaojava;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
 public class GreenDaoExample {
@@ -12,8 +11,7 @@ public class GreenDaoExample {
         //  使用greendao你需要先修改fastandroiddev的build.gradle文件，去掉相应注释！
         //  这里是一些原码
 
-        Schema schema = new Schema(2, "com.ijustyce.health.model");
- //       addRecord(schema);
+        Schema schema = new Schema(2, "com.ijustyce.chat.model");
         addUser(schema);
         try {
             new DaoGenerator().generateAll(schema, "greendaojava/src-model");
@@ -47,17 +45,14 @@ public class GreenDaoExample {
          */
     }
 
-    private static void addRecord(Schema schema, Entity entity){
-        Entity note = schema.addEntity("Record");
+    private static void addRecord(Schema schema){
+        Entity Record = schema.addEntity("Record");
 
-        note.addIdProperty();
-        note.addStringProperty("title");
-        note.addLongProperty("ownerId");
-        note.addIntProperty("type");
-        note.addStringProperty("content");
-        note.addBooleanProperty("delete");
-        note.addIntProperty("status");
-        note.addStringProperty("phone");
+        Record.addIdProperty();
+        Record.addStringProperty("date");
+        Record.addStringProperty("msg");
+        Record.addStringProperty("from");
+        Record.addIntProperty("type");
 //        Property phone = note.addStringProperty("phone").notNull().getProperty();
 //        note.addToOne(entity, phone);
     }
@@ -66,13 +61,11 @@ public class GreenDaoExample {
         Entity note = schema.addEntity("User");
 
         note.addIdProperty();
-        note.addStringProperty("phone");
-        note.addStringProperty("pw");
+        note.addStringProperty("email");
+        note.addStringProperty("head");
         note.addStringProperty("name");
         note.addIntProperty("identity");
         note.addStringProperty("head");
         note.addBooleanProperty("delete");
-
-        addRecord(schema, note);
     }
 }
