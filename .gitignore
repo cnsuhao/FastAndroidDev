@@ -19,9 +19,11 @@ captures/*
 .idea/*
 health/*
 news/*
+xingche/*
+chat/*
+ichat/*
 school/*
 diancan/*
-settings.gradle
 
 # Local configuration file (sdk path, etc)
 local.properties

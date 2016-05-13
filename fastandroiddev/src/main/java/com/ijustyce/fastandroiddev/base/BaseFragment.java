@@ -80,6 +80,14 @@ public abstract class BaseFragment<T> extends Fragment {
         doResume();
     }
 
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+
+    }
+
     void doInit(){}
 
     public final String getResString(int id) {

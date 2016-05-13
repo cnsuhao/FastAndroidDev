@@ -184,6 +184,14 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
     }
 
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+        scrollToPosition(0);
+    }
+
     /**
      * 滚动到某个item所在的位置
      * @param position item的位置

@@ -80,8 +80,7 @@ public abstract class BaseTabFragment extends BaseFragment {
         FragmentAdapter mFragmentAdapter = new FragmentAdapter(getChildFragmentManager(),
                 mFragmentList, mTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.setOffscreenPageLimit(mFragmentList.size()  > 5 ? 5 : mFragmentList.size());
-
+        mViewPager.setOffscreenPageLimit(mFragmentList.size() > 3 ? 3 : mFragmentList.size());
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
