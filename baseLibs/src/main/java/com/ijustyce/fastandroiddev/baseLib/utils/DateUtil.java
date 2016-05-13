@@ -161,7 +161,7 @@ public class DateUtil {
         if (date == null) return 0;
         long l = date.getTime();
         String str = String.valueOf(l);
-        return Long.parseLong(str.substring(0, 10));
+        return Long.parseLong(str.substring(0, str.length() >=10 ? 10 : str.length()));
     }
 
     /**

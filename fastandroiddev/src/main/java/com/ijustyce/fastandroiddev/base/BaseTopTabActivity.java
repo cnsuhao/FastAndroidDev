@@ -87,6 +87,28 @@ public abstract class BaseTopTabActivity extends BaseActivity {
     }
 
     @Override
+    public void toolBarClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarClick();
+    }
+
+    @Override
+    public void toolBarDoubleClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
+    }
+
+    @Override
     public void onDestroy(){
 
         ButterKnife.unbind(this);

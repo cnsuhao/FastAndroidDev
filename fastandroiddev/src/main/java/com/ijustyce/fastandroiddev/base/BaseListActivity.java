@@ -183,6 +183,11 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
     }
 
+    @Override
+    public void toolBarDoubleClick(){
+        scrollToPosition(0);
+    }
+
     /**
      * 滚动到某个item所在的位置
      * @param position item的位置

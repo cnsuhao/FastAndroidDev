@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/res/merged/debug/mipmap-mdpi-v4/split_right_1.png",
+        "source": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/exploded-aar/FastAndroidDev/fastandroiddev/unspecified/res/mipmap-mdpi-v4/split_right_1.png"
+    },
+    {
+        "merged": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/res/merged/debug/mipmap-mdpi-v4/split_1.png",
+        "source": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/exploded-aar/FastAndroidDev/fastandroiddev/unspecified/res/mipmap-mdpi-v4/split_1.png"
+    },
+    {
+        "merged": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/res/merged/debug/mipmap-mdpi-v4/ic_launcher.png",
+        "source": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/src/main/res/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/res/merged/debug/mipmap-mdpi-v4/split_left_1.png",
+        "source": "/Users/yangchun/code/lzh/FastAndroidDev/myapplication/build/intermediates/exploded-aar/FastAndroidDev/fastandroiddev/unspecified/res/mipmap-mdpi-v4/split_left_1.png"
+    }
+]

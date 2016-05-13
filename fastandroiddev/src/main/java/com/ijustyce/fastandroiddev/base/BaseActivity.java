@@ -30,10 +30,12 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     public Activity mContext;
     public SweetAlertDialog dialog;
     public Handler handler;
-    public View rootView;
 
     public String TAG ;
     private T mData;
+
+    private static final int SHORT_DELAY = 1000;
+    private boolean clicked;
 
     /**
      * onCreate .
@@ -49,8 +51,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }
 
         mContext = this;
-        rootView = View.inflate(mContext, getLayoutId(), null);
-        setContentView(rootView);
+        setContentView(getLayoutId());
 
         TAG = getClass().getName();
 
@@ -59,6 +60,18 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (clicked){
+                        toolBarDoubleClick();
+                    }else{
+                        clicked = true;
+                        toolBarClick();
+                        handler.postDelayed(resetClick, SHORT_DELAY);
+                    }
+                }
+            });
         }
 
         View back = findViewById(R.id.back);
@@ -75,6 +88,21 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         doInit();
         afterCreate();
         CallBackManager.onCreate(this);
+    }
+
+    private Runnable resetClick = new Runnable() {
+        @Override
+        public void run() {
+            clicked = false;
+        }
+    };
+
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+
     }
 
     void doInit(){}
