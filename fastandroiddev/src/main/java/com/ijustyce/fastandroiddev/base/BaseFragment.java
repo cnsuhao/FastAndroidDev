@@ -124,7 +124,10 @@ public abstract class BaseFragment<T> extends Fragment {
         }
         dismiss();
         ButterKnife.unbind(this);
-        if (mContext != null) {
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }if (mContext != null) {
             mContext = null;
         }
         if (httpListener != null) {

@@ -1,14 +1,13 @@
 package com.ijustyce.fastandroiddev.net;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.ijustyce.fastandroiddev.R;
+import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.baseLib.utils.ToastUtil;
 
@@ -46,17 +45,21 @@ public final class INetWork {
     public static synchronized boolean sendGet(Context context, HttpParams httpParams,
                                                HttpListener listener) {
 
-        if (!isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(context) || httpParams == null) {
+            if (showToast){
+                ToastUtil.showTop(R.string.error_network, context);
+            }
             return false;
         }
 
         String url = httpParams.getUrl();
-        doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
+                && !httpParams.isRefresh()) return true;
 
         Map<String, String> map = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(url).append(map.isEmpty() ? "" : "?");
+        stringBuilder.append(url).append("?");
         for (String key : map.keySet()) {
 
             stringBuilder.append(key).append("=").append(map.get(key)).append("&");
@@ -96,12 +99,16 @@ public final class INetWork {
                                                 HttpListener listener) {
 
 
-        if (!isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(context) || httpParams == null) {
+            if (showToast){
+                ToastUtil.showTop(R.string.error_network, context);
+            }
             return false;
         }
 
         String url = httpParams.getUrl();
-        doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
+                && !httpParams.isRefresh()) return true;
 
         final Map<String, String> params = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
@@ -140,12 +147,16 @@ public final class INetWork {
     public static synchronized boolean postJson(Context context, final HttpParams httpParams
             , HttpListener listener) {
 
-        if (!isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(context) || httpParams == null) {
+            if (showToast){
+                ToastUtil.showTop(R.string.error_network, context);
+            }
             return false;
         }
 
         String url = httpParams.getUrl();
-        doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
+                && !httpParams.isRefresh()) return true;
 
         final Map<String, String> headers = HttpParams.getHeader();
         HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
@@ -181,7 +192,10 @@ public final class INetWork {
      */
     public static boolean uploadFile(FormFile[] files, Context context, HttpParams httpParams, ProcessListener listener){
 
-        if (!isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(context) || httpParams == null) {
+            if (showToast){
+                ToastUtil.showTop(R.string.error_network, context);
+            }
             return false;
         }
 
@@ -198,27 +212,6 @@ public final class INetWork {
     }
 
     /**
-     * whether is connected to network .
-     *
-     * @return true if connect or else return false
-     */
-    public static boolean isConnected(Context context) {
-
-        if (context == null){
-            return false;
-        }
-
-        ConnectivityManager conManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
-        boolean value =  networkInfo != null && networkInfo.isAvailable();
-        if (!value && showToast){
-            ToastUtil.showTop(R.string.error_network, context);
-        }
-        return value;
-    }
-
-    /**
      * 检测cache里是否有这个请求
      */
     private static boolean doCache(int cacheTime, String key, String url , HttpListener listener){
@@ -229,25 +222,5 @@ public final class INetWork {
         }
         listener.success(tmp, url);
         return true;
-    }
-
-    /**
-     * whether is wifi
-     *
-     * @param context
-     * @return true if is wifi or return false
-     */
-
-    public static boolean isWifi(Context context) {
-
-        if (context == null) {
-            return false;
-        }
-
-        ConnectivityManager connectMgr = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo info = connectMgr.getActiveNetworkInfo();
-        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
     }
 }

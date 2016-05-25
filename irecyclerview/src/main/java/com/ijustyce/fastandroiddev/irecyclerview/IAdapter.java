@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.irecyclerview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,7 +19,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     private Context mContext;
     private View mHeaderView, mFooterView;
     private int size, position;
-
+    private RecyclerView recyclerView;
     private static final int TYPE_FOOTER = 1, TYPE_HEADER = 2, TYPE_NORMAL = 3;
 
     public IAdapter(List<T> mData, Context mContext) {
@@ -101,6 +102,10 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }
     }
 
+    public void setRecyclerView(RecyclerView recyclerView){
+        this.recyclerView = recyclerView;
+    }
+
     @Override
     public final int getItemCount() {
         return size;
@@ -139,6 +144,52 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
             if (holder != null) holder.setItemPosition(position);
             createView(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
         }
+        doEvent();
+    }
+
+    public final void doEvent(){
+        if (recyclerView == null || recyclerView.isComputingLayout()) return;
+        int size = changedItem == null ? 0 : changedItem.size();
+        for (int i = 0; i < size; i++){
+            int position = changedItem.indexOfKey(i);
+            int type = changedItem.indexOfValue(i);
+            switch (type){
+                case 1:
+                    itemChanged(position);
+                    break;
+                case 2:
+                    removeItem(position);
+                    break;
+                case 3:
+                    itemInsert(position);
+                    break;
+                case 4:
+                    dataChanged();
+                    break;
+
+            }
+        }
+    }
+
+    SparseIntArray changedItem; //  key is position and value is type, 1->changed, 2->remove, 3->insert, 4->DataChanged
+    public final void itemChanged(int position){
+        if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemChanged(position);
+        else changedItem.put(position, 1);
+    }
+
+    public final void itemRemove(int position){
+        if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemRemoved(position);
+        else changedItem.put(position, 2);
+    }
+
+    public final void itemInsert(int position){
+        if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemInserted(position);
+        else changedItem.put(position, 3);
+    }
+
+    public final void dataChanged(){
+        if (recyclerView != null && !recyclerView.isComputingLayout()) notifyDataSetChanged();
+        else changedItem.put(4, 0);
     }
 
     public final T getObject(int position) {

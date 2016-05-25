@@ -1,2 +1,3 @@
 include ':baseLibs', ':fastandroiddev', ':SweetAlert',
-        ':umenglib', 'irecyclerview', 'school','xingche'
+        ':umenglib', ':irecyclerview',':greendaojava',
+        ':alipay',':qrcode'

@@ -53,6 +53,14 @@ public abstract class BaseTabActivity extends BaseActivity {
     }
 
     @Override
+    public void doResume() {
+        if (mFragmentList == null || mFragmentList.isEmpty())return;
+        for (Fragment fragment : mFragmentList){
+            fragment.onResume();
+        }
+    }
+
+    @Override
     public int getLayoutId() {
         return R.layout.fastandroiddev_activity_tab;
     }

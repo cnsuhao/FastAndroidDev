@@ -27,7 +27,6 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public IRecyclerView mIRecyclerView;
     public LinearLayout noData;
 
-    public Handler handler;
     public IAdapter<T> adapter;
     public List<T> data;
 

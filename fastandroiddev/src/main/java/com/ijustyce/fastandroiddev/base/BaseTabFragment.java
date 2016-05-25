@@ -38,7 +38,15 @@ public abstract class BaseTabFragment extends BaseFragment {
         addTitle();
         addFragment();
         setAdapter();
-    };
+    }
+
+    @Override
+    public void doResume() {
+        if (mFragmentList == null || mFragmentList.isEmpty())return;
+        for (Fragment fragment : mFragmentList){
+            fragment.onResume();
+        }
+    }
 
     public final void addHeaderView(View view){
 

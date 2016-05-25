@@ -223,9 +223,10 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
             httpListener = null;
         }if (handler != null){
             handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }if (mContext != null) {
+            mContext = null;
         }
-        handler = null;
-        mContext = null;
     }
 
     @Override
