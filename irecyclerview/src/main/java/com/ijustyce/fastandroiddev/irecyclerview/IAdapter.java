@@ -39,6 +39,10 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }
     }
 
+    public final Context getContext(){
+        return mContext;
+    }
+
     public boolean isFooterVisible() {
         return isFooterVisible;
     }
