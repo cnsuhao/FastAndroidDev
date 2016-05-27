@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.ijustyce.fastandroiddev.R;
@@ -29,10 +30,12 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     public Activity mContext;
     public SweetAlertDialog dialog;
     public Handler handler;
-    public View rootView;
 
     public String TAG ;
     private T mData;
+
+    private static final int SHORT_DELAY = 1000;
+    private boolean clicked;
 
     /**
      * onCreate .
@@ -48,8 +51,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }
 
         mContext = this;
-        rootView = View.inflate(mContext, getLayoutId(), null);
-        setContentView(rootView);
+        setContentView(getLayoutId());
 
         TAG = getClass().getName();
 
@@ -58,14 +60,49 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (clicked){
+                        toolBarDoubleClick();
+                    }else{
+                        clicked = true;
+                        toolBarClick();
+                        handler.postDelayed(resetClick, SHORT_DELAY);
+                    }
+                }
+            });
         }
+
+        View back = findViewById(R.id.back);
+        if (back != null) back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backPress();
+            }
+        });
 
         AppManager.pushActivity(this);
 
         handler = new Handler();
         doInit();
         afterCreate();
-        CallBackManager.getActivityLifeCall().onCreate(this);
+        CallBackManager.onCreate(this);
+    }
+
+    private Runnable resetClick = new Runnable() {
+        @Override
+        public void run() {
+            clicked = false;
+        }
+    };
+
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+
     }
 
     void doInit(){}
@@ -74,7 +111,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     protected void onStop() {
         super.onStop();
         VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
-        CallBackManager.getActivityLifeCall().onStop(this);
+        CallBackManager.onStop(this);
     }
 
     /**
@@ -94,7 +131,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected final void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume(this);
+        CallBackManager.onResume(this);
         doResume();
     }
 
@@ -110,7 +147,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (handler != null){
             handler.post(dismiss);
         }
-        CallBackManager.getActivityLifeCall().onPause(this);
+        CallBackManager.onPause(this);
     }
 
     public String getTAG() {
@@ -178,7 +215,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (mContext != null && TAG != null && VolleyUtils.getInstance().getVolleyRequestQueue(mContext) != null){
             VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
-        CallBackManager.getActivityLifeCall().onDestroy(this);
+        CallBackManager.onDestroy(this);
         super.onDestroy();
         AppManager.moveActivity(this);
         ButterKnife.unbind(this);
@@ -186,9 +223,17 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
             httpListener = null;
         }if (handler != null){
             handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }if (mContext != null) {
+            mContext = null;
         }
-        handler = null;
-        mContext = null;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        CallBackManager.dispatchTouchEvent(event, this);
+        return super.dispatchTouchEvent(event);
     }
 
     public final void newActivity(Intent intent, Bundle bundle){
@@ -272,6 +317,14 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     public final String getResText(int id){
 
         return getResources().getString(id);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //first saving my state, so the bundle wont be empty.
+        //https://code.google.com/p/android/issues/detail?id=19917
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
     }
 
     @Override

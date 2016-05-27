@@ -14,6 +14,7 @@ public final class HttpParams {
     private Map<String, String> params;
     private String url;
     private String tag;
+    private boolean refresh = true;
     private String cacheKey = "";
     private int cacheTime;  //  秒数
     private JSONObject json;
@@ -31,6 +32,15 @@ public final class HttpParams {
     public HttpParams setCacheTime(int second){
 
         cacheTime = second;
+        return this;
+    }
+
+    public boolean isRefresh() {
+        return refresh;
+    }
+
+    public HttpParams refresh(boolean refresh) {
+        this.refresh = refresh;
         return this;
     }
 

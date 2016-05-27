@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
@@ -28,9 +27,8 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public IRecyclerView mIRecyclerView;
     public LinearLayout noData;
 
-    public Handler handler;
     public IAdapter<T> adapter;
-    private List<T> data;
+    public List<T> data;
 
     public int pageNo = 1;
 
@@ -102,7 +100,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     @Override
     public void onFailed(int code, String msg, String taskId) {
 
-        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+     //   Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         handler.post(hasNoData);
     }
 
@@ -117,6 +115,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
 
         Object result = IJson.fromJson(object, getType());
+        onGetData(result);
         if (result instanceof IResponseData){
 
             List<T> objectsList = ((IResponseData<T>)result).getData();
@@ -128,6 +127,8 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             }
         }
     }
+
+    public void onGetData(Object object){};
 
     private PullToRefreshListener refreshListener = new PullToRefreshListener() {
         @Override
@@ -179,6 +180,21 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if (data != null) {
             data = null;
         }
+    }
+
+    @Override
+    public void toolBarDoubleClick(){
+        scrollToPosition(0);
+    }
+
+    /**
+     * 滚动到某个item所在的位置
+     * @param position item的位置
+     */
+    public final void scrollToPosition(int position){
+
+        if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null) return;
+        mIRecyclerView.getRecyclerView().smoothScrollToPosition(position);
     }
 
     public final void setNoDataImg(int resId){

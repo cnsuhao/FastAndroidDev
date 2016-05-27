@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.baseLib.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -52,6 +53,22 @@ public class DateUtil {
         }
 
         return day + dateToString(date, " HH" + HOUR + "mm" + MINUTE);
+    }
+
+    public static String getWeekOfDate(Date date) {
+
+        String[] weekDays = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0)
+            w = 0;
+        return weekDays[w];
+    }
+
+    public static String getWeekOfDate() {
+
+        return getWeekOfDate(new Date());
     }
 
     /**
@@ -161,21 +178,22 @@ public class DateUtil {
         if (date == null) return 0;
         long l = date.getTime();
         String str = String.valueOf(l);
-        return Long.parseLong(str.substring(0, 10));
+        return Long.parseLong(str.substring(0, str.length() >=10 ? 10 : str.length()));
     }
 
     /**
      * convert Unix timestamp to a certain date
-     *
      * @param timesTamp Unix timestamp
      * @return date , like 2014-04-27 11:42:00
      */
     public static String timesTampToDate(String timesTamp, String format) {
 
-        if (StringUtils.isEmpty(format) || StringUtils.isEmpty(timesTamp)) return null;
+        if (format == null || timesTamp ==null) return null;
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
-        long lcc_time = Long.valueOf(timesTamp);
-        return sdf.format(new Date(lcc_time * 1000L));
+
+        long lcc_time = StringUtils.getLong(timesTamp);
+        if (lcc_time == 0) return null;
+        return sdf.format(new Date(lcc_time * 1000));
     }
 
     public static long stringToTimesTamp(String date, String format) {

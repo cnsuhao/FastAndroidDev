@@ -80,6 +80,14 @@ public abstract class BaseFragment<T> extends Fragment {
         doResume();
     }
 
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+
+    }
+
     void doInit(){}
 
     public final String getResString(int id) {
@@ -116,7 +124,10 @@ public abstract class BaseFragment<T> extends Fragment {
         }
         dismiss();
         ButterKnife.unbind(this);
-        if (mContext != null) {
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }if (mContext != null) {
             mContext = null;
         }
         if (httpListener != null) {
@@ -234,6 +245,14 @@ public abstract class BaseFragment<T> extends Fragment {
     public final T getData(){
 
         return mData;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //first saving my state, so the bundle wont be empty.
+        //https://code.google.com/p/android/issues/detail?id=19917
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
     }
 
     public Class getType(){

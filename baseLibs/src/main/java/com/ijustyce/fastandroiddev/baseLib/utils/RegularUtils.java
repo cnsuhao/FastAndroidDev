@@ -22,6 +22,7 @@ public class RegularUtils {
     public static boolean isInt(String value){
 
         if (StringUtils.isEmpty(value)) return false;
+        value = value.substring(value.startsWith("-") ? 1 : 0);
         Pattern p = Pattern
                 .compile("^([0-9])+$");
         Matcher m = p.matcher(value);
@@ -31,6 +32,7 @@ public class RegularUtils {
     public static boolean isNumber(String value){
 
         if (StringUtils.isEmpty(value)) return false;
+        value = value.substring(value.startsWith("-") ? 1 : 0);
         Pattern p = Pattern
                 .compile("^(([0-9])|(\\.))+$");
         Matcher m = p.matcher(value);

@@ -5,7 +5,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 9
@@ -30,9 +30,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'de.greenrobot:greendao:2.1.0'    //  如果使用greendao请删除注释
-    compile project(':autolayout')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //  如果使用greendao请删除注释
+    compile 'com.zhy:autolayout:1.4.3'
     compile project(':SweetAlert')
     compile project(':irecyclerview')
+    compile 'com.bugtags.library:bugtags-lib:latest.integration'
 }
