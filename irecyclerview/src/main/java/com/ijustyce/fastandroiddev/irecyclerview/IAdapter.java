@@ -43,21 +43,12 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }
     }
 
-<<<<<<< HEAD
-    public final Context getContext(){
-        return mContext;
-    }
-
-    public boolean isFooterVisible() {
-        return isFooterVisible;
-=======
     public final void removeItem(int position){
 
         if (mData == null || position < 0 || position >= mData.size()) return;
         mData.remove(position);
         reAddFooter();
         notifyItemRemoved(position);
->>>>>>> e0343227cf2b09602f8b055e0e97f19c2c3c6b69
     }
 
     public final boolean isFooterVisible() {

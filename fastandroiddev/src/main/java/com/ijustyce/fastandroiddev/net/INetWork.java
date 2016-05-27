@@ -59,7 +59,7 @@ public final class INetWork {
         Map<String, String> map = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(url).append(map.isEmpty() ? "" : "?");
+        stringBuilder.append(url).append("?");
         for (String key : map.keySet()) {
 
             stringBuilder.append(key).append("=").append(map.get(key)).append("&");
