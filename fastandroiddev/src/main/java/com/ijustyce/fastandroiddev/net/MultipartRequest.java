@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class MultipartRequest extends Request<String> {
     private ProcessListener mListener;
-    private Map<String, String> headerMap;
     private Map<String, String> mParams;
     private FormFile[] files;
     private String BOUNDARY = "---------7dc05dba8f3e19";
@@ -42,7 +41,7 @@ public class MultipartRequest extends Request<String> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        headerMap = new HashMap<>();
+        Map<String, String> headerMap = new HashMap<>();
         headerMap.put("Charset", "UTF-8");
         //Keep-Alive
         headerMap.put("Connection", "Keep-Alive");

@@ -185,6 +185,27 @@ public final class INetWork {
         return true;
     }
 
+    public static boolean downloadFile(HttpParams httpParams, String savePath, Context context,
+                                       ProcessListener processListener){
+
+        if (!CommonTool.isConnected(context) || httpParams == null) {
+            if (showToast){
+                ToastUtil.showTop(R.string.error_network, context);
+            }
+            return false;
+        }
+        FileDownRequest request = new FileDownRequest(httpParams.getUrl(), processListener, savePath);
+        String tag = httpParams.getTag();
+        if (tag == null || tag.length() < 1) {
+
+            VolleyUtils.addRequest(request, context);
+            ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
+        } else {
+            VolleyUtils.addRequest(request, httpParams.getTag(), context);
+        }
+        return true;
+    }
+
     /**
      * 上传一组文件
      * files    文件
