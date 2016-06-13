@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
@@ -28,12 +29,12 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public LinearLayout noData;
 
     public IAdapter<T> adapter;
-    public List<T> data;
+    private List<T> data;
 
     public int pageNo = 1;
 
     @Override
-    final void doInit() {
+    public final void doInit() {
 
         init();
     }
@@ -43,8 +44,16 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         doResume();
     }
 
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+        scrollToPosition(0);
+    }
+
     @Override
-    public void doResume() {
+    public final void doResume() {
 
         //  刷新数据
         if (mIRecyclerView != null) {
@@ -70,10 +79,10 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
 
         Object result = IJson.fromJson(object, getType());
-        onGetData(result);
         if (result instanceof IResponseData){
 
-            List<T> objectsList = ((IResponseData<T>)result).getData();
+            List<T> objectsList = parseData(result);
+            objectsList = objectsList == null ? ((IResponseData<T>)result).getData() : objectsList;
             if (objectsList != null && !objectsList.isEmpty()){
                 data.addAll(objectsList);
                 handler.post(newData);
@@ -83,9 +92,15 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
     }
 
-    public void onGetData(Object object){};
+    public List<T> parseData(Object object){
+        return null;
+    }
 
-    public final T getById(int position){
+    public boolean showNoData(){
+        return true;
+    }
+
+    public T getById(int position){
 
         if (position < 0 || position >= data.size()){
             return null;
@@ -96,7 +111,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     @Override
     public void onFailed(int code, String msg, String taskId) {
 
-    //    Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         handler.post(hasNoData);
     }
 
@@ -124,7 +139,6 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         data = new ArrayList<>();
         adapter = buildAdapter(mContext, data);
         if(adapter == null){
-            noData.setVisibility(View.VISIBLE);
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
             return;
         }
@@ -156,12 +170,12 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
     };
 
+    //  获取更多数据
+    public abstract boolean getMoreData();
+
     public boolean clickNoDataToRefresh(){
         return true;
     }
-
-    //  获取更多数据
-    public abstract boolean getMoreData();
 
     public abstract IAdapter<T> buildAdapter(Context mContext, List<T> data);
 
@@ -176,29 +190,12 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             adapter = null;
         }
         if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
             handler = null;
         }
         if (data != null) {
             data = null;
         }
-    }
-
-    public void toolBarClick(){
-
-    }
-
-    public void toolBarDoubleClick(){
-        scrollToPosition(0);
-    }
-
-    /**
-     * 滚动到某个item所在的位置
-     * @param position item的位置
-     */
-    public final void scrollToPosition(int position){
-
-        if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null) return;
-        mIRecyclerView.getRecyclerView().smoothScrollToPosition(position);
     }
 
     public final void setNoDataImg(int resId){
@@ -207,6 +204,17 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         ImageView imgView = (ImageView) noData.findViewById(R.id.noDataImg);
         if (imgView != null)
             imgView.setImageBitmap(CommonTool.drawableToBitmap(getResources().getDrawable(resId)));
+    }
+
+    /**
+     * 滚动到某个item所在的位置
+     * @param position item的位置
+     */
+    public final void scrollToPosition(int position){
+
+        if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null
+                || data == null || data.isEmpty()) return;
+        mIRecyclerView.getRecyclerView().smoothScrollToPosition(position);
     }
 
     public final void setNoDataMsg(int resId){
@@ -228,8 +236,8 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
             if (mContext != null && adapter != null && data != null) {
-                //adapter.notifyDataSetChanged();
                 mIRecyclerView.notifyDataSetChanged();
+             //   adapter.notifyDataSetChanged();
             }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
@@ -247,11 +255,11 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
-                //adapter.notifyDataSetChanged();
+           //     adapter.notifyDataSetChanged();
                 mIRecyclerView.notifyDataSetChanged();
             }
 
-            if (data != null && data.isEmpty() && noData != null) {
+            if (showNoData() && data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }

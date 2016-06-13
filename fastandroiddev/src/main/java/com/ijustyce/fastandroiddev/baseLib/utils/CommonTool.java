@@ -1,6 +1,7 @@
 package com.ijustyce.fastandroiddev.baseLib.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -39,15 +40,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -60,27 +62,65 @@ import java.util.UUID;
 public class CommonTool {
 
     /**
-     * 对double 类型数据进行四舍五入，并保留两位小数
+     *  对double 类型数据进行四舍五入，并保留两位小数
      */
-    public static double getShortDouble(double value) {
+    public static double getShortDouble(double value){
 
         return Math.round(value * 100) / 100.0;
     }
 
     /**
      * 判断是否是wifi
-     *
      * @return 如果是wifi 则返回true，否则返回false
      */
 
-    public static boolean isWifi(Context context) {
+    public static boolean isWifi(Context context){
 
         if (context == null) return false;
         ConnectivityManager connectMgr = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo info = connectMgr.getActiveNetworkInfo();
-        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
+        return info!=null && info.getType() == ConnectivityManager.TYPE_WIFI;
+    }
+
+    /**
+     * 获取android当前可用内存大小,以M为单位
+     */
+    public static int getAvailMemory(Context context){
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+        am.getMemoryInfo(mi);
+        int avail = (int)mi.availMem/(1024*1024);
+        ILog.i("===CommonTool===", "getAvailMemory " + avail);
+        return avail;
+    }
+
+    /**
+     * 获取总内存大小，以M为单位
+     * @return  总内存大小M
+     */
+    public static int getTotalMemory(Context context){
+        String str1 = "/proc/meminfo";// 系统内存信息文件
+        String str2;
+        String[] arrayOfString;
+        int initial_memory = 0;
+        try
+        {
+            FileReader localFileReader = new FileReader(str1);
+            BufferedReader localBufferedReader = new BufferedReader(
+                    localFileReader, 8192);
+            str2 = localBufferedReader.readLine();// 读取meminfo第一行，系统总内存大小
+            arrayOfString = str2.split("\\s+");
+            for (String num : arrayOfString) {
+                ILog.i(str2, num + "\t");
+            }
+            initial_memory = Integer.valueOf(arrayOfString[1]);// 获得系统总内存，单位是KB
+            localBufferedReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return initial_memory/1024;
     }
 
     /**
@@ -175,7 +215,7 @@ public class CommonTool {
         return getPkgName(context) + getVersionName(context);
     }
 
-    public static boolean openUrl(String url, Activity mContext) {
+    public static boolean openUrl(String url, Activity mContext){
 
         if (mContext == null || !RegularUtils.isCommonUrl(url)) return false;
 
@@ -184,23 +224,23 @@ public class CommonTool {
         Uri content_url = Uri.parse(url);
         intent.setData(content_url);
         try {
-            mContext.startActivity(Intent.createChooser(intent, "请选择应用"));
+            mContext.startActivity( Intent.createChooser(intent, "请选择应用"));
         } catch (android.content.ActivityNotFoundException ex) {
             return false;
         }
         return true;
     }
 
-    public static void setEditAble(boolean editAble, EditText editText) {
+    public static void setEditAble(boolean editAble, EditText editText){
 
-        if (editText == null) {
+        if (editText == null){
             return;
         }
         editText.setFocusableInTouchMode(editAble);
         editText.setLongClickable(editAble);
-        if (editAble) {
+        if (editAble){
             editText.requestFocus();
-        } else {
+        }else {
             editText.clearFocus();
         }
     }
@@ -213,7 +253,7 @@ public class CommonTool {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
-            mContext.startActivityForResult(Intent.createChooser(intent, "请选择文件"), requestCode);
+            mContext.startActivityForResult( Intent.createChooser(intent, "请选择文件"), requestCode);
         } catch (android.content.ActivityNotFoundException ex) {
             return false;
         }
@@ -460,20 +500,19 @@ public class CommonTool {
 
     /**
      * 显示或隐藏密码
-     *
-     * @param showPw true 则显示，否则隐藏
-     * @param view   若为空，则直接return
+     * @param showPw    true 则显示，否则隐藏
+     * @param view      若为空，则直接return
      */
-    public static void showPw(boolean showPw, TextView view) {
+    public static void showPw(boolean showPw, TextView view){
 
-        if (view == null) {
+        if (view == null){
             ILog.e("===CommonTool===", "showPw view can not be null ...");
             return;
         }
-        if (showPw) {
+        if(showPw){
             //如果选中，显示密码
             view.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-        } else {
+        }else{
             //否则隐藏密码
             view.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
@@ -706,13 +745,12 @@ public class CommonTool {
     /**
      * 直接调用短信API发送信息(设置监听发送和接收状态)
      *
-     * @param strPhone 手机号码
-     * @param strMsg   短信内容
+     * @param strPhone      手机号码
+     * @param strMsg 短信内容
      */
     public static void sendMessage(final Context mContext, final String strPhone, final String strMsg) {
 
-        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg))
-            return;
+        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg)) return;
         //处理返回的发送状态
         String SENT_SMS_ACTION = "SENT_SMS_ACTION";
         Intent sentIntent = new Intent(SENT_SMS_ACTION);
@@ -760,14 +798,13 @@ public class CommonTool {
     /**
      * 跳转至发送短信界面(自动设置接收方的号码以及短信内容)
      *
-     * @param mContext context
-     * @param strPhone 手机号码
-     * @param strMsg   短信内容
+     * @param mContext      context
+     * @param strPhone      手机号码
+     * @param strMsg        短信内容
      */
     public static void toSendMessageActivity(Context mContext, String strPhone, String strMsg) {
 
-        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg))
-            return;
+        if (mContext == null || StringUtils.isEmpty(strPhone) || StringUtils.isEmpty(strMsg)) return;
         if (PhoneNumberUtils.isGlobalPhoneNumber(strPhone)) {
             Uri uri = Uri.parse("smsto:" + strPhone);
             Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
@@ -778,11 +815,10 @@ public class CommonTool {
 
     /**
      * get screen width
-     *
      * @param context context
      * @return
      */
-    public static int getScreenWidth(Context context) {
+    public static int getScreenWidth(Context context){
 
         if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -791,46 +827,18 @@ public class CommonTool {
 
     /**
      * get screen height
-     *
      * @param context context
      * @return
      */
-    public static int getScreenHeight(Context context) {
+    public static int getScreenHeight(Context context){
 
         if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return vm.getDefaultDisplay().getHeight();
     }
 
-    public int progressNotify(Context con, int iconId, String title, int progress) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(con);
-        mBuilder.setContentTitle(title)//设置通知栏标题
-                .setContentText(title) //设置通知栏显示内容
-                //.setContentIntent(getDefalutIntent(con, Notification.FLAG_AUTO_CANCEL))
-                //  .setNumber(number) //设置通知集合的数量
-                .setTicker(title) //通知首次出现在通知栏，带上升动画效果的
-                .setWhen(System.currentTimeMillis())//通知产生的时间，会在通知信息里显示，一般是系统获取到的时间
-                .setPriority(Notification.PRIORITY_DEFAULT) //设置该通知优先级
-                //  .setAutoCancel(true)//设置这个标志当用户单击面板就可以让通知将自动取消
-                .setOngoing(false)//ture，设置他为一个正在进行的通知。他们通常是用来表示一个后台任务,用户积极参与(如播放音乐)或以某种方式正在等待,因此占用设备(如一个文件下载,同步操作,主动网络连接)
-                //Notification.DEFAULT_ALL  Notification.DEFAULT_SOUND 添加声音 // requires VIBRATE permission
-                .setSmallIcon(iconId);//设置通知小ICON
-        //    mBuilder.setDefaults(Notification.DEFAULT_ALL);//向通知添加声音、闪灯和振动效果的最简单、最一致的方式是使用当前的用户默认设置，使用defaults属性，可以组合
-        RemoteViews myNotificationView = new RemoteViews(con.getPackageName(), R.layout.fastandroiddev_notification_download);
-        myNotificationView.setTextViewText(R.id.notification_title, title);
-        myNotificationView.setProgressBar(R.id.notification_progressBar,100,progress,false);
-        Notification notification = mBuilder.build();
-        notification.contentView = myNotificationView;
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-        NotificationManager notificationManager = (NotificationManager) con
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        int id = (int)System.currentTimeMillis();
-        notificationManager.notify(id, notification);
-        return id;
-    }
-
     public static void showNotify(String title, String msg, Intent intent,
-                                  Context context, int resSmallIcon) {
+                                  Context context, int resSmallIcon){
 
         if (StringUtils.isEmpty(title) || StringUtils.isEmpty(msg)) return;
 
@@ -858,7 +866,7 @@ public class CommonTool {
         notificationManager.notify(id, notification);
     }
 
-    public static String getText(TextView view) {
+    public static String getText(TextView view){
 
         return view == null ? null : view.getText().toString();
     }

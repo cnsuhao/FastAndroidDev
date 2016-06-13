@@ -14,4 +14,37 @@ public interface ActivityLifeCall {
     void onStop(Activity activity);
     void onDestroy(Activity activity);
     void dispatchTouchEvent(MotionEvent event, Activity activity);
+
+    class DefaultActivityLifeCall implements ActivityLifeCall{
+
+        @Override
+        public void onResume(Activity activity) {
+
+        }
+
+        @Override
+        public void onPause(Activity activity) {
+
+        }
+
+        @Override
+        public void onCreate(Activity activity) {
+
+        }
+
+        @Override
+        public void onStop(Activity activity) {
+
+        }
+
+        @Override
+        public void onDestroy(Activity activity) {
+
+        }
+        @Override
+        public void dispatchTouchEvent(MotionEvent event, Activity activity) {
+
+        }
+
+    }
 }

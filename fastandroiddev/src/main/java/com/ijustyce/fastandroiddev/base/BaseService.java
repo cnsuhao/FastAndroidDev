@@ -1,13 +1,12 @@
 package com.ijustyce.fastandroiddev.base;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.IBinder;
 
-public class BaseService extends Service{
+public class BaseService extends IntentService {
 
 	private IntentFilter killSelf;
     public boolean kill = false;
@@ -16,10 +15,19 @@ public class BaseService extends Service{
     public static final String KILL_SELF = "kill_self";
 
 	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
+	protected void onHandleIntent(Intent intent) {
+
 	}
-	
+
+	public BaseService(String name) {
+		super(name);
+	}
+
+	@Override
+	public void onStart(Intent intent, int startId) {
+		super.onStart(intent, startId);
+	}
+
 	private BroadcastReceiver killSelfReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -48,6 +56,12 @@ public class BaseService extends Service{
 
         this.stopSelf();
     }
+
+	@Override
+	public void onLowMemory() {
+		super.onLowMemory();
+		System.gc();
+	}
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

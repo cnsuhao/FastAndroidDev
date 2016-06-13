@@ -64,18 +64,16 @@ public class OptAnimationLoader {
                 createAnimationFromXml(c, parser, (AnimationSet)anim, attrs);
             } else if (name.equals("alpha")) {
                 anim = new AlphaAnimation(c, attrs);
-            } else if (name.equals("scale")) {
-                anim = new ScaleAnimation(c, attrs);
-            }  else if (name.equals("rotate")) {
+            }   else if (name.equals("rotate")) {
                 anim = new RotateAnimation(c, attrs);
             }  else if (name.equals("translate")) {
                 anim = new TranslateAnimation(c, attrs);
-            } else {
-                try {
-                    anim = (Animation) Class.forName(name).getConstructor(Context.class, AttributeSet.class).newInstance(c, attrs);
-                } catch (Exception te) {
-                    throw new RuntimeException("Unknown animation name: " + parser.getName() + " error:" + te.getMessage());
-                }
+            }
+//            else if (name.equals("scale")) {
+//                anim = new ScaleAnimation(c, attrs);
+//            }
+            else {
+                anim = new ScaleAnimation(c, attrs);
             }
 
             if (parent != null) {

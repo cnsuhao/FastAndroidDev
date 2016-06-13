@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.ijustyce.fastandroiddev.R;
@@ -33,7 +32,6 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
 
     public String TAG ;
     private T mData;
-
     private static final int SHORT_DELAY = 1000;
     private boolean clicked;
 
@@ -50,10 +48,10 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
             return;
         }
 
-        mContext = this;
         setContentView(getLayoutId());
 
         TAG = getClass().getName();
+        mContext = this;
 
         ButterKnife.bind(this);
 
@@ -74,20 +72,12 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
             });
         }
 
-        View back = findViewById(R.id.back);
-        if (back != null) back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backPress();
-            }
-        });
-
         AppManager.pushActivity(this);
 
         handler = new Handler();
         doInit();
         afterCreate();
-        CallBackManager.onCreate(this);
+        CallBackManager.getActivityLifeCall().onCreate(this);
     }
 
     private Runnable resetClick = new Runnable() {
@@ -105,13 +95,19 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
 
     }
 
-    void doInit(){}
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        System.gc();
+    }
+
+    protected void doInit(){}
 
     @Override
     protected void onStop() {
         super.onStop();
         VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
-        CallBackManager.onStop(this);
+        CallBackManager.getActivityLifeCall().onStop(this);
     }
 
     /**
@@ -131,7 +127,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected final void onResume() {
         super.onResume();
-        CallBackManager.onResume(this);
+        CallBackManager.getActivityLifeCall().onResume(this);
         doResume();
     }
 
@@ -147,7 +143,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (handler != null){
             handler.post(dismiss);
         }
-        CallBackManager.onPause(this);
+        CallBackManager.getActivityLifeCall().onPause(this);
     }
 
     public String getTAG() {
@@ -169,7 +165,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
      * 让dialog消失
      * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
      */
-    public final void dismiss(int delay){
+    public void dismiss(int delay){
 
         if (handler == null){
             handler = new Handler();
@@ -183,17 +179,17 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         handler.postDelayed(dismiss, delay);
     }
 
-    public final void dismiss() {
+    public void dismiss() {
 
         dismiss(0);
     }
 
-    public final String getResString(int resId){
+    public String getResString(int resId){
 
         return getResources().getString(resId);
     }
 
-    public final void showProcess(String text){
+    public void showProcess(String text){
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(text);
@@ -201,7 +197,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         dialog.show();
     }
 
-    public final void showProcess(int resId){
+    public void showProcess(int resId){
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(getResString(resId));
@@ -215,7 +211,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (mContext != null && TAG != null && VolleyUtils.getInstance().getVolleyRequestQueue(mContext) != null){
             VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
-        CallBackManager.onDestroy(this);
+        CallBackManager.getActivityLifeCall().onDestroy(this);
         super.onDestroy();
         AppManager.moveActivity(this);
         ButterKnife.unbind(this);
@@ -227,13 +223,6 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }if (mContext != null) {
             mContext = null;
         }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        CallBackManager.dispatchTouchEvent(event, this);
-        return super.dispatchTouchEvent(event);
     }
 
     public final void newActivity(Intent intent, Bundle bundle){
@@ -289,7 +278,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         }
     };
 
-    public final T getData(){
+    public T getData(){
 
         return mData;
     }
@@ -314,7 +303,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         this.finish();
     }
 
-    public final String getResText(int id){
+    public String getResText(int id){
 
         return getResources().getString(id);
     }
@@ -333,7 +322,8 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             backPress();
+            return true;
         }
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
 }

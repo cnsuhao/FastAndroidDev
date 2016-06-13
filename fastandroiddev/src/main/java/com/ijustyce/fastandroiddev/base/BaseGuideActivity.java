@@ -3,7 +3,6 @@ package com.ijustyce.fastandroiddev.base;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.view.MotionEvent;
 import android.view.Window;
 
 import com.ijustyce.fastandroiddev.R;
@@ -40,7 +39,7 @@ public abstract class BaseGuideActivity extends AutoLayoutActivity {
         addFragment();
         setAdapter();
 
-        CallBackManager.onCreate(this);
+        CallBackManager.getActivityLifeCall().onCreate(this);
     }
 
     public void afterCreate(){}
@@ -77,31 +76,24 @@ public abstract class BaseGuideActivity extends AutoLayoutActivity {
         super.onDestroy();
         ButterKnife.unbind(this);
         AppManager.moveActivity(this);
-        CallBackManager.onDestroy(this);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        CallBackManager.dispatchTouchEvent(event, this);
-        return super.dispatchTouchEvent(event);
+        CallBackManager.getActivityLifeCall().onDestroy(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        CallBackManager.onStop(this);
+        CallBackManager.getActivityLifeCall().onStop(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        CallBackManager.onResume(this);
+        CallBackManager.getActivityLifeCall().onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        CallBackManager.onPause(this);
+        CallBackManager.getActivityLifeCall().onPause(this);
     }
 }

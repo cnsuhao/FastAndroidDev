@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
@@ -28,7 +29,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public LinearLayout noData;
 
     public IAdapter<T> adapter;
-    public List<T> data;
+    private List<T> data;
 
     public int pageNo = 1;
 
@@ -46,9 +47,14 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         }
     }
 
-    final void doInit() {
-
+    @Override
+    protected final void doInit() {
         init();
+    }
+
+    @Override
+    public void toolBarDoubleClick(){
+        scrollToPosition(0);
     }
 
     @Override
@@ -80,7 +86,6 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         data = new ArrayList<>();
         adapter = buildAdapter(mContext, data);
         if(adapter == null){
-            noData.setVisibility(View.VISIBLE);
             ILog.e("===BaseListActivity===", "adapter can not be null ...");
             return;
         }
@@ -89,7 +94,11 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     public abstract Class getType();
 
-    public final T getById(int position){
+    public boolean showNoData(){
+        return true;
+    }
+
+    public T getById(int position){
 
         if (position < 0 || position >= data.size()){
             return null;
@@ -100,7 +109,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     @Override
     public void onFailed(int code, String msg, String taskId) {
 
-     //   Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         handler.post(hasNoData);
     }
 
@@ -174,27 +183,9 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         if (adapter != null) {
             adapter = null;
         }
-        if (handler != null) {
-            handler = null;
-        }
         if (data != null) {
             data = null;
         }
-    }
-
-    @Override
-    public void toolBarDoubleClick(){
-        scrollToPosition(0);
-    }
-
-    /**
-     * 滚动到某个item所在的位置
-     * @param position item的位置
-     */
-    public final void scrollToPosition(int position){
-
-        if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null) return;
-        mIRecyclerView.getRecyclerView().smoothScrollToPosition(position);
     }
 
     public final void setNoDataImg(int resId){
@@ -224,7 +215,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
             if (mContext != null && adapter != null && data != null) {
-                //adapter.notifyDataSetChanged();
+               // adapter.notifyDataSetChanged();
                 mIRecyclerView.notifyDataSetChanged();
             }
 
@@ -233,6 +224,17 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             }
         }
     };
+
+    /**
+     * 滚动到某个item所在的位置
+     * @param position item的位置
+     */
+    public final void scrollToPosition(int position){
+
+        if (mIRecyclerView == null || mIRecyclerView.getRecyclerView() == null
+                || data == null || data.isEmpty()) return;
+        mIRecyclerView.getRecyclerView().smoothScrollToPosition(position);
+    }
 
     public final Runnable hasNoData = new Runnable() {
         @Override
@@ -243,11 +245,11 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
-                //adapter.notifyDataSetChanged();
+           //     adapter.notifyDataSetChanged();
                 mIRecyclerView.notifyDataSetChanged();
             }
 
-            if (data != null && data.isEmpty() && noData != null) {
+            if (showNoData() && data != null && data.isEmpty() && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }

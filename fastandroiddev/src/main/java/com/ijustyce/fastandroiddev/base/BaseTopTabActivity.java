@@ -32,20 +32,56 @@ public abstract class BaseTopTabActivity extends BaseActivity {
         return R.layout.fastandroiddev_activity_top_tab;
     }
 
-    final void doInit(){
+    protected final void doInit(){
 
         initData();
 
         addTitle();
         addFragment();
         setAdapter();
-    };
+    }
+
+    @Override
+    public void doResume() {
+        if (mFragmentList == null || mFragmentList.isEmpty())return;
+        for (Fragment fragment : mFragmentList){
+            fragment.onResume();
+        }
+    }
+
+    @Override
+    public void toolBarClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarClick();
+    }
+
+    @Override
+    public void toolBarDoubleClick() {
+        if (mViewPager == null) return;
+        int id = mViewPager.getCurrentItem();
+        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
+            return;
+        }
+        Fragment fragment = mFragmentList.get(id);
+        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
+    }
 
     public final void addHeaderView(View view){
 
         if (view != null) {
             headerView.addView(view);
         }
+    }
+
+    public final void setBackground(int colorId){
+
+        View view = findViewById(R.id.topView);
+        if (view != null) view.setBackgroundColor(colorId);
     }
 
     private void initData(){
@@ -87,28 +123,6 @@ public abstract class BaseTopTabActivity extends BaseActivity {
     }
 
     @Override
-    public void toolBarClick() {
-        if (mViewPager == null) return;
-        int id = mViewPager.getCurrentItem();
-        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
-            return;
-        }
-        Fragment fragment = mFragmentList.get(id);
-        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarClick();
-    }
-
-    @Override
-    public void toolBarDoubleClick() {
-        if (mViewPager == null) return;
-        int id = mViewPager.getCurrentItem();
-        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
-            return;
-        }
-        Fragment fragment = mFragmentList.get(id);
-        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
-    }
-
-    @Override
     public void onDestroy(){
 
         ButterKnife.unbind(this);
@@ -123,6 +137,13 @@ public abstract class BaseTopTabActivity extends BaseActivity {
     public final void setTabBackground(int color){
 
         mTabLayout.setBackgroundColor(getResColor(color));
+    }
+
+    public final void setTabHeight(int height){
+
+        ViewGroup.LayoutParams params = mTabLayout.getLayoutParams();
+        params.height = height;
+        mTabLayout.setLayoutParams(params);
     }
 
     public final void setTabIndicatorHeight(int height){
@@ -167,13 +188,6 @@ public abstract class BaseTopTabActivity extends BaseActivity {
         if (mViewPager != null){
             mViewPager.setCanScroll(canScroll);
         }
-    }
-
-    public final void setTabHeight(int height){
-
-        ViewGroup.LayoutParams params = mTabLayout.getLayoutParams();
-        params.height = height;
-        mTabLayout.setLayoutParams(params);
     }
 
     public final void setTabIndicatorColor(int color){

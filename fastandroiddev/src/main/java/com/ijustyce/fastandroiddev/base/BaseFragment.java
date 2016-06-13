@@ -58,12 +58,28 @@ public abstract class BaseFragment<T> extends Fragment {
         return mView;
     }
 
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        System.gc();
+    }
+
     public abstract int getLayoutId();
 
     public void afterCreate() {
     }
 
+    public void doInit(){};
+
     public void doResume() {
+    }
+
+    public void toolBarClick(){
+
+    }
+
+    public void toolBarDoubleClick(){
+
     }
 
     @Override
@@ -80,17 +96,7 @@ public abstract class BaseFragment<T> extends Fragment {
         doResume();
     }
 
-    public void toolBarClick(){
-
-    }
-
-    public void toolBarDoubleClick(){
-
-    }
-
-    void doInit(){}
-
-    public final String getResString(int id) {
+    public String getResString(int id) {
 
         return getResources().getString(id);
     }
@@ -124,11 +130,11 @@ public abstract class BaseFragment<T> extends Fragment {
         }
         dismiss();
         ButterKnife.unbind(this);
-        if (handler != null){
+        if (mContext != null) {
+            mContext = null;
+        }if (handler != null){
             handler.removeCallbacksAndMessages(null);
             handler = null;
-        }if (mContext != null) {
-            mContext = null;
         }
         if (httpListener != null) {
             httpListener = null;
@@ -150,7 +156,7 @@ public abstract class BaseFragment<T> extends Fragment {
      * 让dialog消失
      * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
      */
-    public final void dismiss(int delay){
+    public void dismiss(int delay){
 
         if (handler == null){
             handler = new Handler();
@@ -164,7 +170,7 @@ public abstract class BaseFragment<T> extends Fragment {
         handler.postDelayed(dismiss, delay);
     }
 
-    public final void dismiss() {
+    public void dismiss() {
 
         dismiss(0);
     }
@@ -173,7 +179,7 @@ public abstract class BaseFragment<T> extends Fragment {
         return TAG;
     }
 
-    public final void showProcess(String text){
+    public void showProcess(String text){
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(text);
@@ -181,7 +187,7 @@ public abstract class BaseFragment<T> extends Fragment {
         dialog.show();
     }
 
-    public final void showProcess(int resId) {
+    public void showProcess(int resId) {
 
         dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
         dialog.setTitleText(getResString(resId));
@@ -242,9 +248,14 @@ public abstract class BaseFragment<T> extends Fragment {
         }
     };
 
-    public final T getData(){
+    public T getData(){
 
         return mData;
+    }
+
+    public Class getType(){
+
+        return null;
     }
 
     @Override
@@ -253,11 +264,6 @@ public abstract class BaseFragment<T> extends Fragment {
         //https://code.google.com/p/android/issues/detail?id=19917
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
         super.onSaveInstanceState(outState);
-    }
-
-    public Class getType(){
-
-        return null;
     }
 
     public void onSuccess(String object, String taskId) {

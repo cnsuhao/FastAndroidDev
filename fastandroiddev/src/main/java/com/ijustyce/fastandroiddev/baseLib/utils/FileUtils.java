@@ -111,14 +111,18 @@ public class FileUtils {
      * 复制 assets 下的文件到 toPath 目录
      *
      * @param context  mContext
-     * @param toPath   目标文件路径
+     * @param toPath   目标文件路径, 如果存在，将会被覆盖
      * @param fileName assets 下的文件名称
      * @return 成功返回true，失败返回false
      */
-    public static boolean copyDataToSD(Context context,String toPath, String fileName) {
+    public static boolean copyAssets(Context context,String toPath, String fileName) {
 
         if (context == null || toPath == null || fileName == null) return false;
         try {
+            File toFile = new File(toPath);
+            if (toFile.exists()){
+                toFile.delete();
+            }
             InputStream myInput;
             OutputStream myOutput;
             myOutput = new FileOutputStream(toPath);
@@ -129,7 +133,6 @@ public class FileUtils {
                 myOutput.write(buffer, 0, length);
                 length = myInput.read(buffer);
             }
-
             myOutput.flush();
             myInput.close();
             myOutput.close();
@@ -279,7 +282,7 @@ public class FileUtils {
      */
     public static void writeTextFile(File file, String str) {
 
-        if (file == null || !file.exists() || str == null) return;
+        if (file == null || str == null) return;
         DataOutputStream out;
         try {
             out = new DataOutputStream(new FileOutputStream(file));

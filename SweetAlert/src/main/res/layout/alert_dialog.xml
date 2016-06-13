@@ -141,7 +141,6 @@
     <EditText
         android:id="@+id/edit"
         android:minLines="1"
-        android:textColor="@color/background_material_dark"
         android:layout_marginLeft="10sp"
         android:layout_marginRight="10sp"
         android:background="@drawable/article_bg"

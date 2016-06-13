@@ -3,7 +3,6 @@ package com.ijustyce.fastandroiddev.base;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.ijustyce.fastandroiddev.R;
@@ -11,6 +10,8 @@ import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by yc on 15-12-25.   顶部是tab的fragment
@@ -30,14 +31,20 @@ public abstract class BaseTabFragment extends BaseFragment {
         return R.layout.fastandroiddev_fragment_tab;
     }
 
-    @Override
-    final void doInit(){
+    public final void afterCreate(){
 
         initData();
 
         addTitle();
         addFragment();
         setAdapter();
+    };
+
+    public final void addHeaderView(View view){
+
+        if (view != null) {
+            headerView.addView(view);
+        }
     }
 
     @Override
@@ -45,13 +52,6 @@ public abstract class BaseTabFragment extends BaseFragment {
         if (mFragmentList == null || mFragmentList.isEmpty())return;
         for (Fragment fragment : mFragmentList){
             fragment.onResume();
-        }
-    }
-
-    public final void addHeaderView(View view){
-
-        if (view != null) {
-            headerView.addView(view);
         }
     }
 
@@ -87,44 +87,35 @@ public abstract class BaseTabFragment extends BaseFragment {
                 mFragmentList, mTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
         mViewPager.setOffscreenPageLimit(mFragmentList.size() > 3 ? 3 : mFragmentList.size());
+
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
     @Override
-    public void toolBarClick() {
-        if (mViewPager == null) return;
-        int id = mViewPager.getCurrentItem();
-        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
-            return;
-        }
-        Fragment fragment = mFragmentList.get(id);
-        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarClick();
+    public void onDestroy(){
+
+        ButterKnife.unbind(this);
+        super.onDestroy();
     }
 
-    @Override
-    public void toolBarDoubleClick() {
-        if (mViewPager == null) return;
-        int id = mViewPager.getCurrentItem();
-        if (id < 0 || mFragmentList == null || mFragmentList.isEmpty() || id >= mFragmentList.size()){
-            return;
-        }
-        Fragment fragment = mFragmentList.get(id);
-        if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
-    }
-
-    public final void setScrollMode(){
+    public void setScrollMode(){
 
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
     }
 
-    public final void setTabBackground(int color){
+    public String getResString(int resId){
+
+        return getResources().getString(resId);
+    }
+
+    public void setTabBackground(int color){
 
         mTabLayout.setBackgroundColor(getResColor(color));
     }
 
-    public final void setTabIndicatorHeight(int height){
+    public void setTabIndicatorHeight(int height){
 
         mTabLayout.setSelectedTabIndicatorHeight(height);
     }
@@ -138,7 +129,7 @@ public abstract class BaseTabFragment extends BaseFragment {
      *  设置tab的可见性
      * @param value 只能是 View.GONE、View.VISIBLE、View.INVISIBLE
      */
-    public final void setTabVisibility(int value){
+    public void setTabVisibility(int value){
 
         if (value == View.GONE || value == View.VISIBLE || value == View.INVISIBLE) {
             mTabLayout.setVisibility(value);
@@ -148,7 +139,7 @@ public abstract class BaseTabFragment extends BaseFragment {
         }
     }
 
-    public final void setCurrentFragment(int id){
+    public void setCurrentFragment(int id){
 
         if (id > -1 && id < mFragmentList.size() && mViewPager != null){
             mViewPager.setCurrentItem(id, true);
@@ -161,26 +152,19 @@ public abstract class BaseTabFragment extends BaseFragment {
      * 是否禁止左右滑动
      * @param canScroll   TRUE的时候可以左右滑动，false的时候不能左右滑动，默认是true
      */
-    public final void setCanScroll(boolean canScroll){
+    public void setCanScroll(boolean canScroll){
 
         if (mViewPager != null){
             mViewPager.setCanScroll(canScroll);
         }
     }
 
-    public final void setTabHeight(int height){
-
-        ViewGroup.LayoutParams params = mTabLayout.getLayoutParams();
-        params.height = height;
-        mTabLayout.setLayoutParams(params);
-    }
-
-    public final void setTabIndicatorColor(int color){
+    public void setTabIndicatorColor(int color){
 
         mTabLayout.setSelectedTabIndicatorColor(getResColor(color));
     }
 
-    public final void setTabTextColor(int normalColor, int selectedColor){
+    public void setTabTextColor(int normalColor, int selectedColor){
 
         mTabLayout.setTabTextColors(getResColor(normalColor), getResColor(selectedColor));
     }
