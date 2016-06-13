@@ -30,7 +30,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * An {@link com.android.volley.toolbox.HttpStack} based on {@link HttpURLConnection}.
+ * An {@link HttpStack} based on {@link HttpURLConnection}.
  */
 public class TransferStack implements HttpStack {
 
@@ -121,14 +121,14 @@ public class TransferStack implements HttpStack {
      * @return whether the response has a body
      */
     private static boolean hasResponseBody(int requestMethod, int responseCode) {
-        return requestMethod != Request.Method.HEAD
+        return requestMethod != Method.HEAD
             && !(HttpStatus.SC_CONTINUE <= responseCode && responseCode < HttpStatus.SC_OK)
             && responseCode != HttpStatus.SC_NO_CONTENT
             && responseCode != HttpStatus.SC_NOT_MODIFIED;
     }
 
     /**
-     * Initializes an {@link org.apache.http.HttpEntity} from the given {@link HttpURLConnection}.
+     * Initializes an {@link HttpEntity} from the given {@link HttpURLConnection}.
      * @param connection
      * @return an HttpEntity populated with data from <code>connection</code>.
      */

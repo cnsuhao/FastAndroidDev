@@ -1,11 +1,10 @@
 package com.ijustyce.fastandroiddev.net;
 
-import android.content.Context;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.ijustyce.fastandroiddev.IApplication;
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
@@ -42,12 +41,11 @@ public final class INetWork {
     /**
      * send a get request
      */
-    public static synchronized boolean sendGet(Context context, HttpParams httpParams,
-                                               HttpListener listener) {
+    public static synchronized boolean sendGet(HttpParams httpParams, HttpListener listener) {
 
-        if (!CommonTool.isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
+                ToastUtil.showTop(R.string.error_network);
             }
             return false;
         }
@@ -82,10 +80,10 @@ public final class INetWork {
         String tag = httpParams.getTag();
         if (tag == null || tag.length() < 1) {
 
-            VolleyUtils.addRequest(stringRequest, context);
+            VolleyUtils.addRequest(stringRequest, IApplication.getInstance());
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
         } else {
-            VolleyUtils.addRequest(stringRequest, httpParams.getTag(), context);
+            VolleyUtils.addRequest(stringRequest, httpParams.getTag(), IApplication.getInstance());
         }
         ILog.i("===INetWork url===", httpParams.getUrl());
         ILog.i("===INetWork params===", httpParams.getParams().toString());
@@ -95,13 +93,12 @@ public final class INetWork {
     /**
      * send a post request
      */
-    public static synchronized boolean sendPost(Context context, HttpParams httpParams,
-                                                HttpListener listener) {
+    public static synchronized boolean sendPost(HttpParams httpParams, HttpListener listener) {
 
 
-        if (!CommonTool.isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
+                ToastUtil.showTop(R.string.error_network);
             }
             return false;
         }
@@ -133,10 +130,10 @@ public final class INetWork {
         String tag = httpParams.getTag();
         if (tag == null || tag.length() < 1) {
 
-            VolleyUtils.addRequest(stringRequest, context);
+            VolleyUtils.addRequest(stringRequest, IApplication.getInstance());
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
         } else {
-            VolleyUtils.addRequest(stringRequest, httpParams.getTag(), context);
+            VolleyUtils.addRequest(stringRequest, httpParams.getTag(), IApplication.getInstance());
         }
 
         ILog.i("===INetWork url===", httpParams.getUrl());
@@ -144,12 +141,12 @@ public final class INetWork {
         return true;
     }
 
-    public static synchronized boolean postJson(Context context, final HttpParams httpParams
+    public static synchronized boolean postJson(final HttpParams httpParams
             , HttpListener listener) {
 
-        if (!CommonTool.isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
+                ToastUtil.showTop(R.string.error_network);
             }
             return false;
         }
@@ -175,33 +172,32 @@ public final class INetWork {
         String tag = httpParams.getTag();
         if (tag == null || tag.length() < 1) {
 
-            VolleyUtils.addRequest(jsonObjectRequest, context);
+            VolleyUtils.addRequest(jsonObjectRequest, IApplication.getInstance());
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
         } else {
-            VolleyUtils.addRequest(jsonObjectRequest, httpParams.getTag(), context);
+            VolleyUtils.addRequest(jsonObjectRequest, httpParams.getTag(), IApplication.getInstance());
         }
         ILog.i("===INetWork url===", httpParams.getUrl());
         ILog.i("===INetWork params===", httpParams.getParams().toString());
         return true;
     }
 
-    public static boolean downloadFile(HttpParams httpParams, String savePath, Context context,
-                                       ProcessListener processListener){
+    public static boolean downloadFile(HttpParams httpParams, String savePath, ITransferListener downloadListener){
 
-        if (!CommonTool.isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
+                ToastUtil.showTop(R.string.error_network);
             }
             return false;
         }
-        FileDownRequest request = new FileDownRequest(httpParams.getUrl(), processListener, savePath);
+        FileDownRequest request = new FileDownRequest(httpParams.getUrl(), downloadListener, savePath);
         String tag = httpParams.getTag();
         if (tag == null || tag.length() < 1) {
 
-            VolleyUtils.addRequest(request, context);
+            VolleyUtils.addRequest(request, IApplication.getInstance());
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
         } else {
-            VolleyUtils.addRequest(request, httpParams.getTag(), context);
+            VolleyUtils.addRequest(request, httpParams.getTag(), IApplication.getInstance());
         }
         return true;
     }
@@ -211,11 +207,11 @@ public final class INetWork {
      * files    文件
      * @return  true if success or return false
      */
-    public static boolean uploadFile(FormFile[] files, Context context, HttpParams httpParams, ProcessListener listener){
+    public static boolean uploadFile(FormFile[] files, HttpParams httpParams, ITransferListener listener){
 
-        if (!CommonTool.isConnected(context) || httpParams == null) {
+        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network, context);
+                ToastUtil.showTop(R.string.error_network);
             }
             return false;
         }
@@ -224,10 +220,10 @@ public final class INetWork {
         String tag = httpParams.getTag();
         if (tag == null || tag.length() < 1) {
 
-            VolleyUtils.addRequest(request, context);
+            VolleyUtils.addRequest(request, IApplication.getInstance());
             ILog.e("===TAG is null===", "http will not be canceled even if activity or fragment stop");
         } else {
-            VolleyUtils.addRequest(request, httpParams.getTag(), context);
+            VolleyUtils.addRequest(request, httpParams.getTag(), IApplication.getInstance());
         }
         return true;
     }

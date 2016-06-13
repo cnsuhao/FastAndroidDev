@@ -6,6 +6,8 @@
     <string name="ViewHolder">ViewHolder</string>
     <string name="record_hint">录音结束倒计时:#num#秒</string>
 
+    <string name="select_app">选择应用</string>
+
     <string-array name="jazzy_effects">
         <item>Standard</item>
         <item>Tablet</item>

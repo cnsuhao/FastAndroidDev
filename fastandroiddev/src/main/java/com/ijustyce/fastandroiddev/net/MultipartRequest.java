@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MultipartRequest extends Request<String> {
-    private ProcessListener mListener;
+    private ITransferListener mListener;
     private Map<String, String> mParams;
     private FormFile[] files;
     private String BOUNDARY = "---------7dc05dba8f3e19";
@@ -28,11 +28,11 @@ public class MultipartRequest extends Request<String> {
         }
     };
 
-    public MultipartRequest(String url, ProcessListener listener, Map<String, String> params, FormFile[] files) {
+    public MultipartRequest(String url, ITransferListener listener, Map<String, String> params, FormFile[] files) {
         this(Method.POST, url, listener, params, files);
     }
 
-    public MultipartRequest(int method, String url, ProcessListener listener, Map<String, String> params, FormFile[] files) {
+    public MultipartRequest(int method, String url, ITransferListener listener, Map<String, String> params, FormFile[] files) {
         super(method, url, errorListener);
         mListener = listener;
         mParams = params;

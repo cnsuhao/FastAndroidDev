@@ -32,9 +32,9 @@ public class VolleyUtils {
     /**
      * Returns a Volley request queue for creating network requests
      *
-     * @return {@link com.android.volley.RequestQueue}
+     * @return {@link RequestQueue}
      */
-    public RequestQueue getVolleyRequestQueue(Context context) {
+    public static RequestQueue getVolleyRequestQueue(Context context) {
 
         if (mRequestQueue == null && context != null) {
           //  mRequestQueue = Volley.newRequestQueue(context);

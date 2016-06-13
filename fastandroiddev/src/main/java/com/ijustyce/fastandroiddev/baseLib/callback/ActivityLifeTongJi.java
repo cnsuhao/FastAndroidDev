@@ -1,10 +1,9 @@
-package com.ijustyce.fastandroiddev.umenglib;
+package com.ijustyce.fastandroiddev.baseLib.callback;
 
 import android.app.Activity;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.ijustyce.fastandroiddev.baseLib.callback.ActivityLifeCall;
 import com.umeng.analytics.MobclickAgent;
 
 /**

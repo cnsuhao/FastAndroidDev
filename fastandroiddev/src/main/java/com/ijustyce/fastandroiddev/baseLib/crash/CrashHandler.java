@@ -1,8 +1,6 @@
 package com.ijustyce.fastandroiddev.baseLib.crash;
 
 import android.content.Context;
-
-import com.ijustyce.fastandroiddev.baseLib.BuildConfig;
 import com.ijustyce.fastandroiddev.baseLib.utils.FileUtils;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 
@@ -42,7 +40,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         ex.printStackTrace();
         saveToFile(ex);
-        if (BuildConfig.DEBUG && mDefaultHandler != null){
+        if (mDefaultHandler != null){
             mDefaultHandler.uncaughtException(thread, ex);
         }else{
             android.os.Process.killProcess(android.os.Process.myPid());

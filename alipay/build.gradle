@@ -9,13 +9,6 @@ android {
         targetSdkVersion 23
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles 'proguard-project.txt'
-        }
-    }
-
     lintOptions {
         abortOnError false
     }

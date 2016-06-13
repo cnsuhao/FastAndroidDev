@@ -2,15 +2,15 @@ package com.ijustyce.fastandroiddev.ui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.webkit.DownloadListener;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.ijustyce.fastandroiddev.net.DownManager;
+import com.ijustyce.fastandroiddev.net.HttpParams;
+import com.ijustyce.fastandroiddev.net.INetWork;
 
 /**
  * Created by yangchun on 16/4/13.  带进度条的WebView，
@@ -36,8 +36,9 @@ public class ProgressWebView extends WebView {
         setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                DownManager downManager = new DownManager(mContext, url, null);
-                downManager.startDown();
+                HttpParams params = HttpParams.create(null, url);
+                INetWork.downloadFile(params, Environment.getExternalStoragePublicDirectory
+                        (Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), null);
             }
         });
     }

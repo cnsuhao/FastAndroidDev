@@ -10,8 +10,8 @@ import java.util.Map;
  */
 public final class HttpParams {
 
-    private static Map<String, String> commonParams, header;
-    private Map<String, String> params;
+    private static HashMap<String, String> commonParams, header;
+    private HashMap<String, String> params;
     private String url;
     private String tag;
     private boolean refresh = true;

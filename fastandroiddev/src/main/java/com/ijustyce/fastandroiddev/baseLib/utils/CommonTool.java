@@ -39,10 +39,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ijustyce.fastandroiddev.baseLib.R;
+import com.ijustyce.fastandroiddev.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -799,6 +800,33 @@ public class CommonTool {
         if (context == null) return 0;
         WindowManager vm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return vm.getDefaultDisplay().getHeight();
+    }
+
+    public int progressNotify(Context con, int iconId, String title, int progress) {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(con);
+        mBuilder.setContentTitle(title)//设置通知栏标题
+                .setContentText(title) //设置通知栏显示内容
+                //.setContentIntent(getDefalutIntent(con, Notification.FLAG_AUTO_CANCEL))
+                //  .setNumber(number) //设置通知集合的数量
+                .setTicker(title) //通知首次出现在通知栏，带上升动画效果的
+                .setWhen(System.currentTimeMillis())//通知产生的时间，会在通知信息里显示，一般是系统获取到的时间
+                .setPriority(Notification.PRIORITY_DEFAULT) //设置该通知优先级
+                //  .setAutoCancel(true)//设置这个标志当用户单击面板就可以让通知将自动取消
+                .setOngoing(false)//ture，设置他为一个正在进行的通知。他们通常是用来表示一个后台任务,用户积极参与(如播放音乐)或以某种方式正在等待,因此占用设备(如一个文件下载,同步操作,主动网络连接)
+                //Notification.DEFAULT_ALL  Notification.DEFAULT_SOUND 添加声音 // requires VIBRATE permission
+                .setSmallIcon(iconId);//设置通知小ICON
+        //    mBuilder.setDefaults(Notification.DEFAULT_ALL);//向通知添加声音、闪灯和振动效果的最简单、最一致的方式是使用当前的用户默认设置，使用defaults属性，可以组合
+        RemoteViews myNotificationView = new RemoteViews(con.getPackageName(), R.layout.fastandroiddev_notification_download);
+        myNotificationView.setTextViewText(R.id.notification_title, title);
+        myNotificationView.setProgressBar(R.id.notification_progressBar,100,progress,false);
+        Notification notification = mBuilder.build();
+        notification.contentView = myNotificationView;
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        NotificationManager notificationManager = (NotificationManager) con
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        int id = (int)System.currentTimeMillis();
+        notificationManager.notify(id, notification);
+        return id;
     }
 
     public static void showNotify(String title, String msg, Intent intent,
