@@ -11,7 +11,6 @@ import java.util.List;
 public class AppManager {
 
     private static List<Activity> allActivity;
-
     static {
 
         allActivity = new ArrayList<>();
@@ -27,7 +26,7 @@ public class AppManager {
         allActivity.remove(activity);
     }
 
-    public static void finishActivity(Class className){
+    public static void finishActivity(Class<? extends Activity> className){
 
         if (className == null){
             return;
@@ -44,6 +43,19 @@ public class AppManager {
         }
     }
 
+    public static boolean isActivityRun(Class<? extends Activity> className){
+        for (Activity tmp : allActivity) {
+            if (tmp == null) {
+                continue;
+            }
+            String tmpClass = getClassName(tmp);
+            if (tmpClass.equals(className.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void finishAll(){
 
         for (Activity tmp : allActivity) {
@@ -58,7 +70,7 @@ public class AppManager {
      *  结束其他所有Activity
      * @param className 要保留的activity
      */
-    public static void finishExcept(Class className) {
+    public static void finishExcept(Class<? extends Activity> className) {
 
         if (allActivity == null) {
             return;

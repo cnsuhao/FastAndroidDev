@@ -109,7 +109,7 @@ public class HttpResponse {
 
     public Response.Listener<String> stringListener = new Response.Listener<String>() {
         @Override
-        public void onResponse(String s) {
+        public synchronized void onResponse(String s) {
 
             if (request != null && request.isCanceled()){
 
@@ -130,10 +130,9 @@ public class HttpResponse {
     public Response.ErrorListener errorListener = new Response.ErrorListener() {
 
         @Override
-        public void onErrorResponse(VolleyError volleyError) {
+        public synchronized void onErrorResponse(VolleyError volleyError) {
 
             if (request != null && request.isCanceled()){
-
                 return;
             }
 

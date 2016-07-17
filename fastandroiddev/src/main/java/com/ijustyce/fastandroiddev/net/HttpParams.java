@@ -27,7 +27,7 @@ public final class HttpParams {
 
     /**
      * 设置缓存秒数
-     * @param second    缓存秒数
+     * @param second    缓存秒数, -1为永久缓存
      */
     public HttpParams setCacheTime(int second){
 
@@ -150,13 +150,21 @@ public final class HttpParams {
         return this;
     }
 
-    public Map<String, String> getParams(){
+    public Map<String, String> getParams() {
 
-        if (params == null){
+        if (params == null) {
             params = new HashMap<>();
         }
-        if (commonParams != null){
-            params.putAll(commonParams);
+        /**
+         *  在多线程里，可能有，可能，可能有一个线程已经发送了这个请求，正在遍历参数，另一个却正要去发送！
+         *  理论上，一个HttpParam被这样用的可能性很小！但testin、utest测试还是发现有！
+         */
+        try {
+            if (commonParams != null) {
+                params.putAll(commonParams);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return params;
     }

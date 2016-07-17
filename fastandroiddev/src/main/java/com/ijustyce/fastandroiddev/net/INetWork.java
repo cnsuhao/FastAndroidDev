@@ -45,13 +45,13 @@ public final class INetWork {
 
         if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network);
+                ToastUtil.show(R.string.error_network);
             }
             return false;
         }
 
         String url = httpParams.getUrl();
-        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
+        if (httpParams.getCacheTime() != 0 && doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
                 && !httpParams.isRefresh()) return true;
 
         Map<String, String> map = httpParams.getParams();
@@ -98,13 +98,13 @@ public final class INetWork {
 
         if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network);
+                ToastUtil.show(R.string.error_network);
             }
             return false;
         }
 
         String url = httpParams.getUrl();
-        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
+        if (httpParams.getCacheTime() != 0 && doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
                 && !httpParams.isRefresh()) return true;
 
         final Map<String, String> params = httpParams.getParams();
@@ -146,13 +146,13 @@ public final class INetWork {
 
         if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network);
+                ToastUtil.show(R.string.error_network);
             }
             return false;
         }
 
         String url = httpParams.getUrl();
-        if (doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
+        if (httpParams.getCacheTime() != 0 && doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
                 && !httpParams.isRefresh()) return true;
 
         final Map<String, String> headers = HttpParams.getHeader();
@@ -186,7 +186,7 @@ public final class INetWork {
 
         if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network);
+                ToastUtil.show(R.string.error_network);
             }
             return false;
         }
@@ -211,7 +211,7 @@ public final class INetWork {
 
         if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
             if (showToast){
-                ToastUtil.showTop(R.string.error_network);
+                ToastUtil.show(R.string.error_network);
             }
             return false;
         }

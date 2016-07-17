@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -34,6 +35,7 @@ import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
@@ -67,6 +69,30 @@ public class CommonTool {
     public static double getShortDouble(double value){
 
         return Math.round(value * 100) / 100.0;
+    }
+
+    public static String getMetaData(Context context, String key) {
+        if (TextUtils.isEmpty(key)) {
+            return null;
+        }
+        Object res = null;
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            if (packageManager != null) {
+                ApplicationInfo applicationInfo = packageManager
+                        .getApplicationInfo(context.getPackageName(),
+                                PackageManager.GET_META_DATA);
+                if (applicationInfo != null && applicationInfo.metaData != null) {
+                    res = applicationInfo.metaData.get(key);
+                }
+
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // 有可能是String, 有可能是Integer
+        return String.valueOf(res);
     }
 
     /**
@@ -837,13 +863,23 @@ public class CommonTool {
         return vm.getDefaultDisplay().getHeight();
     }
 
-    public static void showNotify(String title, String msg, Intent intent,
+    public static String ACTION_NOTIFY_DELETE = "fastandroiddev_action_notify_delete";
+    public static String NOTIFY_ID = "fastandroiddev_notify_id";
+    public static int showNotify(String title, String msg, Intent intent,
                                   Context context, int resSmallIcon){
+        return showNotify(title, msg, intent, context, resSmallIcon, true);
+    }
 
-        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(msg)) return;
+    /**==============显示一个通知，并注册清除事件=======================**/
+    public static int showNotify(String title, String msg, Intent intent,
+                                  Context context, int resSmallIcon, boolean autoCancel){
+
+        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(msg)) return -1;
 
         int id = (int)System.currentTimeMillis();
-
+        intent.putExtra(NOTIFY_ID, id);
+        PendingIntent deleteIntent = PendingIntent.getBroadcast(context, id,
+                new Intent(ACTION_NOTIFY_DELETE).putExtra(NOTIFY_ID, id), 0);
         PendingIntent pi = PendingIntent.getActivity(context, id, intent, 0);
         Notification notification = new NotificationCompat.Builder(context)
                 .setTicker(title)
@@ -851,7 +887,8 @@ public class CommonTool {
                 .setContentTitle(title)
                 .setContentText(msg)
                 .setContentIntent(pi)
-                .setAutoCancel(true)
+                .setDeleteIntent(deleteIntent)
+                .setAutoCancel(autoCancel)
                 .setDefaults(Notification.DEFAULT_SOUND)//设置声音，此为默认声音
                 //    .setVibrate(vT) //设置震动，此震动数组为：long vT[]={300,100,300,100};
                 //.setLights(argb, onMs, offMs)
@@ -864,6 +901,7 @@ public class CommonTool {
         NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, notification);
+        return id;
     }
 
     public static String getText(TextView view){

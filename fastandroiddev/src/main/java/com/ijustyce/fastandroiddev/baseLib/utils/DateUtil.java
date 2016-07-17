@@ -181,15 +181,19 @@ public class DateUtil {
         return Long.parseLong(str.substring(0, str.length() >=10 ? 10 : str.length()));
     }
 
+    public static String timesTampToDate(String timesTamp, String format){
+        return timesTampToDate(timesTamp, format, Locale.getDefault());
+    }
+
     /**
      * convert Unix timestamp to a certain date
      * @param timesTamp Unix timestamp
      * @return date , like 2014-04-27 11:42:00
      */
-    public static String timesTampToDate(String timesTamp, String format) {
+    public static String timesTampToDate(String timesTamp, String format, Locale locale) {
 
         if (format == null || timesTamp ==null) return null;
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(format, locale);
 
         long lcc_time = StringUtils.getLong(timesTamp);
         if (lcc_time == 0) return null;

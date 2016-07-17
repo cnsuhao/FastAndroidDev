@@ -24,20 +24,13 @@ import com.nineoldandroids.view.ViewHelper;
 
 public class JazzyViewPager extends ViewPager {
 
-    public static final String TAG = "JazzyViewPager";
-
- //   private boolean mEnabled = true;
+    public final String TAG = "JazzyViewPager";
     private boolean mFadeEnabled = false;
     private boolean mOutlineEnabled = false;
     public static int sOutlineColor = Color.WHITE;
     private TransitionEffect mEffect = TransitionEffect.Standard;
 
-    private static SparseArray<Object> mObjs = new SparseArray<>();
-
-    private static final float SCALE_MAX = 0.5f;
-    private static final float ZOOM_MAX = 0.86f;
-    private static final float ROT_MAX = 15.0f;
-
+    private SparseArray<Object> mObjs = new SparseArray<>();
     private boolean isFirst = true;
 
     public enum TransitionEffect {
@@ -280,6 +273,9 @@ public class JazzyViewPager extends ViewPager {
     }
 
     private void animateZoom(View left, View right, float positionOffset, boolean in) {
+
+        final float ZOOM_MAX = 0.86f;
+
         if (mState != State.IDLE) {
             if (left != null) {
                 manageLayer(left, true);
@@ -303,6 +299,7 @@ public class JazzyViewPager extends ViewPager {
     }
 
     private void animateRotate(View left, View right, float positionOffset, boolean up) {
+        final float ROT_MAX = 15.0f;
         if (mState != State.IDLE) {
             if (left != null) {
                 manageLayer(left, true);
@@ -396,6 +393,7 @@ public class JazzyViewPager extends ViewPager {
     }
 
     protected void animateStack(View left, View right, float positionOffset, int positionOffsetPixels) {
+        final float SCALE_MAX = 0.5f;
         if (mState != State.IDLE) {
             if (right != null) {
                 manageLayer(right, true);

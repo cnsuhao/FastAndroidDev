@@ -12,17 +12,15 @@ import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by yc on 15-12-25.   顶部是tab的Activity
  */
 public abstract class BaseTopTabActivity extends BaseActivity {
 
-    private TabLayout mTabLayout;
+    public TabLayout mTabLayout;
     private BaseViewPager mViewPager;
 
-    public List<String> mTitleList;
+    public List<CharSequence> mTitleList;
     public List<Fragment> mFragmentList;
 
     private LinearLayout headerView;
@@ -74,20 +72,16 @@ public abstract class BaseTopTabActivity extends BaseActivity {
     public final void addHeaderView(View view){
 
         if (view != null) {
-            headerView.addView(view);
+            headerView = (LinearLayout) findViewById(R.id.headerView);
+            if (headerView != null) {
+                headerView.addView(view);
+            }
         }
-    }
-
-    public final void setBackground(int colorId){
-
-        View view = findViewById(R.id.topView);
-        if (view != null) view.setBackgroundColor(colorId);
     }
 
     private void initData(){
 
         mTabLayout = (TabLayout) findViewById(R.id.tabTitle);
-        headerView = (LinearLayout) findViewById(R.id.headerView);
         mViewPager = (BaseViewPager) findViewById(R.id.viewPager);
         mFragmentList = new ArrayList<>();
         mTitleList = new ArrayList<>();
@@ -120,13 +114,6 @@ public abstract class BaseTopTabActivity extends BaseActivity {
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
-    }
-
-    @Override
-    public void onDestroy(){
-
-        ButterKnife.unbind(this);
-        super.onDestroy();
     }
 
     public final void setScrollMode(){
@@ -191,7 +178,6 @@ public abstract class BaseTopTabActivity extends BaseActivity {
     }
 
     public final void setTabIndicatorColor(int color){
-
         mTabLayout.setSelectedTabIndicatorColor(getResColor(color));
     }
 

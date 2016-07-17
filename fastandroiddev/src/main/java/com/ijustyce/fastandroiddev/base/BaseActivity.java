@@ -2,6 +2,8 @@ package com.ijustyce.fastandroiddev.base;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +18,6 @@ import com.ijustyce.fastandroiddev.net.HttpListener;
 import com.ijustyce.fastandroiddev.net.VolleyUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
 
-import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
@@ -24,7 +25,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  *
  * @author yc
  */
-public abstract class BaseActivity<T> extends AutoLayoutActivity {
+public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends AutoLayoutActivity {
 
     public Activity mContext;
     public SweetAlertDialog dialog;
@@ -34,6 +35,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     private T mData;
     private static final int SHORT_DELAY = 1000;
     private boolean clicked;
+    public Bind contentView;
 
     /**
      * onCreate .
@@ -43,17 +45,13 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
 
         super.onCreate(bundle);
         if (!beforeCreate()){
-
             finish();
             return;
         }
-
-        setContentView(getLayoutId());
+        contentView = DataBindingUtil.setContentView(this, getLayoutId());
 
         TAG = getClass().getName();
         mContext = this;
-
-        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -72,12 +70,22 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
             });
         }
 
+        View back = findViewById(R.id.back);
+        if (back != null){
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    backPress();
+                }
+            });
+        }
+
         AppManager.pushActivity(this);
 
         handler = new Handler();
         doInit();
         afterCreate();
-        CallBackManager.getActivityLifeCall().onCreate(this);
+        CallBackManager.onCreate(this);
     }
 
     private Runnable resetClick = new Runnable() {
@@ -106,8 +114,8 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
-        CallBackManager.getActivityLifeCall().onStop(this);
+        VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
+        CallBackManager.onStop(this);
     }
 
     /**
@@ -127,7 +135,7 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected final void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume(this);
+        CallBackManager.onResume(this);
         doResume();
     }
 
@@ -136,14 +144,14 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+        if (mContext != null && TAG != null && VolleyUtils
                 .getVolleyRequestQueue(mContext) != null){
-            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+            VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
         if (handler != null){
             handler.post(dismiss);
         }
-        CallBackManager.getActivityLifeCall().onPause(this);
+        CallBackManager.onPause(this);
     }
 
     public String getTAG() {
@@ -208,20 +216,20 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
     @Override
     protected void onDestroy() {
 
-        if (mContext != null && TAG != null && VolleyUtils.getInstance().getVolleyRequestQueue(mContext) != null){
-            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+        if (mContext != null && TAG != null && VolleyUtils.getVolleyRequestQueue(mContext) != null){
+            VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
-        CallBackManager.getActivityLifeCall().onDestroy(this);
+        CallBackManager.onDestroy(this);
         super.onDestroy();
         AppManager.moveActivity(this);
-        ButterKnife.unbind(this);
-        if (httpListener != null) {
-            httpListener = null;
-        }if (handler != null){
+        if (mContext != null) mContext = null;
+        if (httpListener != null) httpListener = null;
+        if (dialog != null) dialog = null;
+        if (TAG != null) TAG = null;
+        if (mData != null) mData = null;
+        if (handler != null){
             handler.removeCallbacksAndMessages(null);
             handler = null;
-        }if (mContext != null) {
-            mContext = null;
         }
     }
 
@@ -233,7 +241,14 @@ public abstract class BaseActivity<T> extends AutoLayoutActivity {
         if (bundle != null){
             intent.putExtras(bundle);
         }
-        mContext.startActivity(intent);
+        startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.push_out, R.anim.push_right_out);
     }
 
     public final void newActivity(Intent intent) {

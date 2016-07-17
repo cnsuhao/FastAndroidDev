@@ -4,12 +4,12 @@ android {
 
     useLibrary 'org.apache.http.legacy'
 
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 23
+        targetSdkVersion 24
     }
 
     lintOptions {
@@ -27,15 +27,21 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.zhy:autolayout:1.4.3'
     compile project(':SweetAlert')
-    compile 'com.android.support:palette-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.bugtags.library:bugtags-lib:latest.integration'
-    compile 'com.umeng.analytics:analytics:latest.integration'
-    compile 'com.alipay.euler:andfix:0.4.0'
+    compile 'com.android.support:palette-v7:24.0.0'
+    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+  //  compile 'com.alipay.euler:andfix:0.4.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+   // compile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    //  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 }

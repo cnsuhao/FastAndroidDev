@@ -16,7 +16,7 @@ import com.ijustyce.fastandroiddev.net.INetWork;
  * Created by yangchun on 16/4/13.  带进度条的WebView，
  * 如果你调用了  setWebChromeClient  请务必在 onProgressChanged 里调用这个类的onProgressChanged
  */
-public class ProgressWebView extends WebView {
+public class ProgressWebView extends WebView{
 
     private ProgressBar progressbar;
     private Context mContext;

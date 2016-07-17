@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data class="MainView">
+
+        <variable
+            name="user"
+            type="com.ijustyce.fastandroiddev.example.model.User" />
+
+        <variable
+            name="handler"
+            type="com.ijustyce.fastandroiddev.example.EventHandler" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/view_layout_main"
+            bind:handler="@{handler}"
+            bind:user="@{user}"/>
+
+        <TextView
+            android:id="@+id/name2"
+            android:onClick="@{handler::onNameClick}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{user.name}" />
+    </LinearLayout>
+
+</layout>

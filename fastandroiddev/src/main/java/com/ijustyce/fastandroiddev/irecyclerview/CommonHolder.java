@@ -9,9 +9,12 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Checkable;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
@@ -22,20 +25,34 @@ import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
  */
 public class CommonHolder extends RecyclerView.ViewHolder{
 
-    private View itemView;
+    public View itemView;
     private Context mContext;
     private SparseArray<View> mView;
     private int position;
-    
-    public CommonHolder(View itemView, Context mContext) {
+
+    public CommonHolder(View itemView, Context context, boolean fillParent){
         super(itemView);
         this.itemView = itemView;
-        this.mContext = mContext;
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        this.itemView.setLayoutParams(lp);
+        this.mContext = context;
         mView = new SparseArray<>();
+
+        if (!fillParent) return;
+
+        ViewGroup.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewParent parent = itemView.getParent();
+        if (parent instanceof FrameLayout){
+            lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+        }if (parent instanceof RelativeLayout){
+            lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        this.itemView.setLayoutParams(lp);
+    }
+    
+    public CommonHolder(View itemView, Context mContext) {
+        this(itemView, mContext, true);
     }
 
     /**
@@ -55,11 +72,15 @@ public class CommonHolder extends RecyclerView.ViewHolder{
     }
 
     public static CommonHolder getInstance(@LayoutRes int id, Context mContext, ViewGroup parent){
+        return getInstance(id, mContext, parent, false);
+    }
+
+    public static CommonHolder getInstance(@LayoutRes int id, Context mContext, ViewGroup parent, boolean fillParent){
         
         if (mContext == null){
             return null;
         }
-        return new CommonHolder(LayoutInflater.from(mContext).inflate(id, parent, false), mContext);
+        return new CommonHolder(LayoutInflater.from(mContext).inflate(id, parent, false), mContext, fillParent);
     }
 
     /**

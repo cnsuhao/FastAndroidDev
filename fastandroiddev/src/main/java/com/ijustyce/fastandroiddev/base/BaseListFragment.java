@@ -4,9 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
@@ -26,12 +24,11 @@ import java.util.List;
 public abstract class BaseListFragment<T> extends BaseFragment {
 
     public IRecyclerView mIRecyclerView;
-    public LinearLayout noData;
-
+    public View noData;
     public IAdapter<T> adapter;
-    private List<T> data;
-
+    public List<T> data;
     public int pageNo = 1;
+    public boolean showNoData = true;
 
     @Override
     public final void doInit() {
@@ -70,6 +67,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
     @Override
     public final void onSuccess(String object, String taskId) {
+        if (handler == null) return;
         if (data == null) {
             handler.post(hasNoData);
             return;
@@ -79,6 +77,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
 
         Object result = IJson.fromJson(object, getType());
+        beforeSuccess(result, taskId);
         if (result instanceof IResponseData){
 
             List<T> objectsList = parseData(result);
@@ -90,14 +89,17 @@ public abstract class BaseListFragment<T> extends BaseFragment {
                 handler.post(hasNoData);
             }
         }
+        afterSuccess(object, taskId);
+    }
+
+    public void beforeSuccess(Object object, String taskId){}
+
+    public void afterSuccess(String object, String taskId){
+
     }
 
     public List<T> parseData(Object object){
         return null;
-    }
-
-    public boolean showNoData(){
-        return true;
     }
 
     public T getById(int position){
@@ -111,17 +113,17 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     @Override
     public void onFailed(int code, String msg, String taskId) {
 
-        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        if (handler == null) return;
         handler.post(hasNoData);
     }
 
-    public int getRecyclerViewId(){return R.id.list;};
-    public int getNoDataId(){return R.id.noData;};
+    public int getRecyclerViewId(){return R.id.list;}
+    public int getNoDataId(){return R.id.noData;}
 
     public final void init() {
 
         mIRecyclerView = (IRecyclerView) mView.findViewById(getRecyclerViewId());
-        noData = (LinearLayout) mView.findViewById(getNoDataId());
+        noData = mView.findViewById(getNoDataId());
 
         if (noData != null && clickNoDataToRefresh()){
             noData.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +159,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
             pageNo = 1;
             mIRecyclerView.setHasMore(true);
-            if (!getMoreData()) {
+            if (!getMoreData() && handler != null) {
                 handler.post(hasNoData);
             }
         }
@@ -182,10 +184,6 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (mContext != null) {
-            mContext = null;
-        }
         if (adapter != null) {
             adapter = null;
         }
@@ -195,6 +193,10 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         }
         if (data != null) {
             data = null;
+        }if (mIRecyclerView != null){
+            mIRecyclerView = null;
+        }if (noData != null){
+            noData = null;
         }
     }
 
@@ -235,13 +237,11 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
+            if ((data == null || !data.isEmpty()) && noData != null) {
+                noData.setVisibility(View.GONE);
+            }
             if (mContext != null && adapter != null && data != null) {
                 mIRecyclerView.notifyDataSetChanged();
-             //   adapter.notifyDataSetChanged();
-            }
-
-            if ((data == null || !data.isEmpty()) && noData != null) {
-                noData.setVisibility(View.INVISIBLE);
             }
         }
     };
@@ -255,11 +255,10 @@ public abstract class BaseListFragment<T> extends BaseFragment {
             mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
-           //     adapter.notifyDataSetChanged();
                 mIRecyclerView.notifyDataSetChanged();
             }
 
-            if (showNoData() && data != null && data.isEmpty() && noData != null) {
+            if (showNoData && adapter != null && adapter.getItemCount() < 2 && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }
