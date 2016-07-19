@@ -3,6 +3,7 @@ package com.ijustyce.fastandroiddev.example;
 import com.ijustyce.fastandroiddev.base.BaseActivity;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.contentprovider.CommonData;
+import com.ijustyce.fastandroiddev.example.EventHandler.ShowMVVMEvent;
 import com.ijustyce.fastandroiddev.example.databinding.MainView;
 import com.ijustyce.fastandroiddev.example.model.User;
 
@@ -20,7 +21,7 @@ public class MainActivity extends BaseActivity<MainView, User> {
         user.setAge(21);
         user.setName("haha");
         contentView.setUser(user);
-        contentView.setHandler(new EventHandler());
+        contentView.setHandler(new ShowMVVMEvent(this));
 
         handler.postDelayed(new Runnable() {
             @Override

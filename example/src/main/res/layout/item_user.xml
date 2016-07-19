@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data class="MainView">
+    <data>
 
         <variable
             name="user"
@@ -14,23 +13,24 @@
     </data>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/view_layout_main"
-            bind:handler="@{handler}"
-            bind:user="@{user}"/>
+        android:layout_height="wrap_content"
+        android:padding="36px"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/name2"
+            android:id="@+id/name"
             android:onClick="@{handler::onNameClick}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{user.name}" />
-    </LinearLayout>
 
+        <TextView
+            android:id="@+id/age"
+            android:onClick="@{user.age > 25 ? handler::onBigAgeClick : handler::onAgeClick}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{user.age + ""}' />
+
+    </LinearLayout>
 </layout>

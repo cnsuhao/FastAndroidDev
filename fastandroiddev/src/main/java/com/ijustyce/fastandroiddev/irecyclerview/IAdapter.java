@@ -1,9 +1,14 @@
 package com.ijustyce.fastandroiddev.irecyclerview;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Handler;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseIntArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,7 +21,7 @@ import java.util.List;
 /**
  * Created by yangchun on 16/4/15.  通用的RecyclerView adapter
  */
-public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
+public abstract class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
 
     private List<T> mData;
     private Context mContext;
@@ -24,12 +29,20 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     private int position;
     private RecyclerView recyclerView;
     private Handler handler;
-    public static final int TYPE_FOOTER = -10, TYPE_HEADER = -20;
+    static final int TYPE_FOOTER = -10, TYPE_HEADER = -20;
+    public int layoutId;
 
-    public IAdapter(List<T> mData, Context mContext) {
+    public IAdapter(Context mContext, List<T> mData, @LayoutRes int layoutId) {
 
         this.mData = mData;
         this.mContext = mContext;
+        handler = new Handler();
+        this.layoutId = layoutId;
+    }
+
+    public IAdapter(Context mContext, List<T> mData){
+        this.mContext = mContext;
+        this.mData = mData;
         handler = new Handler();
     }
 
@@ -103,38 +116,48 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     }
 
     @Override
-    public final CommonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final IBindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         switch (viewType) {
 
             case TYPE_FOOTER:
-                return new CommonHolder(mFooterView, mContext, false);
+                return new IBindingHolder(mFooterView, mContext);
 
             case TYPE_HEADER:
-                return new CommonHolder(mHeaderView, mContext, false);
+                return new IBindingHolder(mHeaderView, mContext);
 
             default:
                 parent.setTag(R.string.tag_item_position, viewType);
-                CommonHolder holder = createViewHolder(mContext, parent);
+                IBindingHolder holder = createViewHolder(mContext, parent);
                 AutoUtils.autoSize(holder.itemView);
                 return holder;
         }
     }
 
-    public abstract CommonHolder createViewHolder(Context mContext, ViewGroup parent);
+    public IBindingHolder createViewHolder(Context mContext, ViewGroup parent){
+        ViewDataBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mContext), layoutId, parent, false);
+        IBindingHolder holder = new IBindingHolder(binding.getRoot());
+        holder.setBinding(binding);
+        return holder;
+    }
 
-    public abstract void createView(CommonHolder commonHolder, T object);
+    public abstract void OnBinding(@NonNull IBindingHolder commonHolder, @NonNull T object);
 
     @Override
-    public final void onBindViewHolder(CommonHolder holder, int position) {
+    public final void onBindViewHolder(IBindingHolder holder, int position) {
 
         this.position = position;
         if ((position == 0 && mHeaderView != null) || (position == getItemCount() -1 && mFooterView != null)){
 
-            ILog.i("===object===", "is footer or header not createView ...");
+            ILog.i("===object===", "is footer or header not OnBinding ...");
         }else {
-            if (holder != null) holder.setItemPosition(position);
-            createView(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
+            if (holder == null) return;
+            if (holder.getBinding() != null) {
+                holder.itemPosition = position;
+                OnBinding(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
+                holder.getBinding().executePendingBindings();
+            }
         }
     }
 
@@ -192,7 +215,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }
     };
 
-    SparseIntArray changedItem = new SparseIntArray(); //  key is position and value is type, 1->changed, 2->remove, 3->insert, 4->DataChanged
+    private SparseIntArray changedItem = new SparseIntArray(); //  key is position and value is type, 1->changed, 2->remove, 3->insert, 4->DataChanged
     public final void itemChanged(int position){
         if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemChanged(position);
         else {
