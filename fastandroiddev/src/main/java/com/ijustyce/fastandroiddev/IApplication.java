@@ -10,6 +10,7 @@ import com.zhy.autolayout.config.AutoLayoutConifg;
 public class IApplication extends Application {
 
     private static Application app;
+    public static int NetCacheSize = Integer.MAX_VALUE;
     @Override
     public void onCreate() {
         super.onCreate();

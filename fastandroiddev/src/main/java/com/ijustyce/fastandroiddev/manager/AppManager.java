@@ -3,6 +3,7 @@ package com.ijustyce.fastandroiddev.manager;
 import android.app.Activity;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,10 +11,10 @@ import java.util.List;
  */
 public class AppManager {
 
-    private static List<Activity> allActivity;
+    private static LinkedList<Activity> allActivity;
     static {
 
-        allActivity = new ArrayList<>();
+        allActivity = new LinkedList<>();
     }
 
     public static void pushActivity(Activity activity) {
@@ -24,6 +25,24 @@ public class AppManager {
     public static void moveActivity(Activity activity) {
 
         allActivity.remove(activity);
+    }
+
+    public static void finishActivity(Class<? extends Activity> className, int maxCount){
+        if (className == null){
+            return;
+        }
+
+        for (Activity tmp : allActivity) {
+            if (tmp == null) {
+                continue;
+            }
+            if (maxCount < 1) break;
+            String tmpClass = getClassName(tmp);
+            if (tmpClass.equals(className.getName())) {
+                tmp.finish();
+                maxCount--;
+            }
+        }
     }
 
     public static void finishActivity(Class<? extends Activity> className){

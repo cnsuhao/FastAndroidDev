@@ -303,7 +303,7 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
         return null;
     }
 
-    public void onSuccess(String object, String taskId){
+    public void onSuccess(Object object, String taskId){
 
     }
 

@@ -4,9 +4,11 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.ijustyce.fastandroiddev.IApplication;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by yangchun on 16/6/19.
@@ -28,6 +30,24 @@ class DBTools {
         values.put("userId", userId);
         contentResolver.insert(Uri.parse(COMMON), values);
         values.clear();
+    }
+
+    @NonNull
+    static HashMap<String, String> getCommonValue(String userId){
+        Uri uri = Uri.parse(COMMON);
+        String[] projection = {"_id", "key", "value"};
+        String sortOrder = "_id ASC";
+        Cursor cursor = contentResolver.query(uri, projection, "userId = '" + userId + "'", null, sortOrder);
+        HashMap<String, String> result = new HashMap<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String value = cursor.getString(cursor.getColumnIndex("value"));
+                String key = cursor.getString(cursor.getColumnIndex("key"));
+                result.put(key, value);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return result;
     }
 
     static ArrayList<String> getCommonValue(String key, String userId) {

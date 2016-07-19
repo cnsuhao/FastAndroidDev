@@ -1,19 +1,14 @@
 package com.ijustyce.fastandroiddev.net;
 
-import android.app.Application;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.ijustyce.fastandroiddev.IApplication;
 import com.ijustyce.fastandroiddev.baseLib.utils.DateUtil;
-import com.ijustyce.fastandroiddev.baseLib.utils.FileUtils;
-import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.StringUtils;
+import com.ijustyce.fastandroiddev.contentprovider.CommonData;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -26,27 +21,25 @@ public class HttpResponse {
     private int cacheTime;
     private String cacheKey;
     private static Map<String, String> responseData;
-    private static File file;
-    private static CacheModel cacheModel;
-
     private Request request;
+    private static final String netUser = "fastandroiddev_netUser";
 
     static {
-        Application app = IApplication.getInstance();
-        if (app != null) {
-            file = new File(app.getFilesDir() + "/.httpCache");
-            cacheModel = IJson.fromJson(FileUtils.readTextFile(file), CacheModel.class);
-        }
-        if (cacheModel == null) cacheModel = new CacheModel();
-        responseData = cacheModel.getMap();
+        responseData = CommonData.getAll(netUser);
     }
 
-    public void setRequest(Request request){
+    void setRequest(Request request){
 
         this.request = request;
     }
 
-    public HttpResponse(int cacheTime, String cacheKey, String url, HttpListener httpListener){
+    public static GlobalNetData globalNetData;
+
+    public interface GlobalNetData{
+        public void afterSuccess(String object);
+    }
+
+    HttpResponse(int cacheTime, String cacheKey, String url, HttpListener httpListener){
 
         this.url = url;
         this.httpListener = httpListener;
@@ -58,8 +51,9 @@ public class HttpResponse {
 
         if (cacheTime > 0 || cacheTime == -1){
 
-            responseData.put(cacheKey, DateUtil.getTimesTamp() + response);
-            FileUtils.writeTextFile(file, IJson.toJson(cacheModel, CacheModel.class));
+            String value = DateUtil.getTimesTamp() + response;
+            responseData.put(cacheKey, value);
+            CommonData.put(cacheKey, value, netUser);
         }
     }
 
@@ -74,10 +68,10 @@ public class HttpResponse {
         }else {
             responseData.remove(key);
         }
-        FileUtils.writeTextFile(file, IJson.toJson(cacheModel, CacheModel.class));
+        CommonData.remove(key, netUser);
     }
 
-    public static String getCache(int cacheTime, String url){
+    static String getCache(int cacheTime, String url){
 
         String tmp = responseData.get(url);
         if (tmp == null || tmp.length() < 10){
@@ -91,43 +85,44 @@ public class HttpResponse {
         return tmp.substring(10);
     }
 
-    public Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {
+    private void doSuccess(String value){
+
+        if (StringUtils.isEmpty(value)){
+            httpListener.fail(-1, value, url);
+            return;
+        }
+        if (globalNetData != null){
+            globalNetData.afterSuccess(value);
+        }
+        if (httpListener != null){
+            httpListener.success(value, url);
+        }
+        saveCache(value);
+    }
+
+    Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
 
             if (request != null && request.isCanceled()){
-
                 return;
             }
-
-            if (httpListener != null){
-                httpListener.success(String.valueOf(jsonObject), url);
-            }
-            saveCache(String.valueOf(jsonObject));
+            doSuccess(String.valueOf(jsonObject));
         }
     };
 
-    public Response.Listener<String> stringListener = new Response.Listener<String>() {
+    Response.Listener<String> stringListener = new Response.Listener<String>() {
         @Override
         public synchronized void onResponse(String s) {
 
             if (request != null && request.isCanceled()){
-
                 return;
             }
-            if (httpListener != null){
-
-                if (s == null){
-                    httpListener.fail(-2, "response is null", url);
-                }else{
-                    httpListener.success(s, url);
-                    saveCache(s);
-                }
-            }
+            doSuccess(s);
         }
     };
 
-    public Response.ErrorListener errorListener = new Response.ErrorListener() {
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
 
         @Override
         public synchronized void onErrorResponse(VolleyError volleyError) {

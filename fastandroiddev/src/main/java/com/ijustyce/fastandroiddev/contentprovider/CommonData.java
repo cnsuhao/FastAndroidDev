@@ -3,6 +3,7 @@ package com.ijustyce.fastandroiddev.contentprovider;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by yangchun on 16/7/7.
@@ -13,6 +14,10 @@ public class CommonData {
     public static String get(String key, String userId){
         ArrayList<String> result = DBTools.getCommonValue(key, userId);
         return result == null || result.isEmpty() ? null : result.get(result.size() -1);
+    }
+
+    public static HashMap<String, String> getAll(String userId){
+        return DBTools.getCommonValue(userId);
     }
 
     public static String get(String key){
