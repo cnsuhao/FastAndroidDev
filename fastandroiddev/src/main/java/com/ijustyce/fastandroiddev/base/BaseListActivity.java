@@ -11,6 +11,7 @@ import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+import com.ijustyce.fastandroiddev.irecyclerview.BindingInfo;
 import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
 import com.ijustyce.fastandroiddev.irecyclerview.IRecyclerView;
 import com.ijustyce.fastandroiddev.irecyclerview.PullToRefreshListener;
@@ -84,13 +85,16 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         mIRecyclerView.setHasMore(true);
         mIRecyclerView.setPullToRefreshListener(refreshListener);
         data = new ArrayList<>();
-        adapter = buildAdapter(mContext, data);
-        if(adapter == null){
-            ILog.e("===BaseListActivity===", "adapter can not be null ...");
-            return;
+        BindingInfo bindingInfos = getBindingInfos();
+        if (bindingInfos != null){
+            adapter = new IAdapter<>(mContext, data, bindingInfos);
+            mIRecyclerView.setAdapter(adapter);
+        }else{
+            ILog.e("===BaseListActivity===", "getBindingInfos() return null ... ");
         }
-        mIRecyclerView.setAdapter(adapter);
     }
+
+    public abstract BindingInfo getBindingInfos();
 
     public abstract Class getType();
 
@@ -173,8 +177,6 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     //  获取更多数据
     public abstract boolean getMoreData();
-
-    public abstract IAdapter<T> buildAdapter(Context mContext, List<T> data);
 
     @Override
     public void onDestroy() {

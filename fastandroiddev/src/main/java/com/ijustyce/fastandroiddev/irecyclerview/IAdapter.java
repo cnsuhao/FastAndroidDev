@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  * Created by yangchun on 16/4/15.  通用的RecyclerView adapter
  */
-public abstract class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
+public class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
 
     private List<T> mData;
     private Context mContext;
@@ -31,13 +32,15 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
     private Handler handler;
     static final int TYPE_FOOTER = -10, TYPE_HEADER = -20;
     public int layoutId;
+    private BindingInfo bindingInfos;
 
-    public IAdapter(Context mContext, List<T> mData, @LayoutRes int layoutId) {
+    public IAdapter(Context mContext, List<T> mData, @NonNull BindingInfo bindingInfos) {
 
         this.mData = mData;
         this.mContext = mContext;
         handler = new Handler();
-        this.layoutId = layoutId;
+        this.layoutId = bindingInfos.layoutId;
+        this.bindingInfos = bindingInfos;
     }
 
     public IAdapter(Context mContext, List<T> mData){
@@ -142,7 +145,6 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
         return holder;
     }
 
-    public abstract void OnBinding(@NonNull IBindingHolder commonHolder, @NonNull T object);
 
     @Override
     public final void onBindViewHolder(IBindingHolder holder, int position) {
@@ -155,8 +157,13 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
             if (holder == null) return;
             if (holder.getBinding() != null) {
                 holder.itemPosition = position;
-                OnBinding(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
-                holder.getBinding().executePendingBindings();
+                T item = getObject(mHeaderView == null ? position : position-1);//  扣除header占用的位置
+                ViewDataBinding binding = holder.getBinding();
+                for (int i =0; i < bindingInfos.size; i++){
+                    Object value = bindingInfos.info.valueAt(i);
+                    binding.setVariable(bindingInfos.info.keyAt(i), value == null ? item : value);
+                }
+                binding.executePendingBindings();
             }
         }
     }
