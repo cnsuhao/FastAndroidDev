@@ -29,7 +29,6 @@ public class ShowMVVMEvent {
     }
 
     public void gotoListView(View view){
-        Snackbar.make(view, "转到listview", Snackbar.LENGTH_SHORT).show();
         mActivity.newActivity(RecyclerViewActivity.class);
     }
 
