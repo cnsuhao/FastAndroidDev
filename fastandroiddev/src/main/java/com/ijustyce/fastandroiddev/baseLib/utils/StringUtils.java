@@ -1,9 +1,10 @@
 package com.ijustyce.fastandroiddev.baseLib.utils;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by yc on 15-12-24.   string 工具类
@@ -34,6 +35,19 @@ public class StringUtils {
     public static double getDouble(String value){
 
         return getDouble(value, 0.0);
+    }
+
+    /**
+     * 返回几千，保留两位小数！
+     * @param v
+     */
+    public static String getKValue(Object v){
+        String s = String.valueOf(v);
+        double value = getDouble(s);
+        if (value > 1000){
+            return CommonTool.getShortDouble(value / 1000) + "K";
+        }
+        return s;
     }
 
     public static double getDouble(String value, double defaultValue){
@@ -84,7 +98,8 @@ public class StringUtils {
      * @param url url 比如： https://mclient.alipay.com/home/exterfaceAssign.htm?alipay_exterface
      *            _invoke_assign_client_ip=115.192.220.130&body=测试
      */
-    public static Map<String, String> getUrlParams(String url){
+    @NonNull
+    public static HashMap<String, String> getUrlParams(String url){
 
         if (url.isEmpty()) return null;
         String[] urls = url.split("\\?");
@@ -107,7 +122,7 @@ public class StringUtils {
             }
         }
         int j = 1;
-        Map<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
         for (String tmp : values){
             if (j % 2 == 0){
                 map.put(values.get(j -2), values.get(j-1));

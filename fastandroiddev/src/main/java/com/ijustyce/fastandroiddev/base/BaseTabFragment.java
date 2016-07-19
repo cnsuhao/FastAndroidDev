@@ -11,8 +11,6 @@ import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by yc on 15-12-25.   顶部是tab的fragment
  */
@@ -21,7 +19,7 @@ public abstract class BaseTabFragment extends BaseFragment {
     private TabLayout mTabLayout;
     private BaseViewPager mViewPager;
 
-    public List<String> mTitleList;
+    public List<CharSequence> mTitleList;
     public List<Fragment> mFragmentList;
 
     private LinearLayout headerView;
@@ -91,13 +89,6 @@ public abstract class BaseTabFragment extends BaseFragment {
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
-    }
-
-    @Override
-    public void onDestroy(){
-
-        ButterKnife.unbind(this);
-        super.onDestroy();
     }
 
     public void setScrollMode(){

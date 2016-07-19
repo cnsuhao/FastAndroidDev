@@ -1,4 +1,25 @@
-<manifest
-    package="com.ijustyce.fastandroiddev">
+<manifest package="com.ijustyce.fastandroiddev"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="com.ijustyce.fastandroiddev.provider" />
+
+    <application>
+
+        <provider
+            android:name=".contentprovider.IProvider"
+            android:authorities="${applicationId}.contentprovider"
+            android:multiprocess="false"
+            android:permission="com.ijustyce.fastandroiddev.provider"
+            android:process=":IProvider" />
+
+        <!--配置自适应屏幕-->
+        <meta-data
+            android:name="design_width"
+            android:value="750" />
+        <meta-data
+            android:name="design_height"
+            android:value="1334" />
+
+    </application>
 
 </manifest>

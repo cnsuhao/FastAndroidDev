@@ -23,8 +23,6 @@ import com.zhy.autolayout.AutoLayoutActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by yc on 15-12-25.   底部是tab的activity的父类
  */
@@ -36,7 +34,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
 
     private Toolbar toolbar;
 
-    public List<String> mTitleList;
+    public List<CharSequence> mTitleList;
     public List<Fragment> mFragmentList;
     private List<RadioButton> mRadioButton;
 
@@ -50,7 +48,6 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fastandroiddev_activity_tab);
-        ButterKnife.bind(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -65,7 +62,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         setAdapter();
 
         handler = new Handler();
-        CallBackManager.getActivityLifeCall().onCreate(this);
+        CallBackManager.onCreate(this);
         afterCreate();
     }
 
@@ -187,9 +184,8 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     public void onDestroy() {
 
         super.onDestroy();
-        ButterKnife.unbind(this);
         AppManager.moveActivity(this);
-        CallBackManager.getActivityLifeCall().onDestroy(this);
+        CallBackManager.onDestroy(this);
     }
 
     public final void addTab(int layoutId, int radioButtonId) {
@@ -268,18 +264,18 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        CallBackManager.getActivityLifeCall().onStop(this);
+        CallBackManager.onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        CallBackManager.getActivityLifeCall().onPause(this);
+        CallBackManager.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        CallBackManager.getActivityLifeCall().onResume(this);
+        CallBackManager.onResume(this);
     }
 }

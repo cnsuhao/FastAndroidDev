@@ -38,47 +38,54 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
     private PullToRefreshListener mRefreshListener;
 
     private TextView footerLabel;
-
+    public boolean showRefresh = true;
     private int pageSize = 10;
-
     private final static String TAG = "IRecyclerView";
 
     @Override
     public final void onRefresh() {
 
-        if (mRefreshListener != null){
+        if (mRefreshListener != null) {
             mRefreshListener.onRefresh();
-        }if (!mSwipeRefreshLayout.isRefreshing()){
+        }
+        if (showRefresh && !mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(true);
         }
     }
 
-    public final void setPageSize(int size){
+    public final void setPageSize(int size) {
 
         this.pageSize = size;
     }
 
-    public final int getPageSize(){
+    public final int getPageSize() {
 
         return pageSize;
     }
 
-    public final void showFooterWhenNoMoreData(boolean showFooter){
+    public final void showFooterWhenNoMoreData(boolean showFooter) {
 
         this.showFooter = showFooter;
     }
 
-    public final void setFooterLabel(String text){
+    public final void showFooterLabel(boolean show) {
+        initFooter();
+        if (footerLabel != null) {
+            footerLabel.setVisibility(show ? VISIBLE : GONE);
+        }
+    }
+
+    public final void setFooterLabel(String text) {
 
         initFooter();
         if (footerLabel == null) return;
         footerLabel.setText(text);
     }
 
-    private void createRecyclerView(Context context){
+    private void createRecyclerView(Context context) {
 
         View mView = LayoutInflater.from(context).inflate(R.layout.irecyclerview_view_recycler, this);
-        if (mView == null){
+        if (mView == null) {
             ILog.e(TAG, "mView is null, it is a fastandroiddev error, please contact developer... ");
             return;
         }
@@ -101,18 +108,18 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
-    public final void setLayoutManager(RecyclerView.LayoutManager layoutManager){
+    public final void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
         if (mRecyclerView == null) return;
         mRecyclerView.setLayoutManager(layoutManager);
     }
 
-    public final void setAdapter(IAdapter adapter){
+    public final void setAdapter(IAdapter adapter) {
 
         this.adapter = adapter;
         addListener();
     }
 
-    public final void setHasMore(boolean hasMore){
+    public final void setHasMore(boolean hasMore) {
 
         initFooter();
         footerLabel.setText(hasMore ? "正在加载..." : "没有更多数据了");
@@ -120,30 +127,31 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         this.hasMore = hasMore;
     }
 
-    public final void setPullToRefreshListener(PullToRefreshListener mRefreshListener){
+    public final void setPullToRefreshListener(PullToRefreshListener mRefreshListener) {
 
         mSwipeRefreshLayout.setEnabled(mRefreshListener != null);
         this.mRefreshListener = mRefreshListener;
     }
 
-    public final void onRefreshEnd(){
+    public final void onRefreshEnd() {
 
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    public final RecyclerView getRecyclerView(){
+    public final RecyclerView getRecyclerView() {
 
         return mRecyclerView;
     }
 
     /**
      * 瀑布流式 布局
-     * @param num 列数或行数（竖直即true为列数，false为行数）
-     * @param vertical  是否为竖直布局
+     *
+     * @param num      列数或行数（竖直即true为列数，false为行数）
+     * @param vertical 是否为竖直布局
      */
-    public final void setStaggeredGridLayout(int num, boolean vertical){
+    public final void setStaggeredGridLayout(int num, boolean vertical) {
 
-        if (num <= 0){
+        if (num <= 0) {
             num = 1;
         }
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(num, vertical ?
@@ -152,54 +160,78 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     /**
      * gird layout
-     * @param num   列数
+     *
+     * @param num 列数
      */
-    public final void setGirdLayout(int num){
+    public final void setGirdLayout(int num) {
+        setGirdLayout(num, null);
+    }
 
-        if (num <= 0){
+    public final void setGirdLayout(int num, GridLayoutManager.SpanSizeLookup spanSizeLookup){
+        if (num <= 0) {
             num = 1;
-        }if (num > 3){
+        }
+        if (num > 3) {
             ILog.e("===IRecyclerView===", "you set girdlayout with " +
                     "more than 3 span count ...");
         }
         pageSize *= num;
-        mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, num));
+        final int size = num;
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), num);
+        mRecyclerView.setLayoutManager(layoutManager);
+        if (spanSizeLookup != null){
+            layoutManager.setSpanSizeLookup(spanSizeLookup);
+            return;
+        }
+        //  如果没有lookup
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (adapter.getItemViewType(position)) {
+                    case IAdapter.TYPE_FOOTER:
+                    case IAdapter.TYPE_HEADER:
+                        return size;
+                    default:
+                        return 1;
+                }
+            }
+        });
     }
 
-    public final void onLoadEnd(){
+    public final void onLoadEnd() {
 
         initFooter();
     }
 
-    public final void notifyDataSetChanged(){
+    public final void notifyDataSetChanged() {
 
         if (adapter != null) {
             ILog.i("===notifyDataSetChanged===");
-            adapter.reAddFooter();
             adapter.notifyDataSetChanged();
         }
     }
 
-    public final void addHeaderView(View view){
+    public final void addHeaderView(View view) {
 
-        if (mHeader == null){
-            mHeader = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_header, null)
+        if (mHeader == null) {
+            mHeader = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_header, null)
                     .findViewById(R.id.container);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
                     (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             mHeader.setLayoutParams(params);
         }
-        if (mHeader != null && view != null){
+        if (mHeader != null && view != null) {
             mHeader.addView(view);
-        }if (adapter != null){
+        }
+        if (adapter != null) {
             adapter.setHeaderView(mHeader);
         }
     }
 
-    private void initFooter(){
+    private void initFooter() {
 
-        if (mFooter == null){
-            mFooter = (LinearLayout)LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_footer, null)
+        if (mFooter == null) {
+            mFooter = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_footer, null)
                     .findViewById(R.id.container);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -212,22 +244,23 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
             mFooterLoading.setLayoutParams(params);
             processBar = (ProgressBar) mFooter.findViewById(R.id.processBar);
         }
-        if (mFooterLoading != null){
+        if (mFooterLoading != null) {
             mFooterLoading.setVisibility(adapter != null && adapter.getDataSize() >= pageSize && (hasMore || showFooter) ? VISIBLE : GONE);
         }
     }
 
-    public final void addFooterView(View view){
+    public final void addFooterView(View view) {
 
         initFooter();
-        if (mFooter != null && view != null){
-            mFooter.addView(view, mFooter.getChildCount() -1);
-        }if (adapter != null){
+        if (mFooter != null && view != null) {
+            mFooter.addView(view, mFooter.getChildCount() - 1);
+        }
+        if (adapter != null) {
             adapter.setFooterView(mFooter);
         }
     }
 
-    private void addListener(){
+    private void addListener() {
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -236,9 +269,9 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
                                              int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if (mRefreshListener == null || newState != RecyclerView.SCROLL_STATE_IDLE)return;
-                if (adapter.isFooterVisible()) {
-                    if (hasMore && adapter != null && adapter.getDataSize() >= pageSize){
+                if (mRefreshListener == null || newState != RecyclerView.SCROLL_STATE_IDLE) return;
+                if (adapter != null && adapter.isFooterVisible()) {
+                    if (hasMore && adapter != null && adapter.getDataSize() >= pageSize) {
                         mRefreshListener.onLoadMore();
                     }
                     initFooter();
@@ -253,16 +286,17 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         });
         adapter.setFooterView(mFooter);
         adapter.setHeaderView(mHeader);
+        adapter.setRecyclerView(mRecyclerView);
         mRecyclerView.setAdapter(adapter);
     }
 
     /**
      * 初始化入口
-     * @param context   context
-     * @param attrs     参数
+     *
+     * @param context context
+     * @param attrs   参数
      */
-    private void doInit(Context context, AttributeSet attrs){
-
+    private void doInit(Context context, AttributeSet attrs) {
         this.mContext = context;
         createRecyclerView(context);
     }

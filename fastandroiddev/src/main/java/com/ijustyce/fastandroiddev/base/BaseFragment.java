@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.base;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -14,13 +15,12 @@ import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.net.HttpListener;
 import com.ijustyce.fastandroiddev.net.VolleyUtils;
 
-import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by yc on 2015/8/14.  baseFragment for all fragment
  */
-public abstract class BaseFragment<T> extends Fragment {
+public abstract class BaseFragment<Bind extends ViewDataBinding, T> extends Fragment {
 
     public Context mContext;
     public View mView;
@@ -29,6 +29,7 @@ public abstract class BaseFragment<T> extends Fragment {
 
     public String TAG ;
     private T mData;
+    public Bind contentView;
 
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,11 +49,10 @@ public abstract class BaseFragment<T> extends Fragment {
         if (TAG == null) {
             TAG = getClass().getName();
         }if (mContext == null) {
-            mContext = getActivity();
+            mContext = getContext();
         }if (handler == null){
             handler = new Handler();
         }
-        ButterKnife.bind(this, mView);
         doInit();
         afterCreate();
         return mView;
@@ -105,9 +105,9 @@ public abstract class BaseFragment<T> extends Fragment {
     public void onPause() {
         super.onPause();
         dismiss();
-        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+        if (mContext != null && TAG != null && VolleyUtils
                 .getVolleyRequestQueue(mContext) != null){
-            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+            VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
     }
 
@@ -115,29 +115,28 @@ public abstract class BaseFragment<T> extends Fragment {
     public void onStop() {
         super.onStop();
         dismiss();
-        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+        if (mContext != null && TAG != null && VolleyUtils
                 .getVolleyRequestQueue(mContext) != null){
-            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+            VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mContext != null && TAG != null && VolleyUtils.getInstance()
+        if (mContext != null && TAG != null && VolleyUtils
                 .getVolleyRequestQueue(mContext) != null){
-            VolleyUtils.getInstance().getVolleyRequestQueue(mContext).cancelAll(TAG);
+            VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
         dismiss();
-        ButterKnife.unbind(this);
-        if (mContext != null) {
-            mContext = null;
-        }if (handler != null){
+        if (mContext != null) mContext = null;
+        if (httpListener != null) httpListener = null;
+        if (dialog != null) dialog = null;
+        if (TAG != null) TAG = null;
+        if (mData != null) mData = null;
+        if (handler != null){
             handler.removeCallbacksAndMessages(null);
             handler = null;
-        }
-        if (httpListener != null) {
-            httpListener = null;
         }
     }
 
@@ -197,13 +196,14 @@ public abstract class BaseFragment<T> extends Fragment {
 
     public final void newActivity(Intent intent, Bundle bundle){
 
-        if (intent == null){
+        if (intent == null || getActivity() == null){
             return;
         }
         if (bundle != null){
             intent.putExtras(bundle);
         }
-        mContext.startActivity(intent);
+        getActivity().startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     public final void newActivity(Intent intent) {

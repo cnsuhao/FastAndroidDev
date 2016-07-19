@@ -91,14 +91,18 @@
     </declare-styleable>
 
     <declare-styleable name="FancyCoverFlow">
-        <attr name="unselectedAlpha" format="float"/>
-        <attr name="unselectedSaturation" format="float"/>
-        <attr name="unselectedScale" format="float"/>
-        <attr name="maxRotation" format="integer"/>
-        <attr name="scaleDownGravity" format="float"/>
+        <attr name="unselectedAlpha" format="float" />
+        <attr name="unselectedSaturation" format="float" />
+        <attr name="unselectedScale" format="float" />
+        <attr name="maxRotation" format="integer" />
+        <attr name="scaleDownGravity" format="float" />
         <attr name="actionDistance" format="integer">
             <enum name="auto" value="2147483647" />
         </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ClearEditText">
+        <attr name="deleteIcon" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="JazzyViewPager">

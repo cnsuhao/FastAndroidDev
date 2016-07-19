@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,12 +25,13 @@ import java.util.List;
 public abstract class BaseListActivity<T> extends BaseActivity {
 
     public IRecyclerView mIRecyclerView;
-    public LinearLayout noData;
+    public View noData;
 
     public IAdapter<T> adapter;
-    private List<T> data;
+    public List<T> data;
 
     public int pageNo = 1;
+    public boolean showNoData = true;
 
     @Override
     public final void doResume() {
@@ -62,13 +62,13 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         return R.layout.fastandroiddev_activity_list_common;
     }
 
-    public int getRecyclerViewId(){return R.id.list;};
-    public int getNoDataId(){return R.id.noData;};
+    public int getRecyclerViewId(){return R.id.list;}
+    public int getNoDataId(){return R.id.noData;}
 
     public final void init() {
 
         mIRecyclerView = (IRecyclerView) findViewById(getRecyclerViewId());
-        noData = (LinearLayout) findViewById(getNoDataId());
+        noData = findViewById(getNoDataId());
 
         if (noData != null && clickNoDataToRefresh()){
             noData.setOnClickListener(new View.OnClickListener() {
@@ -94,10 +94,6 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     public abstract Class getType();
 
-    public boolean showNoData(){
-        return true;
-    }
-
     public T getById(int position){
 
         if (position < 0 || position >= data.size()){
@@ -110,11 +106,13 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public void onFailed(int code, String msg, String taskId) {
 
         Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        if (handler == null) return;
         handler.post(hasNoData);
     }
 
     @Override
     public final void onSuccess(String object, String taskId) {
+        if (handler == null) return;
         if (data == null) {
             handler.post(hasNoData);
             return;
@@ -135,6 +133,11 @@ public abstract class BaseListActivity<T> extends BaseActivity {
                 handler.post(hasNoData);
             }
         }
+        afterSuccess(object, taskId);
+    }
+
+    public void afterSuccess(String object, String taskId){
+
     }
 
     public void onGetData(Object object){};
@@ -177,14 +180,15 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        if (mContext != null) {
-            mContext = null;
-        }
         if (adapter != null) {
             adapter = null;
         }
         if (data != null) {
             data = null;
+        }if (mIRecyclerView != null){
+            mIRecyclerView = null;
+        }if (noData != null){
+            noData = null;
         }
     }
 
@@ -214,13 +218,12 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
-            if (mContext != null && adapter != null && data != null) {
-               // adapter.notifyDataSetChanged();
-                mIRecyclerView.notifyDataSetChanged();
-            }
 
             if ((data == null || !data.isEmpty()) && noData != null) {
-                noData.setVisibility(View.INVISIBLE);
+                noData.setVisibility(View.GONE);
+            }
+            if (mContext != null && adapter != null && data != null) {
+                mIRecyclerView.notifyDataSetChanged();
             }
         }
     };
@@ -241,15 +244,13 @@ public abstract class BaseListActivity<T> extends BaseActivity {
         public void run() {
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
-
             mIRecyclerView.setHasMore(false);
 
             if (adapter != null){
-           //     adapter.notifyDataSetChanged();
                 mIRecyclerView.notifyDataSetChanged();
             }
 
-            if (showNoData() && data != null && data.isEmpty() && noData != null) {
+            if (showNoData && adapter != null && adapter.getItemCount() < 2 && noData != null) {
                 noData.setVisibility(View.VISIBLE);
             }
         }

@@ -14,10 +14,10 @@ import java.util.List;
 public class FragmentAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> fragmentList;
-    private List<String> titleList;
+    private List<CharSequence> titleList;
 
     public FragmentAdapter(FragmentManager fm, List<Fragment> fragmentList,
-                           List<String> titleList) {
+                           List<CharSequence> titleList) {
 
         super(fm);
         this.fragmentList = fragmentList;

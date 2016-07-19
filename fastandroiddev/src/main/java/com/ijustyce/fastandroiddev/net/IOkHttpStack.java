@@ -41,10 +41,10 @@ public class IOkHttpStack implements HttpStack {
             throws IOException, AuthFailureError {
 
         OkHttpClient client = mClient.clone();
-        int timeoutMs = request.getTimeoutMs();
-        client.setConnectTimeout(timeoutMs, TimeUnit.MILLISECONDS);
-        client.setReadTimeout(timeoutMs, TimeUnit.MILLISECONDS);
-        client.setWriteTimeout(timeoutMs, TimeUnit.MILLISECONDS);
+     //   int timeoutMs = request.getTimeoutMs();
+        client.setConnectTimeout(10_000, TimeUnit.MILLISECONDS);
+        client.setReadTimeout(15_000, TimeUnit.MILLISECONDS);
+        client.setWriteTimeout(20_000, TimeUnit.MILLISECONDS);
 
         com.squareup.okhttp.Request.Builder okHttpRequestBuilder
                 = new com.squareup.okhttp.Request.Builder();

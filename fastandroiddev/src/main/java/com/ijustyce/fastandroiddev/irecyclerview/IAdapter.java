@@ -1,12 +1,15 @@
 package com.ijustyce.fastandroiddev.irecyclerview;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
@@ -18,36 +21,26 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     private List<T> mData;
     private Context mContext;
     private View mHeaderView, mFooterView;
-    private int size, position;
+    private int position;
     private RecyclerView recyclerView;
-    private static final int TYPE_FOOTER = 1, TYPE_HEADER = 2, TYPE_NORMAL = 3;
+    private Handler handler;
+    public static final int TYPE_FOOTER = -10, TYPE_HEADER = -20;
 
     public IAdapter(List<T> mData, Context mContext) {
 
         this.mData = mData;
-        this.size = mData.size();
         this.mContext = mContext;
+        handler = new Handler();
     }
 
     public final Context getContext(){
         return mContext;
     }
 
-    void reAddFooter(){
-
-        size = mData.size();
-        if (mFooterView != null){
-            size++;
-        }if (mHeaderView != null){
-            size++;
-        }
-    }
-
     public final void removeItem(int position){
 
         if (mData == null || position < 0 || position >= mData.size()) return;
         mData.remove(position);
-        reAddFooter();
         notifyItemRemoved(position);
     }
 
@@ -68,9 +61,6 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         if (mFooterView == null){
             return;
         }
-        if (this.mFooterView == null){
-            this.size++;
-        }
         this.mFooterView = mFooterView;
     }
 
@@ -78,8 +68,6 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
 
         if (mHeaderView == null){
             return;
-        }if (this.mHeaderView == null){
-            this.size++;
         }
         this.mHeaderView = mHeaderView;
     }
@@ -98,7 +86,7 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         if (position + 1 == getItemCount() && mFooterView != null) {
             return TYPE_FOOTER;
         } else {
-            return TYPE_NORMAL;
+            return mHeaderView == null ? position : position-1;
         }
     }
 
@@ -108,6 +96,9 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
 
     @Override
     public final int getItemCount() {
+        int size = getDataSize();
+        if (mFooterView != null) size++;
+        if (mHeaderView != null) size++;
         return size;
     }
 
@@ -117,16 +108,17 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         switch (viewType) {
 
             case TYPE_FOOTER:
-                return new CommonHolder(mFooterView, mContext);
+                return new CommonHolder(mFooterView, mContext, false);
 
             case TYPE_HEADER:
-                return new CommonHolder(mHeaderView, mContext);
+                return new CommonHolder(mHeaderView, mContext, false);
 
-            case TYPE_NORMAL:
-                return createViewHolder(mContext, parent);
-
+            default:
+                parent.setTag(R.string.tag_item_position, viewType);
+                CommonHolder holder = createViewHolder(mContext, parent);
+                AutoUtils.autoSize(holder.itemView);
+                return holder;
         }
-        return null;
     }
 
     public abstract CommonHolder createViewHolder(Context mContext, ViewGroup parent);
@@ -137,18 +129,24 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
     public final void onBindViewHolder(CommonHolder holder, int position) {
 
         this.position = position;
-        if ((position == 0 && mHeaderView != null) || (position == size -1 && mFooterView != null)){
+        if ((position == 0 && mHeaderView != null) || (position == getItemCount() -1 && mFooterView != null)){
 
             ILog.i("===object===", "is footer or header not createView ...");
         }else {
             if (holder != null) holder.setItemPosition(position);
             createView(holder, getObject(mHeaderView == null ? position : position-1));  //  扣除header占用的位置
         }
-        doEvent();
     }
 
+    /**
+     * 处理之前的任务，比如itemchanged、datachanged、itemremoved等 一般不需要手动触发
+     */
     public final void doEvent(){
-        if (recyclerView == null || recyclerView.isComputingLayout()) return;
+        if (recyclerView == null || recyclerView.isComputingLayout()) {
+            doDelayEvent();
+            return;
+        }
+        if (handler != null) handler.removeCallbacksAndMessages(null);
         int size = changedItem == null ? 0 : changedItem.size();
         for (int i = 0; i < size; i++){
             int position = changedItem.indexOfKey(i);
@@ -171,25 +169,60 @@ public abstract class IAdapter<T> extends RecyclerView.Adapter<CommonHolder> {
         }
     }
 
-    SparseIntArray changedItem; //  key is position and value is type, 1->changed, 2->remove, 3->insert, 4->DataChanged
+    private void doDelayEvent(){
+        if (mData == null || mContext == null){
+            ILog.i("===IAdapter===", "mData or mContext is null, destroy handler ...");
+            mData = null;
+            mContext = null;
+            if (handler != null){
+                handler.removeCallbacksAndMessages(null);
+                handler = null;
+            }
+            return;
+        }
+        if (handler == null) return;
+        if (changedItem == null || changedItem.size() < 1) handler.removeCallbacksAndMessages(null);
+        else handler.postDelayed(run, 737);
+    }
+
+    private Runnable run = new Runnable() {
+        @Override
+        public void run() {
+            doEvent();
+        }
+    };
+
+    SparseIntArray changedItem = new SparseIntArray(); //  key is position and value is type, 1->changed, 2->remove, 3->insert, 4->DataChanged
     public final void itemChanged(int position){
         if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemChanged(position);
-        else changedItem.put(position, 1);
+        else {
+            changedItem.put(position, 1);
+            doDelayEvent();
+        }
     }
 
     public final void itemRemove(int position){
         if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemRemoved(position);
-        else changedItem.put(position, 2);
+        else {
+            changedItem.put(position, 2);
+            doDelayEvent();
+        }
     }
 
     public final void itemInsert(int position){
         if (recyclerView != null && !recyclerView.isComputingLayout()) notifyItemInserted(position);
-        else changedItem.put(position, 3);
+        else {
+            changedItem.put(position, 3);
+            doDelayEvent();
+        }
     }
 
     public final void dataChanged(){
         if (recyclerView != null && !recyclerView.isComputingLayout()) notifyDataSetChanged();
-        else changedItem.put(4, 0);
+        else {
+            changedItem.put(4, 0);
+            doDelayEvent();
+        }
     }
 
     public final T getObject(int position) {

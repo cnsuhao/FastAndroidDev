@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
@@ -14,16 +13,12 @@ import com.alipay.sdk.app.PayTask;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
 
 public class PayDemoActivity extends Activity {
 
     private String payInfo;
     private String rsa_private, partner, seller, notify_url, total_fee,
-            body, subject, payCode;
+            body, subject, payCode, sign;
     private static final int SDK_PAY_FLAG = 1;
     private static final int SDK_CHECK_FLAG = 2;
     private PayHandler mHandler;
@@ -102,6 +97,7 @@ public class PayDemoActivity extends Activity {
         body = bundle.getString("body");
         subject = bundle.getString("subject");
         payCode = bundle.getString("payCode");
+        sign = bundle.getString("sign");
 
         mHandler = new PayHandler(this);
         pay();
@@ -120,17 +116,17 @@ public class PayDemoActivity extends Activity {
      * call alipay sdk pay. 调用SDK支付
      */
     public void pay() {
-        if (TextUtils.isEmpty(partner) || TextUtils.isEmpty(rsa_private)
+        if (TextUtils.isEmpty(partner)
                 || TextUtils.isEmpty(seller)) {
 
-            setPayResult(false, "partner or rsa_private or seller is empty");
+            setPayResult(false, "partner or seller is empty");
            return;
         }
         // 订单
         String orderInfo = getOrderInfo();
 
-        // 对订单做RSA 签名
-        String sign = sign(orderInfo);
+        // 对订单做RSA 签名   如果已经签名，则不进行
+        sign = sign == null ? sign(orderInfo) : sign;
         try {
             // 仅需对sign 做URL编码
             sign = URLEncoder.encode(sign, "utf-8");
@@ -164,39 +160,39 @@ public class PayDemoActivity extends Activity {
         payThread.start();
     }
 
-    /**
-     * check whether the device has authentication alipay account.
-     * 查询终端设备是否存在支付宝认证账户
-     */
-    public void check(View v) {
-        Runnable checkRunnable = new Runnable() {
-
-            @Override
-            public void run() {
-                // 构造PayTask 对象
-                PayTask payTask = new PayTask(PayDemoActivity.this);
-                // 调用查询接口，获取查询结果
-                boolean isExist = payTask.checkAccountIfExist();
-
-                Message msg = new Message();
-                msg.what = SDK_CHECK_FLAG;
-                msg.obj = isExist;
-                mHandler.sendMessage(msg);
-            }
-        };
-
-        Thread checkThread = new Thread(checkRunnable);
-        checkThread.start();
-    }
-
-    /**
-     * get the sdk version. 获取SDK版本号
-     */
-    public void getSDKVersion() {
-        PayTask payTask = new PayTask(this);
-        String version = payTask.getVersion();
-        Toast.makeText(this, version, Toast.LENGTH_SHORT).show();
-    }
+//    /**
+//     * check whether the device has authentication alipay account.
+//     * 查询终端设备是否存在支付宝认证账户
+//     */
+//    public void check(View v) {
+//        Runnable checkRunnable = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                // 构造PayTask 对象
+//                PayTask payTask = new PayTask(PayDemoActivity.this);
+//                // 调用查询接口，获取查询结果
+//                boolean isExist = payTask.checkAccountIfExist();
+//
+//                Message msg = new Message();
+//                msg.what = SDK_CHECK_FLAG;
+//                msg.obj = isExist;
+//                mHandler.sendMessage(msg);
+//            }
+//        };
+//
+//        Thread checkThread = new Thread(checkRunnable);
+//        checkThread.start();
+//    }
+//
+//    /**
+//     * get the sdk version. 获取SDK版本号
+//     */
+//    public void getSDKVersion() {
+//        PayTask payTask = new PayTask(this);
+//        String version = payTask.getVersion();
+//        Toast.makeText(this, version, Toast.LENGTH_SHORT).show();
+//    }
 
     /**
      * create the order info. 创建订单信息
