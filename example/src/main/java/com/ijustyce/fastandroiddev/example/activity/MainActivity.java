@@ -1,9 +1,10 @@
-package com.ijustyce.fastandroiddev.example;
+package com.ijustyce.fastandroiddev.example.activity;
 
 import com.ijustyce.fastandroiddev.base.BaseActivity;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.contentprovider.CommonData;
 import com.ijustyce.fastandroiddev.example.EventHandler.ShowMVVMEvent;
+import com.ijustyce.fastandroiddev.example.R;
 import com.ijustyce.fastandroiddev.example.databinding.MainView;
 import com.ijustyce.fastandroiddev.example.model.User;
 

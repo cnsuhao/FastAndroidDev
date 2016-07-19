@@ -20,21 +20,21 @@
 
         <TextView
             android:id="@+id/name"
-            android:onClick="@{handler::onNameClick}"
+            android:onClick="@{handler.onNameClick}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{user.name}" />
 
         <TextView
             android:id="@+id/age"
-            android:onClick="@{user.age > 25 ? handler::onBigAgeClick : handler::onAgeClick}"
+            android:onClick="@{user.age > 25 ? handler.onBigAgeClick : handler.onAgeClick}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text='@{user.age + ""}' />
 
         <Button
             android:text="ListView"
-            android:onClick="@{handler::gotoListView}"
+            android:onClick="@{handler.gotoListView}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
