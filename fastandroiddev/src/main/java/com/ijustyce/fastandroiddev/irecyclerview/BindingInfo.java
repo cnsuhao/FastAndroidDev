@@ -13,7 +13,7 @@ public class BindingInfo {
     public int size = 1;
     public int layoutId;
 
-    public BindingInfo(@LayoutRes int id, int key, Object value){
+    public BindingInfo(@LayoutRes int layoutId, int key, Object value){
         this.layoutId = layoutId;
         info = new SparseArray<>();
         info.put(key, value);

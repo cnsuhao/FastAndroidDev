@@ -10,6 +10,7 @@ import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
 import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
+import com.ijustyce.fastandroiddev.irecyclerview.BindingInfo;
 import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
 import com.ijustyce.fastandroiddev.irecyclerview.IRecyclerView;
 import com.ijustyce.fastandroiddev.irecyclerview.PullToRefreshListener;
@@ -139,13 +140,16 @@ public abstract class BaseListFragment<T> extends BaseFragment {
         mIRecyclerView.setHasMore(true);
         mIRecyclerView.setPullToRefreshListener(refreshListener);
         data = new ArrayList<>();
-        adapter = buildAdapter(mContext, data);
-        if(adapter == null){
-            ILog.e("===BaseListActivity===", "adapter can not be null ...");
-            return;
+        BindingInfo bindingInfos = getBindingInfos();
+        if (bindingInfos != null){
+            adapter = new IAdapter<>(mContext, data, bindingInfos);
+            mIRecyclerView.setAdapter(adapter);
+        }else{
+            ILog.e("===BaseListFragment===", "getBindingInfos() return null ... ");
         }
-        mIRecyclerView.setAdapter(adapter);
     }
+
+    public abstract BindingInfo getBindingInfos();
 
     private PullToRefreshListener refreshListener = new PullToRefreshListener() {
         @Override
@@ -178,8 +182,6 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public boolean clickNoDataToRefresh(){
         return true;
     }
-
-    public abstract IAdapter<T> buildAdapter(Context mContext, List<T> data);
 
     @Override
     public void onDestroy() {
