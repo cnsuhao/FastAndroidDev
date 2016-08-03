@@ -43,17 +43,23 @@ public final class INetWork {
      */
     public static synchronized boolean sendGet(HttpParams httpParams, HttpListener listener) {
 
-        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
+        if (httpParams == null){
+            ILog.e("===INetWork", "httpParams is null...");
+            return false;
+        }
+        String url = httpParams.getUrl();
+        if (httpParams.getCacheTime() > 0 &&
+                HttpResponse.getCache(httpParams.getCacheTime(),
+                        httpParams.getCacheKey(), url, listener)) return true;
+
+        if (!CommonTool.isConnected(IApplication.getInstance())) {
             if (showToast){
                 ToastUtil.show(R.string.error_network);
             }
             return false;
         }
 
-        String url = httpParams.getUrl();
-        if (httpParams.getCacheTime() != 0 && doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
-                && !httpParams.isRefresh()) return true;
-
+        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         Map<String, String> map = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
         StringBuilder stringBuilder = new StringBuilder();
@@ -64,7 +70,6 @@ public final class INetWork {
         }
         url = stringBuilder.toString();
 
-        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response.stringListener, response.errorListener){
 
@@ -95,21 +100,26 @@ public final class INetWork {
      */
     public static synchronized boolean sendPost(HttpParams httpParams, HttpListener listener) {
 
+        if (httpParams == null){
+            ILog.e("===INetWork", "httpParams is null...");
+            return false;
+        }
+        String url = httpParams.getUrl();
+        if (httpParams.getCacheTime() > 0 &&
+                HttpResponse.getCache(httpParams.getCacheTime(),
+                        httpParams.getCacheKey(), url, listener)) return true;
 
-        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
+        if (!CommonTool.isConnected(IApplication.getInstance())) {
             if (showToast){
                 ToastUtil.show(R.string.error_network);
             }
             return false;
         }
 
-        String url = httpParams.getUrl();
-        if (httpParams.getCacheTime() != 0 && doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
-                && !httpParams.isRefresh()) return true;
-
         final Map<String, String> params = httpParams.getParams();
         final Map<String, String> headers = HttpParams.getHeader();
-        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
+        HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(),
+                url, listener);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 response.stringListener, response.errorListener) {
             @Override
@@ -144,16 +154,21 @@ public final class INetWork {
     public static synchronized boolean postJson(final HttpParams httpParams
             , HttpListener listener) {
 
-        if (!CommonTool.isConnected(IApplication.getInstance()) || httpParams == null) {
+        if (httpParams == null){
+            ILog.e("===INetWork", "httpParams is null...");
+            return false;
+        }
+        String url = httpParams.getUrl();
+        if (httpParams.getCacheTime() > 0 &&
+                HttpResponse.getCache(httpParams.getCacheTime(),
+                        httpParams.getCacheKey(), url, listener)) return true;
+
+        if (!CommonTool.isConnected(IApplication.getInstance())) {
             if (showToast){
                 ToastUtil.show(R.string.error_network);
             }
             return false;
         }
-
-        String url = httpParams.getUrl();
-        if (httpParams.getCacheTime() != 0 && doCache(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener)
-                && !httpParams.isRefresh()) return true;
 
         final Map<String, String> headers = HttpParams.getHeader();
         HttpResponse response = new HttpResponse(httpParams.getCacheTime(), httpParams.getCacheKey(), url, listener);
@@ -225,19 +240,6 @@ public final class INetWork {
         } else {
             VolleyUtils.addRequest(request, httpParams.getTag(), IApplication.getInstance());
         }
-        return true;
-    }
-
-    /**
-     * 检测cache里是否有这个请求
-     */
-    private static boolean doCache(int cacheTime, String key, String url , HttpListener listener){
-
-        String tmp = HttpResponse.getCache(cacheTime, key);
-        if (tmp == null){
-            return false;
-        }
-        listener.success(tmp, url);
         return true;
     }
 }

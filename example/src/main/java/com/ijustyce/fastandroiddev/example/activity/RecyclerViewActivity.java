@@ -33,6 +33,6 @@ public class RecyclerViewActivity extends BaseListActivity<User> {
     @Override
     public BindingInfo getBindingInfos() {
         ShowMVVMEvent event = new ShowMVVMEvent(this);
-        return new BindingInfo(R.layout.item_user, BR.user, null).add(BR.handler, event);
+        return new BindingInfo(R.layout.item_user, BR.user).add(BR.handler, event);
     }
 }

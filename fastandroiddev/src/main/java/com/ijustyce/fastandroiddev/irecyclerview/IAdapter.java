@@ -4,10 +4,8 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Handler;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,14 +36,8 @@ public class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
 
         this.mData = mData;
         this.mContext = mContext;
-        handler = new Handler();
         this.layoutId = bindingInfos.layoutId;
         this.bindingInfos = bindingInfos;
-    }
-
-    public IAdapter(Context mContext, List<T> mData){
-        this.mContext = mContext;
-        this.mData = mData;
         handler = new Handler();
     }
 

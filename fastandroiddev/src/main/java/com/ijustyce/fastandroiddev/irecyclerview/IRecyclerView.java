@@ -123,7 +123,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
         initFooter();
         footerLabel.setText(hasMore ? "正在加载..." : "没有更多数据了");
-        processBar.setVisibility(hasMore ? VISIBLE : INVISIBLE);
+        processBar.setVisibility(footerLabel.getVisibility() == VISIBLE && hasMore ? VISIBLE : INVISIBLE);
         this.hasMore = hasMore;
     }
 
@@ -207,7 +207,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
         if (adapter != null) {
             ILog.i("===notifyDataSetChanged===");
-            adapter.notifyDataSetChanged();
+            adapter.dataChanged();
         }
     }
 

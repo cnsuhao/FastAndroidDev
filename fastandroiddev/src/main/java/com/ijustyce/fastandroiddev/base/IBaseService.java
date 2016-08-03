@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-public class BaseService extends IntentService {
+public class IBaseService extends IntentService {
 
 	private IntentFilter killSelf;
     public boolean kill = false;
@@ -19,7 +19,7 @@ public class BaseService extends IntentService {
 
 	}
 
-	public BaseService(String name) {
+	public IBaseService(String name) {
 		super(name);
 	}
 

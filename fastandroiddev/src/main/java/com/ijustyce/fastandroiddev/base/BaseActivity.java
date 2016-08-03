@@ -12,27 +12,22 @@ import android.view.View;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.callback.CallBackManager;
-import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.manager.AppManager;
 import com.ijustyce.fastandroiddev.net.HttpListener;
 import com.ijustyce.fastandroiddev.net.VolleyUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * base Activity for all Activity
  *
  * @author yc
  */
-public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends AutoLayoutActivity {
+public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLayoutActivity {
 
     public Activity mContext;
-    public SweetAlertDialog dialog;
     public Handler handler;
 
     public String TAG ;
-    private T mData;
     private static final int SHORT_DELAY = 1000;
     private boolean clicked;
     public Bind contentView;
@@ -148,9 +143,6 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
                 .getVolleyRequestQueue(mContext) != null){
             VolleyUtils.getVolleyRequestQueue(mContext).cancelAll(TAG);
         }
-        if (handler != null){
-            handler.post(dismiss);
-        }
         CallBackManager.onPause(this);
     }
 
@@ -158,59 +150,9 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
         return TAG;
     }
 
-    private Runnable dismiss = new Runnable() {
-        @Override
-        public void run() {
-
-            if (dialog != null && dialog.isShowing() && mContext != null){
-
-                dialog.cancel();
-            }
-        }
-    };
-
-    /**
-     * 让dialog消失
-     * @param delay 0 - 5000 大于 5000 按5000计算，小于0按0计算
-     */
-    public void dismiss(int delay){
-
-        if (handler == null){
-            handler = new Handler();
-        }
-        if (delay <= 0){
-            handler.post(dismiss);
-            return;
-        }if (delay > 10000){
-            delay = 5000;
-        }
-        handler.postDelayed(dismiss, delay);
-    }
-
-    public void dismiss() {
-
-        dismiss(0);
-    }
-
     public String getResString(int resId){
 
         return getResources().getString(resId);
-    }
-
-    public void showProcess(String text){
-
-        dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
-        dialog.setTitleText(text);
-        dialog.getProgressHelper().setBarColor(R.color.colorAccent);
-        dialog.show();
-    }
-
-    public void showProcess(int resId){
-
-        dialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
-        dialog.setTitleText(getResString(resId));
-        dialog.getProgressHelper().setBarColor(R.color.colorAccent);
-        dialog.show();
     }
 
     @Override
@@ -224,9 +166,7 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
         AppManager.moveActivity(this);
         if (mContext != null) mContext = null;
         if (httpListener != null) httpListener = null;
-        if (dialog != null) dialog = null;
         if (TAG != null) TAG = null;
-        if (mData != null) mData = null;
         if (handler != null){
             handler.removeCallbacksAndMessages(null);
             handler = null;
@@ -271,7 +211,6 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
         @Override
         public void fail(int code, String msg, String taskId) {
 
-            dismiss();
             if (mContext == null) {
                 return;
             }
@@ -281,27 +220,12 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
         @Override
         public void success(String object, String taskId) {
 
-            dismiss();
             if (mContext == null) {
                 return;
-            }
-            Class type = getType();
-            if (type != null) {
-                mData = IJson.fromJson(object, getType());
             }
             onSuccess(object, taskId);
         }
     };
-
-    public T getData(){
-
-        return mData;
-    }
-
-    public Class getType(){
-
-        return null;
-    }
 
     public void onSuccess(String object, String taskId){
 
@@ -309,7 +233,6 @@ public abstract class BaseActivity<Bind extends ViewDataBinding, T> extends Auto
 
     public void onFailed(int code, String msg, String taskId) {
 
-        dismiss();
         //  ToastUtil.show(mContext, msg);
     }
 

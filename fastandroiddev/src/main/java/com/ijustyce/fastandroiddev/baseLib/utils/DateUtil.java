@@ -8,6 +8,15 @@ import java.util.Locale;
 
 public class DateUtil {
 
+    /**
+     * Number of milliseconds in a standard second.
+     */
+    public static final long MILLIS_PER_SECOND = 1000;
+    /**
+     * Number of milliseconds in a standard minute.
+     */
+    public static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
+
     private static final String[] days = {"前天", "昨天", "今天", "明天", "后天"};
     private static final String MONTH = "月";
     private static final String DAY = "日";

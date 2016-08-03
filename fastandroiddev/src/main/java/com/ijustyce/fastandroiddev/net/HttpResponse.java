@@ -9,6 +9,7 @@ import com.ijustyce.fastandroiddev.contentprovider.CommonData;
 
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Map;
 public class HttpResponse {
 
     private String url;
-    private HttpListener httpListener;
+    private WeakReference<HttpListener> httpListener;
     private int cacheTime;
     private String cacheKey;
     private static Map<String, String> responseData;
@@ -28,85 +29,94 @@ public class HttpResponse {
         responseData = CommonData.getAll(netUser);
     }
 
-    void setRequest(Request request){
+    void setRequest(Request request) {
 
         this.request = request;
     }
 
     public static GlobalNetData globalNetData;
 
-    public interface GlobalNetData{
-        public void afterSuccess(String object);
+    public interface GlobalNetData {
+        void afterSuccess(String object);
     }
 
-    HttpResponse(int cacheTime, String cacheKey, String url, HttpListener httpListener){
+    HttpResponse(int cacheTime, String cacheKey, String url, HttpListener httpListener) {
 
         this.url = url;
-        this.httpListener = httpListener;
+        this.httpListener = new WeakReference<>(httpListener);
         this.cacheTime = cacheTime;
         this.cacheKey = cacheKey;
     }
 
-    private void saveCache(String response){
+    private void saveCache(String response) {
 
-        if (cacheTime > 0 || cacheTime == -1){
-
-            String value = DateUtil.getTimesTamp() + response;
-            responseData.put(cacheKey, value);
-            CommonData.put(cacheKey, value, netUser);
-        }
+        if (cacheTime < 0 || StringUtils.isEmpty(response)) return;
+        String value = DateUtil.getTimesTamp() + response;
+        responseData.put(cacheKey, value);
+        CommonData.put(cacheKey, value, netUser);
     }
 
     /**
      * 移出或清空缓存  如果url为null，则清空所有
-     * @param key   null则清空所有，否则移出对应的缓存
+     *
+     * @param key null则清空所有，否则移出对应的缓存
      */
-    public static void removeCache(String key){
+    public static void removeCache(String key) {
 
-        if (key == null){
+        if (key == null) {
             responseData.clear();
-        }else {
+        } else {
             responseData.remove(key);
         }
         CommonData.remove(key, netUser);
     }
 
-    static String getCache(int cacheTime, String url){
-
-        String tmp = responseData.get(url);
-        if (tmp == null || tmp.length() < 10){
-            return null;
-        }
-        long putTime = StringUtils.getLong(tmp.substring(0, 10));   //  时间戳只有10位
-        if (cacheTime != -1 && cacheTime < DateUtil.getTimesTamp() - putTime){
-            responseData.remove(url);
-            return null;
-        }
-        return tmp.substring(10);
+    public static String getCache(String cacheKey) {
+        return responseData.get(cacheKey);
     }
 
-    private void doSuccess(String value){
+    static boolean getCache(int cacheTime, String cacheKey, String url, HttpListener listener) {
 
-        if (StringUtils.isEmpty(value)){
-            httpListener.fail(-1, value, url);
+        if (listener == null) return false;
+        String tmp = getCache(cacheKey);
+        if (tmp == null || tmp.length() < 10) {
+            return false;
+        }
+        long putTime = StringUtils.getLong(tmp.substring(0, 10));   //  时间戳只有10位
+        long passTime = DateUtil.getTimesTamp() - putTime;
+        if (cacheTime < passTime) {
+            listener.success(tmp.substring(10), url);
+            return false;
+        }
+        listener.success(tmp.substring(10), url);
+        return true;
+    }
+
+    private void doSuccess(String value) {
+
+        if (requestCanceled()) return;
+
+        if (StringUtils.isEmpty(value)) {
+            httpListener.get().fail(-1, value, url);
             return;
         }
-        if (globalNetData != null){
+
+        httpListener.get().success(value, url);
+        if (globalNetData != null) {
             globalNetData.afterSuccess(value);
         }
-        if (httpListener != null){
-            httpListener.success(value, url);
-        }
         saveCache(value);
+    }
+
+    private boolean requestCanceled(){
+        return request == null || request.isCanceled() ||
+                httpListener == null || httpListener.get() == null;
     }
 
     Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
 
-            if (request != null && request.isCanceled()){
-                return;
-            }
             doSuccess(String.valueOf(jsonObject));
         }
     };
@@ -115,9 +125,6 @@ public class HttpResponse {
         @Override
         public synchronized void onResponse(String s) {
 
-            if (request != null && request.isCanceled()){
-                return;
-            }
             doSuccess(s);
         }
     };
@@ -127,13 +134,10 @@ public class HttpResponse {
         @Override
         public synchronized void onErrorResponse(VolleyError volleyError) {
 
-            if (request != null && request.isCanceled()){
+            if (requestCanceled()) {
                 return;
             }
-
-            if (httpListener != null){
-                httpListener.fail(-1, "数据请求失败", url);
-            }
+            httpListener.get().fail(-1, "数据请求失败", url);
         }
     };
 }
