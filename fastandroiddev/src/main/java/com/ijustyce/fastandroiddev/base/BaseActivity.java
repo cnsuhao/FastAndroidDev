@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.callback.CallBackManager;
@@ -81,6 +82,17 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
         doInit();
         afterCreate();
         CallBackManager.onCreate(this);
+    }
+
+    public String getExtras(String key){
+        Bundle bundle = getIntent().getExtras();
+        if (bundle == null || !bundle.containsKey(key)) return null;
+        return bundle.getString(key);
+    }
+
+    public void setTitle(String title){
+        TextView label = (TextView) findViewById(R.id.label);
+        if (label != null) label.setText(title);
     }
 
     private Runnable resetClick = new Runnable() {

@@ -7,6 +7,8 @@
     <color name="bright_foreground_dark">#ffffffff</color>
     <color name="toast_top">#fff3bb</color>
 
+    <color name="title_bar_color">#000</color>
+
     <color name="bg_color">#ececec</color>   //   主背景颜色
 
     <color name="home_tab">#f8f8f8</color>
