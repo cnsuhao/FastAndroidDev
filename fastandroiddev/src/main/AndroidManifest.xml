@@ -7,7 +7,7 @@
 
         <provider
             android:name=".contentprovider.IProvider"
-            android:authorities="${applicationId}.contentprovider"
+            android:authorities="${applicationId}.provider"
             android:multiprocess="false"
             android:permission="com.ijustyce.fastandroiddev.provider"
             android:process=":IProvider" />

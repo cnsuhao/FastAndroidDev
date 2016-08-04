@@ -46,7 +46,7 @@ public class IProvider extends ContentProvider {
     public boolean onCreate() {
         dbManager = new DBManager(getContext(), DB_NAME, null);
         mBrandMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        mBrandMatcher.addURI(getContext().getPackageName() + ".contentprovider", TAB_COMMON, COMMON);
+        mBrandMatcher.addURI(getContext().getPackageName() + ".provider", TAB_COMMON, COMMON);
         return true;
     }
 
@@ -67,7 +67,7 @@ public class IProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return "com.lzhplus.lzh.brand";
+        return "com.ijustyce.fastandroiddev.common";
     }
 
     @Nullable

@@ -20,7 +20,7 @@ class DBTools {
 
     static {
         contentResolver = IApplication.getInstance().getContentResolver();
-        COMMON = "content://" + IApplication.getInstance().getPackageName() + ".contentprovider/common";
+        COMMON = "content://" + IApplication.getInstance().getPackageName() + ".provider/common";
     }
 
     static void saveCommonData(String key, String value, String userId) {
