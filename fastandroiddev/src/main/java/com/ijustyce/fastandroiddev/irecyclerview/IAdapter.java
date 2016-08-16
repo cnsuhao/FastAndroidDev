@@ -111,22 +111,26 @@ public class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
     }
 
     @Override
-    public final IBindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final CommonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+        CommonHolder commonHolder;
         switch (viewType) {
 
             case TYPE_FOOTER:
-                return new IBindingHolder(mFooterView, mContext);
+                commonHolder = new CommonHolder(mFooterView, mContext, false);
+                break;
 
             case TYPE_HEADER:
-                return new IBindingHolder(mHeaderView, mContext);
+                commonHolder = new CommonHolder(mHeaderView, mContext, false);
+                break;
 
             default:
                 parent.setTag(R.string.tag_item_position, viewType);
-                IBindingHolder holder = createViewHolder(mContext, parent);
-                AutoUtils.autoSize(holder.itemView);
-                return holder;
+                commonHolder = createViewHolder(mContext, parent);
+                break;
         }
+        AutoUtils.autoSize(commonHolder.itemView);
+        return commonHolder;
     }
 
     public IBindingHolder createViewHolder(Context mContext, ViewGroup parent){
