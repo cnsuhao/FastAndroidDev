@@ -1,5 +1,6 @@
 package com.ijustyce.fastandroiddev.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -153,12 +154,12 @@ public abstract class BaseFragment<Bind extends ViewDataBinding> extends Fragmen
         newActivity(intent, null);
     }
 
-    public final void newActivity(Class gotoClass) {
+    public final void newActivity(Class<? extends Activity> gotoClass) {
 
         newActivity(new Intent(mContext, gotoClass), null);
     }
 
-    public final void newActivity(Class gotoClass, Bundle bundle) {
+    public final void newActivity(Class<? extends Activity> gotoClass, Bundle bundle) {
 
         newActivity(new Intent(mContext, gotoClass), bundle);
     }

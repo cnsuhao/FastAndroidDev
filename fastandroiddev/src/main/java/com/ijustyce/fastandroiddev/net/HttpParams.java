@@ -14,9 +14,8 @@ public final class HttpParams {
     private HashMap<String, String> params;
     private String url;
     private String tag;
-    private boolean refresh = true;
     private String cacheKey = "";
-    private int cacheTime;  //  秒数
+    private int cacheTime = -1;  //  秒数
     private JSONObject json;
 
     static {
@@ -27,20 +26,14 @@ public final class HttpParams {
 
     /**
      * 设置缓存秒数
-     * @param second    缓存秒数, -1为永久缓存
+     * @param second    缓存秒数, 过了缓存时间就会从网络更新
      */
     public HttpParams setCacheTime(int second){
 
+        if (second < 1){
+            throw new IllegalArgumentException("cacheTime can not less than 1");
+        }
         cacheTime = second;
-        return this;
-    }
-
-    public boolean isRefresh() {
-        return refresh;
-    }
-
-    public HttpParams refresh(boolean refresh) {
-        this.refresh = refresh;
         return this;
     }
 
@@ -51,6 +44,7 @@ public final class HttpParams {
     public HttpParams addCacheKey(Object key){
 
         cacheKey += key;
+        if (cacheTime < 0) cacheTime = 60;
         return this;
     }
 

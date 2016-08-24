@@ -208,12 +208,12 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
         newActivity(intent, null);
     }
 
-    public final void newActivity(Class gotoClass) {
+    public final void newActivity(Class<? extends Activity> gotoClass) {
 
         newActivity(new Intent(mContext, gotoClass), null);
     }
 
-    public final void newActivity(Class gotoClass, Bundle bundle) {
+    public final void newActivity(Class<? extends Activity> gotoClass, Bundle bundle) {
 
         newActivity(new Intent(this, gotoClass), bundle);
     }
