@@ -1,5 +1,6 @@
 package com.ijustyce.fastandroiddev.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
+import com.ijustyce.fastandroiddev.baseLib.utils.RunTimePermission;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,7 +122,18 @@ public class RecordButton extends Button {
         return true;
     }
 
+    public Activity activity;
+
     private void initDialogAndStartRecord() {
+
+        RunTimePermission runTimePermission = new RunTimePermission(activity);
+        if (!runTimePermission.checkPermissionForRecord()){
+            runTimePermission.requestPermissionForRecord();
+            return;
+        }if (!runTimePermission.checkPermissionForExternalStorage()){
+            runTimePermission.requestPermissionForExternalStorage();
+            return;
+        }
 
         startTime = System.currentTimeMillis();
         recordIndicator = new Dialog(getContext(),
@@ -132,8 +146,9 @@ public class RecordButton extends Button {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         recordIndicator.setOnDismissListener(onDismiss);
-        LayoutParams lp = recordIndicator.getWindow().getAttributes();
-        lp.gravity = Gravity.CENTER;
+        Window window = recordIndicator.getWindow();
+        LayoutParams lp = window == null ? null : window.getAttributes();
+        if (lp != null) lp.gravity = Gravity.CENTER;
 
         startRecording();
         recordIndicator.show();

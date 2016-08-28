@@ -42,9 +42,9 @@ public class IOkHttpStack implements HttpStack {
 
         OkHttpClient client = mClient.clone();
      //   int timeoutMs = request.getTimeoutMs();
-        client.setConnectTimeout(10_000, TimeUnit.MILLISECONDS);
-        client.setReadTimeout(15_000, TimeUnit.MILLISECONDS);
-        client.setWriteTimeout(20_000, TimeUnit.MILLISECONDS);
+        client.setConnectTimeout(60, TimeUnit.SECONDS); //  1分钟连接超时
+        client.setReadTimeout(15, TimeUnit.SECONDS);
+        client.setWriteTimeout(20, TimeUnit.SECONDS);
 
         com.squareup.okhttp.Request.Builder okHttpRequestBuilder
                 = new com.squareup.okhttp.Request.Builder();
