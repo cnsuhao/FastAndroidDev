@@ -72,6 +72,14 @@ public class CommonTool {
         return Math.round(value * 100) / 100.0;
     }
 
+    public static boolean isNull(Object... objects){
+        if (objects == null) return true;
+        for (Object tmp : objects){
+            if (tmp == null) return true;
+        }
+        return false;
+    }
+
     public static String getMetaData(Context context, String key) {
         if (TextUtils.isEmpty(key)) {
             return null;

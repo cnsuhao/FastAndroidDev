@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ijustyce.fastandroiddev.base.BaseActivity;
+import com.ijustyce.fastandroiddev.base.BaseViewModel;
 import com.ijustyce.fastandroiddev.example.activity.RecyclerViewActivity;
 
 /**

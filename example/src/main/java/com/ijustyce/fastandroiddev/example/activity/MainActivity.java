@@ -8,7 +8,7 @@ import com.ijustyce.fastandroiddev.example.R;
 import com.ijustyce.fastandroiddev.example.databinding.MainView;
 import com.ijustyce.fastandroiddev.example.model.User;
 
-public class MainActivity extends BaseActivity<MainView, User> {
+public class MainActivity extends BaseActivity<MainView> {
 
     @Override
     public int getLayoutId() {
