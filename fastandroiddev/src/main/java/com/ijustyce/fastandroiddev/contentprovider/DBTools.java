@@ -37,16 +37,22 @@ class DBTools {
         Uri uri = Uri.parse(COMMON);
         String[] projection = {"_id", "key", "value"};
         String sortOrder = "_id ASC";
-        Cursor cursor = contentResolver.query(uri, projection, "userId = '" + userId + "'", null, sortOrder);
+        Cursor cursor = null;
+        try {
+            cursor = contentResolver.query(uri, projection, "userId = '" + userId + "'", null, sortOrder);
+        }catch (Exception ignore){
+
+        }
         HashMap<String, String> result = new HashMap<>();
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor == null) return result;
+        if (cursor.moveToFirst()) {
             do {
                 String value = cursor.getString(cursor.getColumnIndex("value"));
                 String key = cursor.getString(cursor.getColumnIndex("key"));
                 result.put(key, value);
             } while (cursor.moveToNext());
-            cursor.close();
         }
+        cursor.close();
         return result;
     }
 
@@ -54,15 +60,21 @@ class DBTools {
         Uri uri = Uri.parse(COMMON);
         String[] projection = {"_id", "key", "value"};
         String sortOrder = "_id ASC";
-        Cursor cursor = contentResolver.query(uri, projection, "key = '" + key + "' and userId = '" + userId + "'", null, sortOrder);
+        Cursor cursor = null;
+        try {
+            cursor = contentResolver.query(uri, projection, "key = '" + key + "' and userId = '" + userId + "'", null, sortOrder);
+        }catch (Exception ignore){
+
+        }
         ArrayList<String> result = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor == null) return result;
+        if (cursor.moveToFirst()) {
             do {
                 String value = cursor.getString(cursor.getColumnIndex("value"));
                 result.add(value);
             } while (cursor.moveToNext());
-            cursor.close();
         }
+        cursor.close();
         return result;
     }
 

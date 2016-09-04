@@ -5,6 +5,6 @@ package com.ijustyce.fastandroiddev.net;
  */
 public interface HttpListener {
 
-    void success(String result, String taskId);
+    void success(Object result, String taskId);
     void fail(int code, String msg, String taskId);
 }

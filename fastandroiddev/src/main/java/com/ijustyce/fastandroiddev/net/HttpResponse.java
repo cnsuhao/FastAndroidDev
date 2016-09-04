@@ -4,12 +4,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.ijustyce.fastandroiddev.baseLib.utils.DateUtil;
+import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
+import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.baseLib.utils.StringUtils;
 import com.ijustyce.fastandroiddev.contentprovider.CommonData;
 
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -23,6 +27,8 @@ public class HttpResponse {
     private String cacheKey;
     private static Map<String, String> responseData;
     private Request request;
+    private Type type;
+    private static ArrayList<GlobalHttpListener> listeners = new ArrayList<>();
     private static final String netUser = "fastandroiddev_netUser";
 
     static {
@@ -34,18 +40,37 @@ public class HttpResponse {
         this.request = request;
     }
 
-    public static GlobalNetData globalNetData;
-
-    public interface GlobalNetData {
-        void afterSuccess(String object);
+    public static void addGlobalListener(GlobalHttpListener listener){
+        if (listener == null || listeners == null) return;
+        listeners.add(listener);
+        ILog.e("===HttpResponse===", "be careful , this may cause memory leaks ...");
     }
 
-    HttpResponse(int cacheTime, String cacheKey, String url, HttpListener httpListener) {
+    public static void removeGlobalListener(GlobalHttpListener listener){
+        if (listener == null || listeners == null) return;
+        listeners.remove(listener);
+    }
 
-        this.url = url;
+    public static void removeAllGlobalListener(){
+        if (listeners != null) {
+            listeners.clear();
+        }
+    }
+
+    public interface GlobalHttpListener{
+        void onGetData(Object object);
+    }
+
+    HttpResponse(HttpParams params, HttpListener httpListener) {
+
+        if (params == null) {
+            throw new IllegalArgumentException("httpParams can not be null...");
+        }
+        this.url = params.getUrl();
         this.httpListener = new WeakReference<>(httpListener);
-        this.cacheTime = cacheTime;
-        this.cacheKey = cacheKey;
+        this.cacheTime = params.getCacheTime();
+        this.cacheKey = params.getCacheKey();
+        this.type = params.getType();
     }
 
     private void saveCache(String response) {
@@ -75,20 +100,20 @@ public class HttpResponse {
         return responseData.get(cacheKey);
     }
 
-    static boolean getCache(int cacheTime, String cacheKey, String url, HttpListener listener) {
+    static boolean getCache(HttpParams params, HttpListener listener) {
 
-        if (listener == null) return false;
-        String tmp = getCache(cacheKey);
+        if (params.getCacheTime() < 0 || listener == null) return false;
+        String tmp = getCache(params.getCacheKey());
         if (tmp == null || tmp.length() < 10) {
             return false;
         }
         long putTime = StringUtils.getLong(tmp.substring(0, 10));   //  时间戳只有10位
         long passTime = DateUtil.getTimesTamp() - putTime;
-        if (cacheTime < passTime) {
-            listener.success(tmp.substring(10), url);
+        if (params.getCacheTime() < passTime) {
+            listener.success(tmp.substring(10), params.getUrl());
             return false;
         }
-        listener.success(tmp.substring(10), url);
+        listener.success(tmp.substring(10), params.getUrl());
         return true;
     }
 
@@ -101,11 +126,23 @@ public class HttpResponse {
             return;
         }
 
-        httpListener.get().success(value, url);
-        if (globalNetData != null) {
-            globalNetData.afterSuccess(value);
+        if (type != null){
+            Object object = IJson.fromJson(value, type);
+            notifyListener(object);
+            httpListener.get().success(object, url);
+        }else {
+            httpListener.get().success(value, url);
         }
         saveCache(value);
+    }
+
+    private void notifyListener(Object object){
+        if (listeners == null) return;
+        for (GlobalHttpListener listener : listeners){
+            if (listener != null){
+                listener.onGetData(object);
+            }
+        }
     }
 
     private boolean requestCanceled(){

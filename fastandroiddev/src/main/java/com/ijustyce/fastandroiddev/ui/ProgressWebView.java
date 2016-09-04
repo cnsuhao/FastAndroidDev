@@ -36,9 +36,9 @@ public class ProgressWebView extends WebView{
         setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                HttpParams params = HttpParams.create(null, url);
+                HttpParams params = HttpParams.create(url, null);
                 INetWork.downloadFile(params, Environment.getExternalStoragePublicDirectory
-                        (Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), null);
+                        (Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), null, null);
             }
         });
     }

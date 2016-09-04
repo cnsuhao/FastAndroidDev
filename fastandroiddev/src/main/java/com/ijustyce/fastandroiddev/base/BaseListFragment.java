@@ -8,13 +8,12 @@ import android.widget.TextView;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
-import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.irecyclerview.BindingInfo;
 import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
 import com.ijustyce.fastandroiddev.irecyclerview.IRecyclerView;
 import com.ijustyce.fastandroiddev.irecyclerview.PullToRefreshListener;
-import com.ijustyce.fastandroiddev.net.IResponseData;
+import com.ijustyce.fastandroiddev.net.IResponseList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public abstract class BaseListFragment<Bind extends ViewDataBinding, T> extends 
     }
 
     @Override
-    public final void onSuccess(String object, String taskId) {
+    public final void onSuccess(Object result, String taskId) {
         if (handler == null) return;
         if (data == null) {
             handler.post(hasNoData);
@@ -77,12 +76,11 @@ public abstract class BaseListFragment<Bind extends ViewDataBinding, T> extends 
             data.clear();
         }
 
-        Object result = IJson.fromJson(object, getType());
         beforeSuccess(result, taskId);
-        if (result instanceof IResponseData){
+        if (result instanceof IResponseList){
 
             List<T> objectsList = parseData(result);
-            objectsList = objectsList == null ? ((IResponseData<T>)result).getData() : objectsList;
+            objectsList = objectsList == null ? ((IResponseList<T>)result).getData() : objectsList;
             if (objectsList != null && !objectsList.isEmpty()){
                 data.addAll(objectsList);
                 handler.post(newData);
@@ -90,12 +88,12 @@ public abstract class BaseListFragment<Bind extends ViewDataBinding, T> extends 
                 handler.post(hasNoData);
             }
         }
-        afterSuccess(object, taskId);
+        afterSuccess(result, taskId);
     }
 
     public void beforeSuccess(Object object, String taskId){}
 
-    public void afterSuccess(String object, String taskId){
+    public void afterSuccess(Object object, String taskId){
 
     }
 

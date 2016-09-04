@@ -15,6 +15,7 @@ import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.callback.CallBackManager;
 import com.ijustyce.fastandroiddev.manager.AppManager;
 import com.ijustyce.fastandroiddev.net.HttpListener;
+import com.ijustyce.fastandroiddev.net.HttpParams;
 import com.ijustyce.fastandroiddev.net.VolleyUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
 
@@ -230,7 +231,7 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
         }
 
         @Override
-        public void success(String object, String taskId) {
+        public void success(Object object, String taskId) {
 
             if (mContext == null) {
                 return;
@@ -239,13 +240,17 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
         }
     };
 
-    public void onSuccess(String object, String taskId){
+    public void onSuccess(Object object, String taskId){
 
     }
 
     public void onFailed(int code, String msg, String taskId) {
 
         //  ToastUtil.show(mContext, msg);
+    }
+
+    public void beforeSendRequest(HttpParams params){
+
     }
 
     public void backPress() {

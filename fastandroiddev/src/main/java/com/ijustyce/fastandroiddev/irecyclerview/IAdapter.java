@@ -111,17 +111,17 @@ public class IAdapter<T> extends RecyclerView.Adapter<IBindingHolder> {
     }
 
     @Override
-    public final CommonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final IBindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        CommonHolder commonHolder;
+        IBindingHolder commonHolder;
         switch (viewType) {
 
             case TYPE_FOOTER:
-                commonHolder = new CommonHolder(mFooterView, mContext, false);
+                commonHolder = new IBindingHolder(mFooterView, mContext);
                 break;
 
             case TYPE_HEADER:
-                commonHolder = new CommonHolder(mHeaderView, mContext, false);
+                commonHolder = new IBindingHolder(mHeaderView, mContext);
                 break;
 
             default:

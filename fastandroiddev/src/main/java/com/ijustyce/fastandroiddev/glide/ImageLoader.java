@@ -10,12 +10,10 @@ import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.ijustyce.fastandroiddev.IApplication;
 import com.ijustyce.fastandroiddev.R;
@@ -33,6 +31,8 @@ public class ImageLoader {
 
     private static int maxWidth;
     private static double wBili, hBili;
+    private static final int MIN_WIDTH = 128;
+    private static final int MIN_HEIGHT = 128;
     private static NetworkDisablingLoader networkDisablingLoader;
 
     static {
@@ -152,8 +152,8 @@ public class ImageLoader {
 
     private static boolean preLoad(ImageView img, String url, int width, int height, Transformation transformation) {
         if (type == null || !type.isAliYunServer(url)) return false;
-        String defaultUrl = "@80q_";
-        String wifiUrl = "@";
+        String defaultUrl = "@1wh_80q_";
+        String wifiUrl = "@1wh_";
         if (width > 1 && height > 1) {
             String sizeUrl = height + "h_" + width + "w";
             defaultUrl += sizeUrl;
@@ -180,8 +180,10 @@ public class ImageLoader {
             ILog.e("===ImageLoader===", "url or img is null ...");
             return;
         }
-        height *= hBili;
-        width *= wBili;
+        if (width > MIN_WIDTH && height > MIN_HEIGHT){
+            height *= hBili;
+            width *= wBili;
+        }
         if (width > maxWidth) {
             height = height * maxWidth / width;
             width = maxWidth;
@@ -193,7 +195,9 @@ public class ImageLoader {
         //  this is gif
         if (urls[0].endsWith(".gif")) {
             DrawableRequestBuilder builder = getDrawableBuilder(img, url, width, height);
-            builder.into(img);
+            if (builder != null) {
+                builder.into(img);
+            }
             return;
         }
 
@@ -208,7 +212,13 @@ public class ImageLoader {
     private static DrawableRequestBuilder getDrawableBuilder(ImageView img, String url, int width, int height){
         if (img == null || !canLoad(img.getContext())) return null;
         Object placeholder = img.getTag(R.string.glide_tag_placeholder);
-        DrawableRequestBuilder<String> builder = Glide.with(img.getContext()).load(url);
+        DrawableRequestBuilder<String> builder = null;
+        try {
+            builder = Glide.with(img.getContext()).load(url);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
         if (width > 0 && height > 0) builder.override(width, height);
         if (placeholder != null) {
             builder.placeholder((int) placeholder);

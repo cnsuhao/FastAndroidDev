@@ -2,6 +2,7 @@ package com.ijustyce.fastandroiddev.net;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ public final class HttpParams {
     private String cacheKey = "";
     private int cacheTime = -1;  //  秒数
     private JSONObject json;
+    private Type type;
+    private String msg;
 
     static {
 
@@ -63,9 +66,14 @@ public final class HttpParams {
         params = new HashMap<>();
     }
 
-    public static HttpParams create(String tag, String url){
+    public HttpParams type(Type type){
+        this.type = type;
+        return this;
+    }
 
-        return new HttpParams().tag(tag).url(url);
+    public static HttpParams create(String url, Type type){
+
+        return new HttpParams().url(url).type(type);
     }
 
     /**
@@ -173,8 +181,25 @@ public final class HttpParams {
         return json;
     }
 
-    public String getTag(){
+    public HttpParams setMsg(String msg){
+        this.msg = msg;
+        return this;
+    }
 
+    public String getMsg(){
+        return msg;
+    }
+
+    public HttpParams setTag(String tag){
+        this.tag = tag;
+        return this;
+    }
+
+    public String getTag(){
         return tag;
+    }
+
+    public Type getType(){
+        return type;
     }
 }

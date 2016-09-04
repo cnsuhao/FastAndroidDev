@@ -1,6 +1,5 @@
 package com.ijustyce.fastandroiddev.base;
 
-import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,13 +8,12 @@ import android.widget.Toast;
 
 import com.ijustyce.fastandroiddev.R;
 import com.ijustyce.fastandroiddev.baseLib.utils.CommonTool;
-import com.ijustyce.fastandroiddev.baseLib.utils.IJson;
 import com.ijustyce.fastandroiddev.baseLib.utils.ILog;
 import com.ijustyce.fastandroiddev.irecyclerview.BindingInfo;
 import com.ijustyce.fastandroiddev.irecyclerview.IAdapter;
 import com.ijustyce.fastandroiddev.irecyclerview.IRecyclerView;
 import com.ijustyce.fastandroiddev.irecyclerview.PullToRefreshListener;
-import com.ijustyce.fastandroiddev.net.IResponseData;
+import com.ijustyce.fastandroiddev.net.IResponseList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +113,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     }
 
     @Override
-    public final void onSuccess(String object, String taskId) {
+    public final void onSuccess(Object result, String taskId) {
         if (handler == null) return;
         if (data == null) {
             handler.post(hasNoData);
@@ -125,11 +123,10 @@ public abstract class BaseListActivity<T> extends BaseActivity {
             data.clear();
         }
 
-        Object result = IJson.fromJson(object, getType());
-        onGetData(result);
-        if (result instanceof IResponseData){
+        beforeSuccess(result, taskId);
+        if (result instanceof IResponseList){
 
-            List<T> objectsList = ((IResponseData<T>)result).getData();
+            List<T> objectsList = ((IResponseList<T>)result).getData();
             if (objectsList != null && !objectsList.isEmpty()){
                 data.addAll(objectsList);
                 handler.post(newData);
@@ -137,14 +134,14 @@ public abstract class BaseListActivity<T> extends BaseActivity {
                 handler.post(hasNoData);
             }
         }
-        afterSuccess(object, taskId);
+        afterSuccess(result, taskId);
     }
 
-    public void afterSuccess(String object, String taskId){
+    public void afterSuccess(Object object, String taskId){
 
     }
 
-    public void onGetData(Object object){};
+    public void beforeSuccess(Object object, String taskId){}
 
     private PullToRefreshListener refreshListener = new PullToRefreshListener() {
         @Override

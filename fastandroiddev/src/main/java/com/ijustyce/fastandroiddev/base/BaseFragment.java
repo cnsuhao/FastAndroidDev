@@ -176,7 +176,7 @@ public abstract class BaseFragment<Bind extends ViewDataBinding> extends Fragmen
         }
 
         @Override
-        public void success(String object, String taskId) {
+        public void success(Object object, String taskId) {
 
             if (mContext == null) {
                 return;
@@ -193,7 +193,7 @@ public abstract class BaseFragment<Bind extends ViewDataBinding> extends Fragmen
         super.onSaveInstanceState(outState);
     }
 
-    public void onSuccess(String object, String taskId) {
+    public void onSuccess(Object object, String taskId) {
 
         //  TODO 覆写这个方法，以获取http响应
     }
