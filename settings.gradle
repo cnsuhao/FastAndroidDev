@@ -1,1 +1,1 @@
-include ':alipay', ':SweetAlert', ':fastandroiddev', ':example', ':qrcode'
+include ':alipay', ':SweetAlert', ':fastandroiddev', ':app', ':qrcode'
