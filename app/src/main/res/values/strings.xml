@@ -3,4 +3,12 @@
     <string name="tab_me">我的</string>
     <string name="tab_contact">联系</string>
     <string name="tab_chat">聊天</string>
+    
+    <string name="tab_contact_contacts">通讯录</string>
+    <string name="tab_contact_collect">收藏夹</string>
+    <string name="tab_contact_history">记录</string>
+
+    <string name="tab_chat_message">系统短信</string>
+    <string name="tab_chat_chat">在线聊天</string>
+    <string name="tab_chat_voip">网络电话</string>
 </resources>

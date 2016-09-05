@@ -5,30 +5,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/headerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </LinearLayout>
-
     <android.support.design.widget.TabLayout
         android:id="@+id/tabTitle"
         style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        app:tabMaxWidth="0dp"
-        app:tabIndicatorColor="@color/white"
-        app:tabSelectedTextColor="@color/gray"
         app:tabGravity="fill"
+        app:tabIndicatorColor="@color/white"
+        app:tabMaxWidth="0dp"
+        app:tabSelectedTextColor="@color/gray"
         app:tabTextColor="@color/white" />
 
     <com.ijustyce.fastandroiddev.base.BaseViewPager
         android:id="@+id/viewPager"
-        android:background="@color/white"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@color/white" />
 
 </LinearLayout>

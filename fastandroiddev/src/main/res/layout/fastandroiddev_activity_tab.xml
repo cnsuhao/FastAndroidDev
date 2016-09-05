@@ -14,10 +14,10 @@
         style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#f8f8f8"
-        app:tabMaxWidth="0dp"
         android:layout_alignParentBottom="true"
+        android:background="#f8f8f8"
         app:tabIndicatorColor="@color/white"
+        app:tabMaxWidth="0dp"
         app:tabSelectedTextColor="@color/gray"
         app:tabTextColor="@color/white" />
 

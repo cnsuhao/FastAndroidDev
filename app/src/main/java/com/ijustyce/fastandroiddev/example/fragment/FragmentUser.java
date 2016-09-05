@@ -2,13 +2,13 @@ package com.ijustyce.fastandroiddev.example.fragment;
 
 import com.ijustyce.fastandroiddev.base.BaseFragment;
 import com.ijustyce.fastandroiddev.example.R;
-import com.ijustyce.fastandroiddev.example.databinding.FragmentContactView;
+import com.ijustyce.fastandroiddev.example.databinding.ContactFragmentView;
 
 /**
  * Created by yc on 2016/9/5 0005.
  */
 
-public class FragmentUser extends BaseFragment<FragmentContactView> {
+public class FragmentUser extends BaseFragment<ContactFragmentView>{
 
     @Override
     public int getLayoutId() {

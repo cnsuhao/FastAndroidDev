@@ -33,6 +33,7 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
     private static final int SHORT_DELAY = 1000;
     private boolean clicked;
     public Bind contentView;
+    public boolean useDataBinding = true;
 
     /**
      * onCreate .
@@ -45,8 +46,13 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
             finish();
             return;
         }
-        contentView = DataBindingUtil.setContentView(this, getLayoutId());
 
+        int layoutId = getLayoutId();
+        if (useDataBinding){
+            contentView = DataBindingUtil.setContentView(this, layoutId);
+        }else{
+            setContentView(layoutId);
+        }
         TAG = getClass().getName();
         mContext = this;
 

@@ -23,10 +23,9 @@ public abstract class BaseTopTabActivity extends BaseActivity {
     public List<CharSequence> mTitleList;
     public List<Fragment> mFragmentList;
 
-    private LinearLayout headerView;
-
     @Override
     public int getLayoutId() {
+        useDataBinding = false;
         return R.layout.fastandroiddev_activity_top_tab;
     }
 
@@ -67,16 +66,6 @@ public abstract class BaseTopTabActivity extends BaseActivity {
         }
         Fragment fragment = mFragmentList.get(id);
         if (fragment instanceof BaseFragment) ((BaseFragment)fragment).toolBarDoubleClick();
-    }
-
-    public final void addHeaderView(View view){
-
-        if (view != null) {
-            headerView = (LinearLayout) findViewById(R.id.headerView);
-            if (headerView != null) {
-                headerView.addView(view);
-            }
-        }
     }
 
     private void initData(){
