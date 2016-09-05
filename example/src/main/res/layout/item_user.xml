@@ -19,8 +19,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="32px"
         android:paddingRight="32px"
-        android:paddingBottom="16px"
-        android:orientation="vertical">
+        android:paddingBottom="16px">
 
         <ImageView
             app:imageUrl="@{user.header}"

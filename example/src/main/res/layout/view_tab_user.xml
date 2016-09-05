@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RadioButton
+        android:id="@+id/radioButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawablePadding="2dp"
+        android:drawableTop="@drawable/tab_user"
+        android:gravity="center"
+        android:paddingLeft="0dp"
+        android:text="@string/tab_me"
+        android:textColor="@drawable/tab_text_color"
+        android:textSize="13sp" />
+
+</RelativeLayout>

@@ -50,10 +50,9 @@ public abstract class BaseActivity<Bind extends ViewDataBinding> extends AutoLay
         TAG = getClass().getName();
         mContext = this;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            toolbar.setOnClickListener(new View.OnClickListener() {
+        View topMenu = findViewById(R.id.topMenu);
+        if (topMenu != null) {
+            topMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (clicked){

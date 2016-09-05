@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">Example</string>
+    <string name="app_name">聊聊</string>
+    <string name="tab_me">我的</string>
+    <string name="tab_contact">联系</string>
+    <string name="tab_chat">聊天</string>
 </resources>
