@@ -10,12 +10,9 @@
 *.class
 
 # generated files
-ishare/
 bin/
 gen/
 build/
-myapplication/
-gradle/
 captures/
 
 # Local configuration file (sdk path, etc)
