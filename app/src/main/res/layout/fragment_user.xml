@@ -6,18 +6,22 @@
         <variable
             name="user"
             type="com.ijustyce.fastandroiddev.example.model.UserInfo" />
+
+        <variable
+            name="event"
+            type="com.ijustyce.fastandroiddev.example.event.UserCentEvent" />
     </data>
 
     <RelativeLayout
         android:id="@+id/topView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#EEEEEE">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
         <RelativeLayout
+            android:id="@+id/userInfo"
             android:paddingTop="64px"
             android:paddingBottom="64px"
-            android:background="@color/colorPrimary"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -26,6 +30,7 @@
                 android:id="@+id/userHeader"
                 android:layout_width="128px"
                 android:layout_height="128px"
+                android:onClick="@{event.changeHead}"
                 android:src="@mipmap/user_header" />
 
             <TextView
