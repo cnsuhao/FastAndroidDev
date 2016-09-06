@@ -11,4 +11,7 @@
     <string name="tab_chat_message">系统短信</string>
     <string name="tab_chat_chat">在线聊天</string>
     <string name="tab_chat_voip">网络电话</string>
+
+    <string name="user_default_nickName">假装才十三</string>
+    <string name="user_default_phone">15397123143</string>
 </resources>

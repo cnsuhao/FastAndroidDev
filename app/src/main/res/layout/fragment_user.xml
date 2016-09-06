@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data class="ContactFragmentView">
+        <variable name="user" type="com.ijustyce.fastandroiddev.example.model.UserInfo"/>
+    </data>
+    <RelativeLayout
+        android:id="@+id/topView"
+        android:padding="32px"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.ijustyce.fastandroiddev.ui.CircleImageView
+            android:id="@+id/userHeader"
+            android:src="@mipmap/user_header"
+            android:layout_width="128px"
+            android:layout_height="128px" />
+
+        <TextView
+            android:text="@{user.nickName}"
+            android:layout_toRightOf="@id/userHeader"
+            android:layout_marginLeft="32px"
+            android:layout_marginTop="25px"
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@{user.phone}"
+            android:layout_toRightOf="@id/userHeader"
+            android:layout_marginTop="12px"
+            android:id="@+id/userPhone"
+            android:layout_below="@id/userName"
+            android:layout_alignLeft="@id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</layout>
