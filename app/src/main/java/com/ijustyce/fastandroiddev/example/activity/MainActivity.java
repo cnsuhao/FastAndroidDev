@@ -22,5 +22,7 @@ public class MainActivity extends BaseTabActivity {
         addTab(R.layout.view_tab_contact, R.id.radioButton);
         addTab(R.layout.view_tab_chat, R.id.radioButton);
         addTab(R.layout.view_tab_user, R.id.radioButton);
+
+        showToolBar(false); //  不显示顶部的导航栏
     }
 }

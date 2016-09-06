@@ -71,7 +71,7 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     public final void showToolBar(boolean isShow) {
 
         if (toolbar == null){
-            toolbar = findViewById(R.id.topMenu);
+            toolbar = findViewById(R.id.appBar);
         }if (toolbar != null) {
             toolbar.setVisibility(isShow ? View.VISIBLE : View.GONE);
         }

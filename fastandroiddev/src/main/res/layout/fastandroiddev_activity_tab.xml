@@ -14,21 +14,19 @@
         style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
         android:background="#f8f8f8"
         app:tabIndicatorColor="@color/white"
         app:tabMaxWidth="0dp"
+        android:layout_alignParentBottom="true"
         app:tabSelectedTextColor="@color/gray"
         app:tabTextColor="@color/white" />
 
     <com.ijustyce.fastandroiddev.base.BaseViewPager
-
         android:id="@+id/viewPager"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_above="@id/tabTitle"
         android:layout_below="@id/appBar"
-        android:layout_weight="1"
+        android:layout_above="@id/tabTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:background="@color/white" />
 
 </RelativeLayout>
