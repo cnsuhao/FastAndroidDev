@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by yc on 2015/12/11 0011.    列表Fragment的父类
  */
-public abstract class BaseListFragment<Bind extends ViewDataBinding, T> extends BaseFragment<Bind> {
+public abstract class BaseListFragment<T> extends BaseFragment {
 
     public IRecyclerView mIRecyclerView;
     public View noData;
@@ -62,6 +62,7 @@ public abstract class BaseListFragment<Bind extends ViewDataBinding, T> extends 
 
     @Override
     public int getLayoutId() {
+        useDataBinding = false;
         return R.layout.fastandroiddev_fragment_list_common;
     }
 

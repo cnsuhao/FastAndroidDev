@@ -18,8 +18,8 @@ public class FragmentChat extends BaseTabFragment {
 
     @Override
     public void addFragment() {
-        mFragmentList.add(new FragmentUser());
-        mFragmentList.add(new FragmentUser());
-        mFragmentList.add(new FragmentUser());
+        mFragmentList.add(new FragmentContactList());
+        mFragmentList.add(new FragmentContactList());
+        mFragmentList.add(new FragmentContactList());
     }
 }
