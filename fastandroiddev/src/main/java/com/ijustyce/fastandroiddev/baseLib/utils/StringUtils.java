@@ -98,13 +98,12 @@ public class StringUtils {
      * @param url url 比如： https://mclient.alipay.com/home/exterfaceAssign.htm?alipay_exterface
      *            _invoke_assign_client_ip=115.192.220.130&body=测试
      */
-    @NonNull
     public static HashMap<String, String> getUrlParams(String url){
 
         if (url.isEmpty()) return null;
         String[] urls = url.split("\\?");
         int size = urls.length;
-        if (size < 1) return null;
+        if (size < 2) return null;
 
         if (urls[1].isEmpty()) return null;
         String[] keyAndValus = urls[1].split("=");

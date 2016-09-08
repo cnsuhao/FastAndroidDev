@@ -19,15 +19,13 @@ import java.util.List;
 public class ToastUtil {
 
     private static List<String> notShowList;
-    private static View toastView, toastTopView;
+    private static View toastView;
     private static TextView toastText, toastTopText;
 
     static {
         LayoutInflater mInflater = LayoutInflater.from(IApplication.getInstance());
         toastView = mInflater.inflate(R.layout.fastandroiddev_toast, null);
-        toastTopView = mInflater.inflate(R.layout.fastandroiddev_toast_top, null);
         toastText = (TextView) toastView.findViewById(R.id.message);
-        toastTopText = (TextView) toastTopView.findViewById(R.id.message);
         notShowList = new ArrayList<>();
     }
 
@@ -77,87 +75,6 @@ public class ToastUtil {
             toastStart.setGravity(Gravity.BOTTOM, 0, 90);
             toastStart.setDuration(Toast.LENGTH_LONG);
             toastStart.setView(toastView);
-            toastStart.show();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param id
-     */
-    public static void showTop(int id) {
-
-        String text = IApplication.getInstance().getResources().getString(id);
-        if (!shouldShow(text)) {
-            return;
-        }
-
-        try {
-            toastTopText.setText(text);
-            Toast toastStart = new Toast(IApplication.getInstance());
-            toastStart.setGravity(Gravity.BOTTOM, 0, 90);
-            toastStart.setDuration(Toast.LENGTH_LONG);
-            toastStart.setView(toastTopView);
-            toastStart.show();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public static void showTop(String text) {
-
-        if (!shouldShow(text)) {
-            return;
-        }
-        try {
-            toastTopText.setText(text);
-            Toast toastStart = new Toast(IApplication.getInstance());
-            toastStart.setGravity(Gravity.BOTTOM, 0, 90);
-            toastStart.setDuration(Toast.LENGTH_LONG);
-            toastStart.setView(toastTopView);
-            toastStart.show();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param id
-     * @param yOffset dp , height of ToastUnit
-     */
-    public static void showTop(int id, int yOffset) {
-
-        String text = IApplication.getInstance().getResources().getString(id);
-        if (!shouldShow(text)) {
-            return;
-        }
-
-        try {
-            toastTopText.setText(text);
-            Toast toastStart = new Toast(IApplication.getInstance());
-            toastStart.setGravity(Gravity.TOP, 0, yOffset);
-            toastStart.setDuration(Toast.LENGTH_LONG);
-            toastStart.setView(toastTopView);
-            toastStart.show();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public static void showTop(String text, int yOffset) {
-
-
-        if (!shouldShow(text)) {
-            return;
-        }
-
-        try {
-            toastTopText.setText(text);
-            Toast toastStart = new Toast(IApplication.getInstance());
-            toastStart.setGravity(Gravity.TOP, 0, yOffset);
-            toastStart.setDuration(Toast.LENGTH_LONG);
-            toastStart.setView(toastTopView);
             toastStart.show();
         }catch (Exception e){
             e.printStackTrace();

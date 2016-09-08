@@ -3,10 +3,11 @@ package com.ijustyce.fastandroiddev.base;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +33,8 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
     private ViewPager mViewPager;
     private TextView label;
 
-    private Toolbar toolbar;
+    private View toolbar;
 
-    public List<CharSequence> mTitleList;
     public List<Fragment> mFragmentList;
     private List<RadioButton> mRadioButton;
 
@@ -49,16 +49,10 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fastandroiddev_activity_tab);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
-
         AppManager.pushActivity(this);
         initData();
 
         addFragment();
-        addTitle();
         setAdapter();
 
         handler = new Handler();
@@ -76,7 +70,11 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
 
     public final void showToolBar(boolean isShow) {
 
-        toolbar.setVisibility(isShow ? View.VISIBLE : View.GONE);
+        if (toolbar == null){
+            toolbar = findViewById(R.id.appBar);
+        }if (toolbar != null) {
+            toolbar.setVisibility(isShow ? View.VISIBLE : View.GONE);
+        }
     }
 
     public final void backPress() {
@@ -99,20 +97,14 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         label = (TextView) findViewById(R.id.label);
         mFragmentList = new ArrayList<>();
+
+        View back = findViewById(R.id.back);
+        if (back != null) back.setVisibility(View.GONE);
     }
 
     public final int getCurrentTab() {
 
         return mViewPager == null ? 0 : mViewPager.getCurrentItem();
-    }
-
-    private void addTitle() {
-
-        mTitleList = new ArrayList<>();
-        mTitleList.add("tmp");
-        mTitleList.add("tmp");
-        mTitleList.add("tmp");
-        mRadioButton = new ArrayList<>(mFragmentList.size());
     }
 
     /**
@@ -130,8 +122,9 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
      */
     private void setAdapter() {
 
+        mRadioButton = new ArrayList<>(mFragmentList.size());
         FragmentAdapter mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(),
-                mFragmentList, mTitleList);
+                mFragmentList, null);
         mViewPager.setAdapter(mFragmentAdapter);
         mViewPager.setOffscreenPageLimit(mFragmentList.size() > 3 ? 3 : mFragmentList.size());
 
@@ -188,11 +181,11 @@ public abstract class BaseTabActivity extends AutoLayoutActivity {
         CallBackManager.onDestroy(this);
     }
 
-    public final void addTab(int layoutId, int radioButtonId) {
+    public final void addTab(@LayoutRes int layoutId, @IdRes int radioButtonId) {
 
-        if (mTitleList == null || mRadioButton == null) {
+        if (mRadioButton == null) {
 
-            ILog.e("===mTitleList or mRadioButton is null ...return...");
+            ILog.e("===mRadioButton is null ...return...");
             return;
         }
 

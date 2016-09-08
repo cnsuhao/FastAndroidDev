@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data class="ContactFragmentView">
+
+        <variable
+            name="user"
+            type="com.ijustyce.fastandroiddev.example.model.UserInfo" />
+
+        <variable
+            name="event"
+            type="com.ijustyce.fastandroiddev.example.event.UserCentEvent" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/topView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+        <RelativeLayout
+            android:id="@+id/userInfo"
+            android:paddingTop="64px"
+            android:paddingBottom="64px"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.ijustyce.fastandroiddev.ui.CircleImageView
+                android:id="@+id/userHeader"
+                android:layout_width="128px"
+                android:layout_height="128px"
+                android:onClick="@{event.changeHead}"
+                android:src="@mipmap/user_header" />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32px"
+                android:layout_marginTop="25px"
+                android:layout_toRightOf="@id/userHeader"
+                android:text="@{user.nickName}" />
+
+            <TextView
+                android:id="@+id/userPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/userName"
+                android:layout_below="@id/userName"
+                android:layout_marginTop="12px"
+                android:layout_toRightOf="@id/userHeader"
+                android:text="@{user.phone}" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</layout>

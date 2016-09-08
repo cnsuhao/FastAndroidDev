@@ -22,10 +22,9 @@ public abstract class BaseTabFragment extends BaseFragment {
     public List<CharSequence> mTitleList;
     public List<Fragment> mFragmentList;
 
-    private LinearLayout headerView;
-
     @Override
     public int getLayoutId() {
+        useDataBinding = false;
         return R.layout.fastandroiddev_fragment_tab;
     }
 
@@ -36,13 +35,6 @@ public abstract class BaseTabFragment extends BaseFragment {
         addTitle();
         addFragment();
         setAdapter();
-    };
-
-    public final void addHeaderView(View view){
-
-        if (view != null) {
-            headerView.addView(view);
-        }
     }
 
     @Override
@@ -56,7 +48,6 @@ public abstract class BaseTabFragment extends BaseFragment {
     private void initData(){
 
         mTabLayout = (TabLayout) mView.findViewById(R.id.tabTitle);
-        headerView = (LinearLayout) mView.findViewById(R.id.headerView);
         mViewPager = (BaseViewPager) mView.findViewById(R.id.viewPager);
         mFragmentList = new ArrayList<>();
         mTitleList = new ArrayList<>();

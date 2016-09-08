@@ -93,13 +93,13 @@ public class ImageLoader {
         load(img, url, width, height, transformation);
     }
 
-    public static ImageLoadType type;
-
-    public abstract static class ImageLoadType {
-        public abstract boolean isAliYunServer(String url);
-
-        public abstract boolean isSlowNetWork();
-    }
+//    public static ImageLoadType type;
+//
+//    public abstract static class ImageLoadType {
+//        public abstract boolean isAliYunServer(String url);
+//
+//        public abstract boolean isSlowNetWork();
+//    }
 
     private static class NetworkDisablingLoader implements StreamModelLoader<String> {
         @Override
@@ -135,45 +135,45 @@ public class ImageLoader {
         return loader;
     }
 
-    private static void doAliYunLoad(ImageView img, String defaultUrl, String wifiUrl, int width, int height, boolean slowNetWork
-            , Transformation transformation){
-        if (slowNetWork){
-            BitmapRequestBuilder<String, Bitmap> offlineBuild = getBitmapBuilder(img, wifiUrl, width, height, transformation, getNetWorkDisablingLoader());
-            BitmapRequestBuilder<String, Bitmap> netBuild = getBitmapBuilder(img, defaultUrl, width, height, transformation, null);
-            if (netBuild == null || offlineBuild == null) return;
-            netBuild.thumbnail(offlineBuild.diskCacheStrategy(DiskCacheStrategy.SOURCE)).into(img);
-        }else{
-            BitmapRequestBuilder wifi = getBitmapBuilder(img, wifiUrl, width, height, transformation, null);
-            if (wifi != null) {
-                wifi.diskCacheStrategy(DiskCacheStrategy.ALL).into(img);
-            }
-        }
-    }
+//    private static void doAliYunLoad(ImageView img, String defaultUrl, String wifiUrl, int width, int height, boolean slowNetWork
+//            , Transformation transformation){
+//        if (slowNetWork){
+//            BitmapRequestBuilder<String, Bitmap> offlineBuild = getBitmapBuilder(img, wifiUrl, width, height, transformation, getNetWorkDisablingLoader());
+//            BitmapRequestBuilder<String, Bitmap> netBuild = getBitmapBuilder(img, defaultUrl, width, height, transformation, null);
+//            if (netBuild == null || offlineBuild == null) return;
+//            netBuild.thumbnail(offlineBuild.diskCacheStrategy(DiskCacheStrategy.SOURCE)).into(img);
+//        }else{
+//            BitmapRequestBuilder wifi = getBitmapBuilder(img, wifiUrl, width, height, transformation, null);
+//            if (wifi != null) {
+//                wifi.diskCacheStrategy(DiskCacheStrategy.ALL).into(img);
+//            }
+//        }
+//    }
 
-    private static boolean preLoad(ImageView img, String url, int width, int height, Transformation transformation) {
-        if (type == null || !type.isAliYunServer(url)) return false;
-        String defaultUrl = "@1wh_80q_";
-        String wifiUrl = "@1wh_";
-        if (width > 1 && height > 1) {
-            String sizeUrl = height + "h_" + width + "w";
-            defaultUrl += sizeUrl;
-            wifiUrl += sizeUrl;
-        }
-        if (url.contains("?")) {
-            String[] array = url.split("\\?");
-            defaultUrl = array[0] + defaultUrl;
-            wifiUrl = array[0] + wifiUrl;
-            if (array.length > 1) {
-                defaultUrl = defaultUrl + "?" + array[1];
-                wifiUrl = wifiUrl + "?" + array[1];
-            }
-        }else{
-            defaultUrl = url + defaultUrl;
-            wifiUrl = url + wifiUrl;
-        }
-        doAliYunLoad(img, defaultUrl, wifiUrl, width, height, type.isSlowNetWork(), transformation);
-        return true;
-    }
+//    private static boolean preLoad(ImageView img, String url, int width, int height, Transformation transformation) {
+//        if (type == null || !type.isAliYunServer(url)) return false;
+//        String defaultUrl = "@1wh_80q_";
+//        String wifiUrl = "@1wh_";
+//        if (width > 1 && height > 1) {
+//            String sizeUrl = height + "h_" + width + "w";
+//            defaultUrl += sizeUrl;
+//            wifiUrl += sizeUrl;
+//        }
+//        if (url.contains("?")) {
+//            String[] array = url.split("\\?");
+//            defaultUrl = array[0] + defaultUrl;
+//            wifiUrl = array[0] + wifiUrl;
+//            if (array.length > 1) {
+//                defaultUrl = defaultUrl + "?" + array[1];
+//                wifiUrl = wifiUrl + "?" + array[1];
+//            }
+//        }else{
+//            defaultUrl = url + defaultUrl;
+//            wifiUrl = url + wifiUrl;
+//        }
+//        doAliYunLoad(img, defaultUrl, wifiUrl, width, height, type.isSlowNetWork(), transformation);
+//        return true;
+//    }
 
     public static void load(ImageView img, String url, int width, int height, Transformation transformation) {
         if (StringUtils.isEmpty(url) || img == null) {
@@ -201,7 +201,7 @@ public class ImageLoader {
             return;
         }
 
-        if (preLoad(img, url, width, height, transformation)) return;  //  preload 用于加载其他aliyun等图片资源,以下是正常逻辑!aliyun不支持gif
+    //    if (preLoad(img, url, width, height, transformation)) return;  //  preload 用于加载其他aliyun等图片资源,以下是正常逻辑!aliyun不支持gif
 
         BitmapRequestBuilder builder = getBitmapBuilder(img, url, width, height, transformation, null);
         if (builder != null) {

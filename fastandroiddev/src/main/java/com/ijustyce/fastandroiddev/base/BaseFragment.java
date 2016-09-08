@@ -27,17 +27,23 @@ public abstract class BaseFragment<Bind extends ViewDataBinding> extends Fragmen
 
     public String TAG ;
     public Bind contentView;
+    public boolean useDataBinding = true;
 
     @Override
-    public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
         if (mView != null) {
             return mView;
         }
 
-        contentView = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
-        mView = contentView.getRoot();
+        int layoutId = getLayoutId();
+        if (useDataBinding){
+            contentView = DataBindingUtil.inflate(inflater, layoutId, container, false);
+            mView = contentView.getRoot();
+        }else{
+            mView = inflater.inflate(layoutId, container, false);
+        }
 
         ViewGroup parent = (ViewGroup) mView.getParent();
         if (parent != null) {

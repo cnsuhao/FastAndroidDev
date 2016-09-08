@@ -1,5 +1,6 @@
 package com.ijustyce.fastandroiddev.base;
 
+import android.databinding.ViewDataBinding;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
@@ -58,6 +59,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 
     @Override
     public int getLayoutId() {
+        useDataBinding = false;
         return R.layout.fastandroiddev_activity_list_common;
     }
 

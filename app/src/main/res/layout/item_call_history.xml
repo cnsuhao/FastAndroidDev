@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="com.ijustyce.fastandroiddev.example.model.CallHistory" />
+        <import type="com.ijustyce.fastandroiddev.example.event.ContactEvent" />
+        <variable
+            name="call"
+            type="CallHistory" />
+
+        <variable
+            name="handler"
+            type="ContactEvent" />
+    </data>
+
+    <RelativeLayout
+        android:background="@drawable/radius_fff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{(view) -> handler.onClick(view, call)}"
+        android:layout_marginLeft="16px"
+        android:layout_marginRight="16px"
+        android:layout_marginTop="16px"
+        android:padding="16px"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_marginLeft="25px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15px"
+            android:textSize="36px"
+            android:textColor="@color/mainTextColor"
+            android:text="@{call.name}" />
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_below="@id/name"
+            android:layout_marginTop="15px"
+            android:layout_alignLeft="@id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28px"
+            android:textColor="@color/secondTextColor"
+            android:text='@{call.phone}' />
+
+        <TextView
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28px"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/phone"
+            android:textColor="@color/secondTextColor"
+            android:text='@{call.type}' />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28px"
+            android:layout_toLeftOf="@id/type"
+            android:layout_marginRight="15px"
+            android:layout_alignBottom="@id/phone"
+            android:textColor="@color/secondTextColor"
+            android:text='@{call.time}' />
+
+    </RelativeLayout>
+</layout>
