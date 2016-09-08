@@ -8,11 +8,7 @@ buildscript {
         }
     }
     dependencies {
-<<<<<<< HEAD
-        classpath 'com.android.tools.build:gradle:2.2.0-beta3'
-=======
         classpath 'com.android.tools.build:gradle:2.2.0-rc1'
->>>>>>> 25ed498189a77ed7f43077f20cce1c0581020ec2
         classpath 'com.bugtags.library:bugtags-gradle:latest.integration'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
         classpath 'com.github.dcendents:android-maven-plugin:1.2'
