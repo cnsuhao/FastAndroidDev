@@ -215,7 +215,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public final Runnable newData = new Runnable() {
         @Override
         public void run() {
-
+            if (mIRecyclerView == null) return;
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
 
@@ -242,6 +242,7 @@ public abstract class BaseListActivity<T> extends BaseActivity {
     public final Runnable hasNoData = new Runnable() {
         @Override
         public void run() {
+            if (mIRecyclerView == null) return;
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
             mIRecyclerView.setHasMore(false);

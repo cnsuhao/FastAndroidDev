@@ -234,7 +234,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public final Runnable newData = new Runnable() {
         @Override
         public void run() {
-
+            if (mIRecyclerView == null) return;
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
             if ((data == null || !data.isEmpty()) && noData != null) {
@@ -249,6 +249,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
     public final Runnable hasNoData = new Runnable() {
         @Override
         public void run() {
+            if (mIRecyclerView == null) return;
             mIRecyclerView.onLoadEnd();
             mIRecyclerView.onRefreshEnd();
 
