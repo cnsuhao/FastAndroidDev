@@ -34,7 +34,8 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     private IAdapter adapter;
     private boolean hasMore = true; //  是否还有更多数据
-    private boolean showFooter = true;  //  如果没有更多数据了，是否允许显示footer
+    private boolean showFooterWhenNoMoreData = true;  //  如果没有更多数据了，是否允许显示footer
+    private boolean showFooter = true;
     private PullToRefreshListener mRefreshListener;
 
     private TextView footerLabel;
@@ -63,9 +64,8 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         return pageSize;
     }
 
-    public final void showFooterWhenNoMoreData(boolean showFooter) {
-
-        this.showFooter = showFooter;
+    public final void showFooterWhenNoMoreData(boolean showFooterWhenNoMoreData) {
+        this.showFooterWhenNoMoreData = showFooterWhenNoMoreData;
     }
 
     public final void showFooterLabel(boolean show) {
@@ -73,6 +73,12 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
         if (footerLabel != null) {
             footerLabel.setVisibility(show ? VISIBLE : GONE);
         }
+    }
+
+    public final void showFooter(boolean showFooter){
+        this.showFooter = showFooter;
+        if (mFooter == null) return;
+        mFooter.setVisibility(GONE);
     }
 
     public final void setFooterLabel(String text) {
@@ -121,10 +127,11 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     public final void setHasMore(boolean hasMore) {
 
+        this.hasMore = hasMore;
         initFooter();
+        if (mFooter == null) return;
         footerLabel.setText(hasMore ? "正在加载..." : "没有更多数据了");
         processBar.setVisibility(footerLabel.getVisibility() == VISIBLE && hasMore ? VISIBLE : INVISIBLE);
-        this.hasMore = hasMore;
     }
 
     public final void setPullToRefreshListener(PullToRefreshListener mRefreshListener) {
@@ -230,6 +237,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
 
     private void initFooter() {
 
+        if (!showFooter) return;
         if (mFooter == null) {
             mFooter = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.irecyclerview_view_footer, null)
                     .findViewById(R.id.container);
@@ -245,7 +253,7 @@ public class IRecyclerView extends FrameLayout implements SwipeRefreshLayout.OnR
             processBar = (ProgressBar) mFooter.findViewById(R.id.processBar);
         }
         if (mFooterLoading != null) {
-            mFooterLoading.setVisibility(adapter != null && adapter.getDataSize() >= pageSize && (hasMore || showFooter) ? VISIBLE : GONE);
+            mFooterLoading.setVisibility(adapter != null && adapter.getDataSize() >= pageSize && (hasMore || showFooterWhenNoMoreData) ? VISIBLE : GONE);
         }
     }
 
