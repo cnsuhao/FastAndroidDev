@@ -105,6 +105,10 @@
         <attr name="deleteIcon" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="RotateTextView">
+        <attr name="degree" format="dimension" />
+    </declare-styleable>
+
     <declare-styleable name="JazzyViewPager">
         <attr name="style">
             <enum name="standard" value="0" />
